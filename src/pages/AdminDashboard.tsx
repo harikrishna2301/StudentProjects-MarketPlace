@@ -318,14 +318,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
       {/* Admin Top Header Banner */}
       <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
             <ShieldCheck className="w-4 h-4" />
             <span>Marketplace Administration Console</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
             Welcome, Dr. Anita Sharma
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Curriculum supervisor & project kit catalog manager
           </p>
         </div>
@@ -343,20 +343,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
 
       {/* Global Success Notification Toast */}
       {actionSuccessMessage && (
-        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2 font-medium">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs text-emerald-800 dark:text-emerald-200 flex items-center gap-2 font-medium">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <span>{actionSuccessMessage}</span>
         </div>
       )}
 
       {/* Admin Navigation Sub-Tabs */}
-      <div className="flex items-center gap-1.5 p-1 bg-slate-200/80 rounded-xl max-w-full overflow-x-auto">
+      <div className="flex items-center gap-1.5 p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl max-w-full overflow-x-auto">
         <button
           onClick={() => navigate('/admin')}
           className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
             activeTab === 'overview'
-              ? 'bg-white text-slate-900 shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           Dashboard Overview
@@ -365,8 +365,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           onClick={() => navigate('/admin/projects')}
           className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
             activeTab === 'projects'
-              ? 'bg-white text-slate-900 shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           Manage Projects ({projects.length})
@@ -375,8 +375,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           onClick={() => navigate('/admin/add-project')}
           className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
             activeTab === 'add'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           + Add Project
@@ -385,8 +385,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           onClick={() => navigate('/admin/categories')}
           className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
             activeTab === 'categories'
-              ? 'bg-white text-slate-900 shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           Categories ({categories.length})
@@ -395,8 +395,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           onClick={() => navigate('/admin/orders')}
           className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
             activeTab === 'orders'
-              ? 'bg-white text-slate-900 shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           Orders ({myOrders.length})
@@ -405,8 +405,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           onClick={() => navigate('/admin/users')}
           className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
             activeTab === 'users'
-              ? 'bg-white text-slate-900 shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
           }`}
         >
           Students ({studentsList.length})
@@ -418,69 +418,69 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
         <div className="space-y-8">
           {/* Statistics Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm space-y-2">
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500">Total Project Kits</span>
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total Project Kits</span>
+                <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                   <FolderKanban className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-extrabold text-slate-900 font-mono tabular-nums">
+              <div className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
                 {projects.length}
               </div>
-              <p className="text-[11px] text-slate-400">100% Verified codebases</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">100% Verified codebases</p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm space-y-2">
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500">Enrolled Students</span>
-                <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Enrolled Students</span>
+                <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <Users className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-extrabold text-slate-900 font-mono tabular-nums">
+              <div className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
                 {totalStudentsCount.toLocaleString()}
               </div>
-              <p className="text-[11px] text-emerald-600 font-medium">+18% this semester</p>
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">+18% this semester</p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm space-y-2">
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500">Total Kit Orders</span>
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total Kit Orders</span>
+                <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                   <Receipt className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-extrabold text-slate-900 font-mono tabular-nums">
+              <div className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
                 {totalOrdersCount}
               </div>
-              <p className="text-[11px] text-slate-400">Average rating 4.9</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Average rating 4.9</p>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm space-y-2">
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500">Gross Marketplace Revenue</span>
-                <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Gross Marketplace Revenue</span>
+                <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                   <DollarSign className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-extrabold text-slate-900 font-mono tabular-nums">
+              <div className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
                 ₹{totalRevenue.toLocaleString('en-IN')}
               </div>
-              <p className="text-[11px] text-slate-400">Direct student subscriptions</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">Direct student subscriptions</p>
             </div>
           </div>
 
           {/* Quick Management Table Preview */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Active Published Projects</h3>
-                <p className="text-xs text-slate-500">Catalog items available for student purchase.</p>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Active Published Projects</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Catalog items available for student purchase.</p>
               </div>
               <button
                 onClick={() => navigate('/admin/projects')}
-                className="text-xs font-semibold text-blue-600 hover:underline"
+                className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
               >
                 Manage All Projects ({projects.length})
               </button>
@@ -489,7 +489,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px] tracking-wider">
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 uppercase text-[10px] tracking-wider">
                     <th className="py-2.5 font-semibold">Title</th>
                     <th className="py-2.5 font-semibold">Category</th>
                     <th className="py-2.5 font-semibold">Language</th>
@@ -498,24 +498,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     <th className="py-2.5 font-semibold text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {projects.slice(0, 5).map((project) => (
-                    <tr key={project.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3 font-semibold text-slate-900 max-w-xs truncate">
+                    <tr key={project.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="py-3 font-semibold text-slate-900 dark:text-white max-w-xs truncate">
                         {project.title}
                       </td>
-                      <td className="py-3 text-slate-600">{project.category}</td>
-                      <td className="py-3 font-mono text-slate-500">{project.primaryLanguage}</td>
-                      <td className="py-3 text-right font-mono font-bold text-slate-900 tabular-nums">
+                      <td className="py-3 text-slate-600 dark:text-slate-300">{project.category}</td>
+                      <td className="py-3 font-mono text-slate-500 dark:text-slate-400">{project.primaryLanguage}</td>
+                      <td className="py-3 text-right font-mono font-bold text-slate-900 dark:text-white tabular-nums">
                         ₹{project.price.toLocaleString('en-IN')}
                       </td>
-                      <td className="py-3 text-center font-mono tabular-nums text-slate-600">
+                      <td className="py-3 text-center font-mono tabular-nums text-slate-600 dark:text-slate-300">
                         {project.downloadsCount}
                       </td>
                       <td className="py-3 text-right space-x-2">
                         <button
                           onClick={() => setEditingProject(project)}
-                          className="text-blue-600 hover:text-blue-800 font-medium text-xs"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-xs"
                         >
                           Edit
                         </button>
@@ -538,10 +538,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
       {/* TAB 2: MANAGE PROJECTS (TABLE, SEARCH, EDIT, DELETE CONFIRMATION) */}
       {activeTab === 'projects' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Project Kits Catalog Management</h2>
-              <p className="text-xs text-slate-500 mt-1">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Project Kits Catalog Management</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Search, inspect, edit pricing, or remove deprecated projects from student store.
               </p>
             </div>
@@ -551,7 +551,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
               <select
                 value={projectCategoryFilter}
                 onChange={(e) => setProjectCategoryFilter(e.target.value)}
-                className="px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl outline-none focus:border-blue-500"
+                className="px-3 py-1.5 text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl outline-none focus:border-blue-500"
               >
                 <option value="All">All Categories</option>
                 {categories.map((c) => (
@@ -568,9 +568,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   value={projectSearch}
                   onChange={(e) => setProjectSearch(e.target.value)}
                   placeholder="Search project..."
-                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl outline-none focus:border-blue-500"
+                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl outline-none focus:border-blue-500"
                 />
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute left-2.5 top-2.5" />
               </div>
 
               <button
@@ -584,11 +584,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           </div>
 
           {/* Projects Table */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px] tracking-wider">
+                  <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
                     <th className="py-3 px-4 font-semibold">Project Title & ID</th>
                     <th className="py-3 px-4 font-semibold">Domain</th>
                     <th className="py-3 px-4 font-semibold">Language</th>
@@ -598,34 +598,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     <th className="py-3 px-4 font-semibold text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredProjects.length > 0 ? (
                     filteredProjects.map((project) => (
-                      <tr key={project.id} className="hover:bg-slate-50/80 transition-colors">
+                      <tr key={project.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
                         <td className="py-3.5 px-4">
-                          <div className="font-semibold text-slate-900 max-w-sm truncate">
+                          <div className="font-semibold text-slate-900 dark:text-white max-w-sm truncate">
                             {project.title}
                           </div>
-                          <div className="text-[11px] text-slate-400 font-mono">ID: {project.id}</div>
+                          <div className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">ID: {project.id}</div>
                         </td>
-                        <td className="py-3.5 px-4 text-slate-600">{project.category}</td>
-                        <td className="py-3.5 px-4 font-mono text-slate-500">
+                        <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">{project.category}</td>
+                        <td className="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400">
                           {project.primaryLanguage}
                         </td>
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 tabular-nums">
+                        <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-white tabular-nums">
                           ₹{project.price.toLocaleString('en-IN')}
                         </td>
-                        <td className="py-3.5 px-4 text-center font-mono tabular-nums text-slate-600">
+                        <td className="py-3.5 px-4 text-center font-mono tabular-nums text-slate-600 dark:text-slate-300">
                           {project.downloadsCount}
                         </td>
-                        <td className="py-3.5 px-4 text-center font-mono text-amber-600 font-semibold">
+                        <td className="py-3.5 px-4 text-center font-mono text-amber-600 dark:text-amber-400 font-semibold">
                           ★ {project.rating}
                         </td>
                         <td className="py-3.5 px-4 text-right space-x-1.5 whitespace-nowrap">
                           {/* View details */}
                           <button
                             onClick={() => navigate(`/projects/${project.id}`)}
-                            className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-slate-100"
+                            className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
                             title="Inspect Spec"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />
@@ -634,7 +634,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                           {/* Edit Project Button */}
                           <button
                             onClick={() => setEditingProject(project)}
-                            className="p-1.5 text-blue-600 hover:text-blue-800 rounded-lg hover:bg-blue-50"
+                            className="p-1.5 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/50"
                             title="Edit Project"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
@@ -643,7 +643,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                           {/* Delete Project Button with Modal */}
                           <button
                             onClick={() => setDeletingProject(project)}
-                            className="p-1.5 text-red-500 hover:text-red-700 rounded-lg hover:bg-red-50"
+                            className="p-1.5 text-red-500 hover:text-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/50"
                             title="Delete Kit"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -667,23 +667,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
 
       {/* TAB 3: ADD PROJECT FORM */}
       {activeTab === 'add' && (
-        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-8 space-y-6 max-w-4xl">
-          <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-xl font-bold text-slate-900">Add New Academic Project Kit</h2>
-            <p className="text-xs text-slate-500 mt-1">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm p-6 sm:p-8 space-y-6 max-w-4xl">
+          <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Add New Academic Project Kit</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Provide project title, technical stack, problem statement, and setup commands.
             </p>
           </div>
 
           {formSuccess && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs text-emerald-800 dark:text-emerald-200 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>{formSuccess}</span>
             </div>
           )}
 
           {formError && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex items-center gap-2">
+            <div className="p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-xl text-xs text-red-600 dark:text-red-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
               <span>{formError}</span>
             </div>
@@ -692,7 +692,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           <form onSubmit={handleAddProjectSubmit} className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Project Title *
                 </label>
                 <input
@@ -701,18 +701,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   value={newProject.title}
                   onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
                   placeholder="e.g. AI-Powered Healthcare Diagnostic System"
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Category / Domain *
                 </label>
                 <select
                   value={newProject.category}
                   onChange={(e) => setNewProject({ ...newProject, category: e.target.value })}
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none"
                 >
                   {categories.map((c) => (
                     <option key={c.id} value={c.name}>
@@ -723,7 +723,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Primary Language *
                 </label>
                 <input
@@ -732,12 +732,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   value={newProject.primaryLanguage}
                   onChange={(e) => setNewProject({ ...newProject, primaryLanguage: e.target.value })}
                   placeholder="Java, Python, JavaScript, Solidity"
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Selling Price (₹) *
                 </label>
                 <input
@@ -745,12 +745,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   required
                   value={newProject.price}
                   onChange={(e) => setNewProject({ ...newProject, price: Number(e.target.value) })}
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Original Price (₹) *
                 </label>
                 <input
@@ -760,12 +760,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   onChange={(e) =>
                     setNewProject({ ...newProject, originalPrice: Number(e.target.value) })
                   }
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Tech Stack (comma separated)
                 </label>
                 <input
@@ -773,12 +773,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   value={newProject.techStack}
                   onChange={(e) => setNewProject({ ...newProject, techStack: e.target.value })}
                   placeholder="Spring Boot 3, React 18, MySQL 8, JWT, Tailwind"
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Short Description *
                 </label>
                 <textarea
@@ -787,12 +787,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   value={newProject.shortDescription}
                   onChange={(e) => setNewProject({ ...newProject, shortDescription: e.target.value })}
                   placeholder="2-line summary explaining the core value of this academic capstone."
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Setup / Installation Terminal Command
                 </label>
                 <input
@@ -800,16 +800,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   value={newProject.commandSetup}
                   onChange={(e) => setNewProject({ ...newProject, commandSetup: e.target.value })}
                   placeholder="mvn clean install && mvn spring-boot:run"
-                  className="w-full px-3 py-2 text-xs font-mono bg-slate-900 text-blue-400 border border-slate-800 rounded-xl"
+                  className="w-full px-3 py-2 text-xs font-mono bg-slate-900 dark:bg-slate-950 text-blue-400 border border-slate-800 dark:border-slate-800 rounded-xl"
                 />
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => navigate('/admin/projects')}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold"
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold"
               >
                 Cancel
               </button>
@@ -828,10 +828,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
       {/* TAB 4: CATEGORY MANAGEMENT */}
       {activeTab === 'categories' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Academic Project Categories</h2>
-              <p className="text-xs text-slate-500 mt-1">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Academic Project Categories</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Engineering domain classifications, syllabus mappings, and catalog distribution.
               </p>
             </div>
@@ -849,20 +849,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
             {categories.map((cat) => (
               <div
                 key={cat.id}
-                className="p-5 bg-white rounded-2xl border border-slate-200/90 shadow-sm flex flex-col justify-between"
+                className="p-5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-base font-bold text-slate-900">{cat.name}</h3>
-                    <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-100">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white">{cat.name}</h3>
+                    <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-0.5 rounded-md border border-blue-100 dark:border-blue-900">
                       {cat.projectCount} kits
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed mb-4">{cat.description}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-4">{cat.description}</p>
                 </div>
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-mono">
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-mono">
                   <span>slug: {cat.slug}</span>
-                  <span className="text-emerald-600 font-semibold font-sans">Active</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold font-sans">Active</span>
                 </div>
               </div>
             ))}
@@ -873,10 +873,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
       {/* TAB 5: ORDER MANAGEMENT */}
       {activeTab === 'orders' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Order Management & Fulfillment</h2>
-              <p className="text-xs text-slate-500 mt-1">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Order Management & Fulfillment</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Audit student purchase transactions, payment tokens, and invoice details.
               </p>
             </div>
@@ -885,7 +885,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
               <select
                 value={orderStatusFilter}
                 onChange={(e) => setOrderStatusFilter(e.target.value)}
-                className="px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl outline-none focus:border-blue-500"
+                className="px-3 py-1.5 text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl outline-none focus:border-blue-500"
               >
                 <option value="All">All Statuses</option>
                 <option value="Completed">Completed</option>
@@ -898,18 +898,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   value={orderSearch}
                   onChange={(e) => setOrderSearch(e.target.value)}
                   placeholder="Search orders..."
-                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl outline-none focus:border-blue-500"
+                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl outline-none focus:border-blue-500"
                 />
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute left-2.5 top-2.5" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px] tracking-wider">
+                  <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
                     <th className="py-3 px-4 font-semibold">Order Number</th>
                     <th className="py-3 px-4 font-semibold">Project Kit Title</th>
                     <th className="py-3 px-4 font-semibold">Date</th>
@@ -919,30 +919,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     <th className="py-3 px-4 font-semibold text-right">Details</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredOrders.length > 0 ? (
                     filteredOrders.map((order) => (
-                      <tr key={order.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-3.5 px-4 font-mono font-medium text-slate-800">
+                      <tr key={order.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                        <td className="py-3.5 px-4 font-mono font-medium text-slate-800 dark:text-slate-300">
                           {order.orderNumber}
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-slate-900 max-w-xs truncate">
+                        <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white max-w-xs truncate">
                           {order.projectTitle}
                         </td>
-                        <td className="py-3.5 px-4 text-slate-500 font-mono tabular-nums">{order.date}</td>
-                        <td className="py-3.5 px-4 text-slate-600">{order.paymentMethod}</td>
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 tabular-nums">
+                        <td className="py-3.5 px-4 text-slate-500 dark:text-slate-400 font-mono tabular-nums">{order.date}</td>
+                        <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">{order.paymentMethod}</td>
+                        <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-white tabular-nums">
                           ₹{order.amount.toLocaleString('en-IN')}
                         </td>
                         <td className="py-3.5 px-4 text-center">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
                             {order.status}
                           </span>
                         </td>
                         <td className="py-3.5 px-4 text-right">
                           <button
                             onClick={() => setViewingOrder(order)}
-                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium"
+                            className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
                           >
                             <Eye className="w-3.5 h-3.5" />
                             <span>Invoice</span>
@@ -952,7 +952,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-slate-400">
+                      <td colSpan={7} className="py-8 text-center text-slate-400 dark:text-slate-500">
                         No orders match your filter criteria.
                       </td>
                     </tr>
@@ -967,10 +967,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
       {/* TAB 6: USER MANAGEMENT */}
       {activeTab === 'users' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Enrolled Engineering Students</h2>
-              <p className="text-xs text-slate-500 mt-1">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Enrolled Engineering Students</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Verify student accounts, review college affiliations, and manage user access states.
               </p>
             </div>
@@ -981,17 +981,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
                 placeholder="Search by name, college..."
-                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl outline-none focus:border-blue-500"
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl outline-none focus:border-blue-500"
               />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+              <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute left-2.5 top-2.5" />
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px] tracking-wider">
+                  <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
                     <th className="py-3 px-4 font-semibold">Student Name</th>
                     <th className="py-3 px-4 font-semibold">Email</th>
                     <th className="py-3 px-4 font-semibold">College / University</th>
@@ -1000,23 +1000,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     <th className="py-3 px-4 font-semibold text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredUsers.map((student) => (
-                    <tr key={student.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-slate-900">
+                    <tr key={student.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">
                         {student.fullName}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-600">{student.email}</td>
-                      <td className="py-3.5 px-4 text-slate-700">{student.collegeName}</td>
-                      <td className="py-3.5 px-4 text-center font-mono font-bold text-slate-800">
+                      <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">{student.email}</td>
+                      <td className="py-3.5 px-4 text-slate-700 dark:text-slate-300">{student.collegeName}</td>
+                      <td className="py-3.5 px-4 text-center font-mono font-bold text-slate-800 dark:text-slate-200">
                         {student.purchasesCount}
                       </td>
                       <td className="py-3.5 px-4 text-center">
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                             student.status === 'Active'
-                              ? 'bg-emerald-50 text-emerald-700'
-                              : 'bg-rose-50 text-rose-700'
+                              ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60'
+                              : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60'
                           }`}
                         >
                           {student.status}
@@ -1026,7 +1026,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                         <button
                           onClick={() => toggleUserStatus(student.id)}
                           className={`text-xs font-medium hover:underline ${
-                            student.status === 'Active' ? 'text-amber-600' : 'text-emerald-600'
+                            student.status === 'Active' ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'
                           }`}
                         >
                           {student.status === 'Active' ? 'Suspend' : 'Activate'}
@@ -1048,17 +1048,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           onClick={() => setEditingProject(null)}
         >
           <div
-            className="bg-white rounded-2xl max-w-xl w-full border border-slate-200 p-6 sm:p-8 space-y-5 text-slate-900 shadow-2xl relative"
+            className="bg-white dark:bg-slate-900 rounded-2xl max-w-xl w-full border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 text-slate-900 dark:text-slate-100 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Edit Project Kit</h3>
-                <p className="text-xs text-slate-500">ID: {editingProject.id}</p>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Edit Project Kit</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">ID: {editingProject.id}</p>
               </div>
               <button
                 onClick={() => setEditingProject(null)}
-                className="p-1 text-slate-400 hover:text-slate-700 rounded-lg"
+                className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1066,28 +1066,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
 
             <form onSubmit={handleSaveEditProject} className="space-y-4 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Project Title</label>
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Project Title</label>
                 <input
                   type="text"
                   required
                   value={editingProject.title}
                   onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Category</label>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Category</label>
                   <select
                     value={editingProject.category}
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, category: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500"
                   >
                     {categories.map((c) => (
-                      <option key={c.id} value={c.name}>
+                      <option key={c.id} value={c.name} className="dark:bg-slate-900">
                         {c.name}
                       </option>
                     ))}
@@ -1095,7 +1095,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Primary Language</label>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Primary Language</label>
                   <input
                     type="text"
                     required
@@ -1103,14 +1103,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, primaryLanguage: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Price (₹)</label>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Price (₹)</label>
                   <input
                     type="number"
                     required
@@ -1118,12 +1118,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, price: Number(e.target.value) })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                     Original Price (₹)
                   </label>
                   <input
@@ -1136,13 +1136,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                         originalPrice: Number(e.target.value),
                       })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Short Description
                 </label>
                 <textarea
@@ -1152,21 +1152,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   onChange={(e) =>
                     setEditingProject({ ...editingProject, shortDescription: e.target.value })
                   }
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500"
                 />
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setEditingProject(null)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold flex items-center gap-1.5 shadow-sm"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold flex items-center gap-1.5 shadow-sm transition-colors"
                 >
                   <Save className="w-3.5 h-3.5" />
                   <span>Save Changes</span>
@@ -1184,18 +1184,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           onClick={() => setDeletingProject(null)}
         >
           <div
-            className="bg-white rounded-2xl max-w-md w-full border border-slate-200 p-6 space-y-4 text-slate-900 shadow-2xl relative"
+            className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full border border-slate-200 dark:border-slate-800 p-6 space-y-4 text-slate-900 dark:text-slate-100 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto">
               <AlertTriangle className="w-6 h-6" />
             </div>
 
             <div className="text-center space-y-1">
-              <h3 className="text-base font-bold text-slate-900">Confirm Project Deletion</h3>
-              <p className="text-xs text-slate-500">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Confirm Project Deletion</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Are you sure you want to permanently delete{' '}
-                <span className="font-semibold text-slate-800 font-mono">"{deletingProject.title}"</span>?
+                <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono">"{deletingProject.title}"</span>?
                 This action will remove the project from the student marketplace catalog.
               </p>
             </div>
@@ -1203,13 +1203,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
             <div className="pt-2 flex items-center justify-center gap-3">
               <button
                 onClick={() => setDeletingProject(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition-colors"
               >
                 No, Keep Project
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-semibold shadow-sm"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-colors"
               >
                 Yes, Delete Project
               </button>
@@ -1225,57 +1225,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           onClick={() => setViewingOrder(null)}
         >
           <div
-            className="bg-white rounded-2xl max-w-lg w-full border border-slate-200 p-6 space-y-5 text-slate-900 shadow-2xl relative"
+            className="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full border border-slate-200 dark:border-slate-800 p-6 space-y-5 text-slate-900 dark:text-slate-100 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <span className="text-[10px] font-bold text-blue-600 uppercase">
+                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase">
                   ProjectKit Tax Invoice
                 </span>
-                <h3 className="text-base font-bold text-slate-900">{viewingOrder.orderNumber}</h3>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">{viewingOrder.orderNumber}</h3>
               </div>
               <button
                 onClick={() => setViewingOrder(null)}
-                className="p-1 text-slate-400 hover:text-slate-700 rounded-lg"
+                className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-2 text-slate-600">
+              <div className="grid grid-cols-2 gap-2 text-slate-600 dark:text-slate-300">
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Date of Purchase</span>
-                  <span className="font-mono font-medium">{viewingOrder.date}</span>
+                  <span className="text-slate-400 dark:text-slate-500 block text-[10px]">Date of Purchase</span>
+                  <span className="font-mono font-medium text-slate-800 dark:text-slate-200">{viewingOrder.date}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Payment Method</span>
-                  <span className="font-medium">{viewingOrder.paymentMethod}</span>
+                  <span className="text-slate-400 dark:text-slate-500 block text-[10px]">Payment Method</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">{viewingOrder.paymentMethod}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Invoice Reference</span>
-                  <span className="font-mono">{viewingOrder.invoiceId}</span>
+                  <span className="text-slate-400 dark:text-slate-500 block text-[10px]">Invoice Reference</span>
+                  <span className="font-mono text-slate-800 dark:text-slate-200">{viewingOrder.invoiceId}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Fulfillment Status</span>
-                  <span className="font-bold text-emerald-600">{viewingOrder.status}</span>
+                  <span className="text-slate-400 dark:text-slate-500 block text-[10px]">Fulfillment Status</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{viewingOrder.status}</span>
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
-                <div className="text-[10px] text-slate-400 uppercase font-semibold">
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700/60 space-y-1">
+                <div className="text-[10px] text-slate-400 dark:text-slate-400 uppercase font-semibold">
                   Purchased Item
                 </div>
-                <div className="font-bold text-slate-900">{viewingOrder.projectTitle}</div>
-                <div className="text-slate-500 font-mono text-[11px]">
+                <div className="font-bold text-slate-900 dark:text-white">{viewingOrder.projectTitle}</div>
+                <div className="text-slate-500 dark:text-slate-400 font-mono text-[11px]">
                   Category: {viewingOrder.category}
                 </div>
               </div>
 
-              <div className="pt-2 flex justify-between items-center text-sm font-bold text-slate-900 border-t border-slate-100">
+              <div className="pt-2 flex justify-between items-center text-sm font-bold text-slate-900 dark:text-white border-t border-slate-100 dark:border-slate-800">
                 <span>Amount Paid</span>
-                <span className="text-blue-600 font-mono text-base">
+                <span className="text-blue-600 dark:text-blue-400 font-mono text-base">
                   ₹{viewingOrder.amount.toLocaleString('en-IN')}
                 </span>
               </div>
@@ -1284,7 +1284,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
             <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setViewingOrder(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold transition-colors"
               >
                 Close
               </button>
@@ -1300,14 +1300,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
           onClick={() => setShowAddCategoryModal(false)}
         >
           <div
-            className="bg-white rounded-2xl max-w-md w-full border border-slate-200 p-6 space-y-4 text-slate-900 shadow-2xl relative"
+            className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full border border-slate-200 dark:border-slate-800 p-6 space-y-4 text-slate-900 dark:text-slate-100 shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-base font-bold text-slate-900">Add Academic Category</h3>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Add Academic Category</h3>
               <button
                 onClick={() => setShowAddCategoryModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-700 rounded-lg"
+                className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1323,7 +1323,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
               className="space-y-3 text-xs"
             >
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Category Name *</label>
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Category Name *</label>
                 <input
                   type="text"
                   required
@@ -1332,12 +1332,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     setNewCategoryData({ ...newCategoryData, name: e.target.value })
                   }
                   placeholder="e.g. Cloud Computing & DevOps"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Description *</label>
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Description *</label>
                 <textarea
                   rows={2}
                   required
@@ -1346,21 +1346,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     setNewCategoryData({ ...newCategoryData, description: e.target.value })
                   }
                   placeholder="Short syllabus coverage..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500"
                 />
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex justify-end gap-2">
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowAddCategoryModal(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-sm"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-sm transition-colors"
                 >
                   Create Category
                 </button>

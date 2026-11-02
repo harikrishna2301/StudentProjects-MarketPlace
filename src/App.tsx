@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { ProjectsProvider } from './context/ProjectsContext';
 
@@ -33,10 +34,11 @@ import { AdminDashboard } from './pages/AdminDashboard';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ProjectsProvider>
-          <Routes>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <ProjectsProvider>
+            <Routes>
             {/* Public Storefront Routes */}
             <Route element={<MainLayout />}>
               <Route path="/" element={<Home />} />
@@ -73,5 +75,6 @@ export default function App() {
         </ProjectsProvider>
       </AuthProvider>
     </BrowserRouter>
+  </ThemeProvider>
   );
 }

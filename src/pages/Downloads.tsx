@@ -170,24 +170,24 @@ export const Downloads: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="border-b border-slate-200 dark:border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
             Downloads & Download History
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Access verified source codebundles, IEEE documentation, database dumps, and audit your past download history.
           </p>
         </div>
 
         {/* View Switcher: Available Assets vs Download History */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-200/80 rounded-xl">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl">
           <button
             onClick={() => setActiveTab('assets')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === 'assets'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             Available Assets ({downloadItems.length})
@@ -196,8 +196,8 @@ export const Downloads: React.FC = () => {
             onClick={() => setActiveTab('history')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === 'history'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             Download History ({downloadHistory.length})
@@ -207,8 +207,8 @@ export const Downloads: React.FC = () => {
 
       {/* Success Notification Toast */}
       {downloadSuccessToast && (
-        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2 font-medium">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs text-emerald-800 dark:text-emerald-200 flex items-center gap-2 font-medium">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <span>{downloadSuccessToast}</span>
         </div>
       )}
@@ -219,13 +219,13 @@ export const Downloads: React.FC = () => {
           {activeTab === 'assets' && (
             <div className="space-y-6">
               {/* Filter tabs */}
-              <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-lg max-w-xl overflow-x-auto">
+              <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg max-w-xl overflow-x-auto">
                 <button
                   onClick={() => setActiveFilter('all')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
                     activeFilter === 'all'
-                      ? 'bg-white text-slate-900 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   All Deliverables ({downloadItems.length})
@@ -234,8 +234,8 @@ export const Downloads: React.FC = () => {
                   onClick={() => setActiveFilter('source')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
                     activeFilter === 'source'
-                      ? 'bg-white text-slate-900 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   Source Code
@@ -244,8 +244,8 @@ export const Downloads: React.FC = () => {
                   onClick={() => setActiveFilter('report')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
                     activeFilter === 'report'
-                      ? 'bg-white text-slate-900 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   IEEE Reports
@@ -254,8 +254,8 @@ export const Downloads: React.FC = () => {
                   onClick={() => setActiveFilter('database')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
                     activeFilter === 'database'
-                      ? 'bg-white text-slate-900 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   Database Dumps
@@ -264,8 +264,8 @@ export const Downloads: React.FC = () => {
                   onClick={() => setActiveFilter('viva')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 ${
                     activeFilter === 'viva'
-                      ? 'bg-white text-slate-900 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                   }`}
                 >
                   Viva Guides
@@ -273,28 +273,28 @@ export const Downloads: React.FC = () => {
               </div>
 
               {/* Downloads List */}
-              <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm divide-y divide-slate-100">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={item.id}
-                      className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/60 transition-colors"
+                      className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
                     >
                       <div className="flex items-start gap-3.5">
                         <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.color}`}
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.color} dark:bg-opacity-20`}
                         >
                           <Icon className="w-5 h-5" />
                         </div>
                         <div className="space-y-0.5">
-                          <div className="flex items-center gap-2 text-[11px] text-slate-500">
-                            <span className="font-semibold text-blue-600">{item.typeLabel}</span>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                            <span className="font-semibold text-blue-600 dark:text-blue-400">{item.typeLabel}</span>
                             <span aria-hidden="true">·</span>
                             <span>{item.project.title}</span>
                           </div>
-                          <h4 className="text-xs sm:text-sm font-bold text-slate-900">{item.title}</h4>
-                          <div className="text-[11px] text-slate-400 font-mono">
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{item.title}</h4>
+                          <div className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">
                             {item.format} · Size: {item.fileSize}
                           </div>
                         </div>
@@ -325,15 +325,15 @@ export const Downloads: React.FC = () => {
 
           {/* TAB 2: DOWNLOAD HISTORY */}
           {activeTab === 'history' && (
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
-              <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden">
+              <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Download Audit Trail</h3>
-                  <p className="text-xs text-slate-500">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Download Audit Trail</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Timestamped record of all academic packages unlocked and downloaded by your student account.
                   </p>
                 </div>
-                <span className="text-xs font-mono text-slate-400">
+                <span className="text-xs font-mono text-slate-400 dark:text-slate-500">
                   {downloadHistory.length} Total Downloads
                 </span>
               </div>
@@ -341,7 +341,7 @@ export const Downloads: React.FC = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px] tracking-wider">
+                    <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
                       <th className="py-3 px-4 font-semibold">Timestamp</th>
                       <th className="py-3 px-4 font-semibold">Asset File</th>
                       <th className="py-3 px-4 font-semibold">Project Kit</th>
@@ -351,24 +351,24 @@ export const Downloads: React.FC = () => {
                       <th className="py-3 px-4 font-semibold text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                     {downloadHistory.map((log) => (
-                      <tr key={log.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-3.5 px-4 font-mono text-slate-500 tabular-nums">
+                      <tr key={log.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                        <td className="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400 tabular-nums">
                           {log.timestamp}
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-slate-900">
+                        <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">
                           {log.assetName}
                         </td>
-                        <td className="py-3.5 px-4 text-slate-600 max-w-xs truncate">
+                        <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 max-w-xs truncate">
                           {log.projectTitle}
                         </td>
-                        <td className="py-3.5 px-4 font-mono text-slate-500">{log.fileSize}</td>
-                        <td className="py-3.5 px-4 font-mono text-slate-400 text-[11px]">
+                        <td className="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400">{log.fileSize}</td>
+                        <td className="py-3.5 px-4 font-mono text-slate-400 dark:text-slate-500 text-[11px]">
                           {log.token}
                         </td>
                         <td className="py-3.5 px-4 text-center">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
                             <CheckCircle2 className="w-3 h-3" />
                             <span>{log.status}</span>
                           </span>
@@ -379,7 +379,7 @@ export const Downloads: React.FC = () => {
                               const proj = projects.find((p) => p.title === log.projectTitle) || projects[0];
                               downloadProjectKit(proj, log.assetName);
                             }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded text-xs transition-colors font-medium"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-800 rounded text-xs transition-colors font-medium"
                           >
                             <Download className="w-3.5 h-3.5" />
                             <span>Re-download</span>
@@ -394,11 +394,11 @@ export const Downloads: React.FC = () => {
           )}
         </>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-lg mx-auto shadow-sm">
-          <p className="text-xs text-slate-500 mb-6">No kits downloaded yet.</p>
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-12 text-center max-w-lg mx-auto shadow-sm">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">No kits downloaded yet.</p>
           <Link
             to="/projects"
-            className="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700"
+            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold"
           >
             Explore Project Kits
           </Link>

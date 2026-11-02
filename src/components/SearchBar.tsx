@@ -45,11 +45,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`relative w-full bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:border-slate-300 focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-100/60 transition-all ${
+      className={`relative w-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-blue-600 dark:focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100/60 dark:focus-within:ring-blue-900/40 transition-all ${
         isLarge ? 'p-1.5 sm:p-2' : 'p-1'
       } ${className}`}
     >
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-800">
         {/* Category selector on large search bar */}
         {showCategoryDropdown && isLarge && (
           <div className="relative shrink-0 sm:w-44 py-1 px-3 sm:py-0 flex items-center">
@@ -60,10 +60,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 setCategory(e.target.value);
                 onSearch(query.trim(), e.target.value === 'All Domains' ? undefined : e.target.value);
               }}
-              className="w-full bg-transparent text-xs font-semibold text-slate-700 outline-none cursor-pointer pr-4 appearance-none py-1.5"
+              className="w-full bg-transparent text-xs font-semibold text-slate-700 dark:text-slate-300 outline-none cursor-pointer pr-4 appearance-none py-1.5"
             >
               {categories.map((c) => (
-                <option key={c} value={c}>
+                <option key={c} value={c} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
                   {c}
                 </option>
               ))}
@@ -83,14 +83,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               onSearch(e.target.value, category === 'All Domains' ? undefined : category);
             }}
             placeholder={placeholder}
-            className="w-full bg-transparent text-slate-800 placeholder-slate-400 text-xs sm:text-sm outline-none py-1.5 truncate"
+            className="w-full bg-transparent text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs sm:text-sm outline-none py-1.5 truncate"
           />
 
           {query && (
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 text-slate-400 hover:text-slate-600 rounded-md shrink-0 ml-1"
+              className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-md shrink-0 ml-1"
               aria-label="Clear search"
             >
               <X className="w-4 h-4" />

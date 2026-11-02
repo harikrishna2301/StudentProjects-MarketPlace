@@ -72,10 +72,10 @@ export const Home: React.FC = () => {
   return (
     <div className="space-y-16 sm:space-y-24 pb-20">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-10 sm:pt-16 pb-12 sm:pb-20 bg-gradient-to-b from-white via-slate-50/50 to-white border-b border-slate-200 overflow-hidden">
+      <section className="relative pt-10 sm:pt-16 pb-12 sm:pb-20 bg-gradient-to-b from-white via-slate-50/50 to-white dark:from-slate-950 dark:via-slate-900/60 dark:to-slate-950 border-b border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
         {/* Subtle engineering blueprint grid pattern */}
         <div
-          className="absolute inset-0 opacity-[0.035] pointer-events-none"
+          className="absolute inset-0 opacity-[0.035] dark:opacity-[0.08] pointer-events-none"
           style={{
             backgroundImage:
               'radial-gradient(circle at 1px 1px, #0f172a 1px, transparent 0)',
@@ -88,7 +88,7 @@ export const Home: React.FC = () => {
             {/* Left Column: Heading, Subtitle & Commercial Search Bar */}
             <div className="lg:col-span-7 space-y-6">
               {/* Trust Pill */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50/90 border border-blue-200/80 rounded-full shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400 bg-blue-50/90 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/60 rounded-full shadow-xs">
                 <span className="flex items-center text-amber-500">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
@@ -96,19 +96,19 @@ export const Home: React.FC = () => {
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                 </span>
-                <span className="text-slate-800 font-bold ml-0.5">4.9/5</span>
-                <span className="text-slate-400">·</span>
+                <span className="text-slate-800 dark:text-slate-200 font-bold ml-0.5">4.9/5</span>
+                <span className="text-slate-400 dark:text-slate-500">·</span>
                 <span>12,000+ B.Tech Students Guided</span>
               </div>
 
               {/* Main Heading */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12] text-balance">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.12] text-balance">
                 Build Your Future With The{' '}
-                <span className="text-blue-600">Right Project.</span>
+                <span className="text-blue-600 dark:text-blue-400">Right Project.</span>
               </h1>
 
               {/* Subtitle */}
-              <p className="text-base sm:text-lg text-slate-600 max-w-xl leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
                 Explore ready-to-use engineering projects with source code, documentation and implementation guides.
               </p>
 
@@ -121,39 +121,39 @@ export const Home: React.FC = () => {
                 />
 
                 {/* Popular Keywords Strip */}
-                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                  <span className="font-semibold text-slate-700">Popular searches:</span>
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">Popular searches:</span>
                   <button
                     onClick={() => handleHeroSearch('Spring Boot')}
-                    className="hover:text-blue-600 hover:underline font-medium"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
                   >
                     Spring Boot
                   </button>
-                  <span aria-hidden="true" className="text-slate-300">·</span>
+                  <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
                   <button
                     onClick={() => handleHeroSearch('MERN')}
-                    className="hover:text-blue-600 hover:underline font-medium"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
                   >
                     MERN Stack
                   </button>
-                  <span aria-hidden="true" className="text-slate-300">·</span>
+                  <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
                   <button
                     onClick={() => handleHeroSearch('Machine Learning')}
-                    className="hover:text-blue-600 hover:underline font-medium"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
                   >
                     Machine Learning
                   </button>
-                  <span aria-hidden="true" className="text-slate-300">·</span>
+                  <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
                   <button
                     onClick={() => handleHeroSearch('Java')}
-                    className="hover:text-blue-600 hover:underline font-medium"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
                   >
                     Java
                   </button>
-                  <span aria-hidden="true" className="text-slate-300">·</span>
+                  <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
                   <button
                     onClick={() => handleHeroSearch('IoT')}
-                    className="hover:text-blue-600 hover:underline font-medium"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
                   >
                     IoT
                   </button>
@@ -172,14 +172,14 @@ export const Home: React.FC = () => {
 
                 <a
                   href="#popular-categories"
-                  className="px-6 py-3.5 text-sm font-semibold text-slate-700 bg-white hover:bg-slate-100 rounded-xl border border-slate-200 transition-colors shadow-xs"
+                  className="px-6 py-3.5 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors shadow-xs"
                 >
                   Browse Categories
                 </a>
               </div>
 
               {/* Guarantees Row */}
-              <div className="pt-4 border-t border-slate-200/80 flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-slate-600">
+              <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-slate-600 dark:text-slate-400">
                 <div className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>Verified Java 17 & Node 20 runtimes</span>
@@ -358,22 +358,22 @@ export const Home: React.FC = () => {
 
       {/* 2. MODERN STATISTICS SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-sm">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 shadow-sm transition-colors">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-800">
             {/* Stat 1 */}
             <div className="pt-4 sm:pt-0 sm:px-4 space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   Verified Repositories
                 </span>
-                <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                   <Code2 className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-blue-600 font-mono tabular-nums">
+              <div className="text-3xl sm:text-4xl font-extrabold text-blue-600 dark:text-blue-400 font-mono tabular-nums">
                 500+
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Full-stack engineering kits across Java, Python, and Web stacks.
               </p>
             </div>
@@ -381,17 +381,17 @@ export const Home: React.FC = () => {
             {/* Stat 2 */}
             <div className="pt-4 sm:pt-0 sm:px-4 space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   Students Guided
                 </span>
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <Users className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tabular-nums">
+              <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
                 12,000+
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Graduates across VIT, SRM, PES, Anna University, and NITs.
               </p>
             </div>
@@ -399,17 +399,17 @@ export const Home: React.FC = () => {
             {/* Stat 3 */}
             <div className="pt-4 sm:pt-0 sm:px-4 space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   Viva Clearance
                 </span>
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <Award className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-emerald-600 font-mono tabular-nums">
+              <div className="text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono tabular-nums">
                 98.4%
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 First-attempt pass rate in final external evaluation seminars.
               </p>
             </div>
@@ -417,17 +417,17 @@ export const Home: React.FC = () => {
             {/* Stat 4 */}
             <div className="pt-4 sm:pt-0 sm:px-4 space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   Specializations
                 </span>
-                <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                   <Layers className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tabular-nums">
+              <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
                 45+
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Academic disciplines including CSE, IT, ECE, AI & Data Science.
               </p>
             </div>
@@ -439,13 +439,13 @@ export const Home: React.FC = () => {
       <section id="popular-categories" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
+            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
               Academic Disciplines
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Popular Engineering Categories
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
               Select your academic branch and preferred technology stack.
             </p>
           </div>
@@ -469,25 +469,25 @@ export const Home: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
+            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
               Hand-Curated Blueprints
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Featured Final-Year Projects
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
               Top reviewed kits selected for comprehensive documentation, clean architecture, and viva readiness.
             </p>
           </div>
 
           {/* Interactive domain pill tabs */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl overflow-x-auto shrink-0">
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl overflow-x-auto shrink-0">
             <button
               onClick={() => setFeaturedDomain('All')}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                 featuredDomain === 'All'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               All Kits
@@ -496,8 +496,8 @@ export const Home: React.FC = () => {
               onClick={() => setFeaturedDomain('Java')}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                 featuredDomain === 'Java'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               Java & Spring Boot
@@ -506,8 +506,8 @@ export const Home: React.FC = () => {
               onClick={() => setFeaturedDomain('Web')}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                 featuredDomain === 'Web'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               MERN Stack
@@ -516,8 +516,8 @@ export const Home: React.FC = () => {
               onClick={() => setFeaturedDomain('AI')}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
                 featuredDomain === 'AI'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               AI & Machine Learning
@@ -533,81 +533,81 @@ export const Home: React.FC = () => {
       </section>
 
       {/* 5. PROFESSIONAL HOW IT WORKS SECTION */}
-      <section className="bg-white py-16 sm:py-20 border-y border-slate-200">
+      <section className="bg-white dark:bg-slate-950 py-16 sm:py-20 border-y border-slate-200 dark:border-slate-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
-            <div className="text-xs font-bold text-blue-600 uppercase tracking-wider">
+            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
               Step-by-Step Pathway
             </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               How ProjectKit Works
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               Four structured milestones from capstone selection to a high-scoring university viva defense.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
             {/* Step 1 */}
-            <div className="p-6 rounded-2xl border border-slate-200/90 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all space-y-3 relative">
+            <div className="p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 hover:shadow-md transition-all space-y-3 relative">
               <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-mono font-bold text-sm flex items-center justify-center shadow-xs">
                 01
               </div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 Browse Verified Blueprints
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Filter by department, programming language (Java, Python, MERN), and budget. Inspect detailed modules, problem statements, and requirements before ordering.
               </p>
-              <div className="pt-2 text-[11px] text-blue-600 font-semibold flex items-center gap-1">
+              <div className="pt-2 text-[11px] text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
                 <span>Filter by university syllabus</span>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="p-6 rounded-2xl border border-slate-200/90 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all space-y-3 relative">
+            <div className="p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 hover:shadow-md transition-all space-y-3 relative">
               <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-mono font-bold text-sm flex items-center justify-center shadow-xs">
                 02
               </div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 Instant Kit Delivery
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Download the complete codebase archive, normalized MySQL database script, IEEE format 80+ page report in Word & PDF, and seminar PowerPoint deck.
               </p>
-              <div className="pt-2 text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+              <div className="pt-2 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                 <span>Direct ZIP archive unlock</span>
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="p-6 rounded-2xl border border-slate-200/90 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all space-y-3 relative">
+            <div className="p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 hover:shadow-md transition-all space-y-3 relative">
               <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-mono font-bold text-sm flex items-center justify-center shadow-xs">
                 03
               </div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 10-Minute Local Setup
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Follow copy-paste execution commands in IntelliJ, Eclipse, VS Code, or terminal. Pre-tested dependencies eliminate version mismatches.
               </p>
-              <div className="pt-2 text-[11px] text-purple-600 font-semibold flex items-center gap-1">
+              <div className="pt-2 text-[11px] text-purple-600 dark:text-purple-400 font-semibold flex items-center gap-1">
                 <span>Tested on Windows, Mac, Linux</span>
               </div>
             </div>
 
             {/* Step 4 */}
-            <div className="p-6 rounded-2xl border border-slate-200/90 bg-slate-50/50 hover:bg-white hover:shadow-md transition-all space-y-3 relative">
+            <div className="p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 hover:shadow-md transition-all space-y-3 relative">
               <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-mono font-bold text-sm flex items-center justify-center shadow-xs">
                 04
               </div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 Ace Your Final Viva
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Master external examiner scrutiny with our 60+ question viva cheat sheet covering system architecture, ER models, and concurrency.
               </p>
-              <div className="pt-2 text-[11px] text-amber-600 font-semibold flex items-center gap-1">
+              <div className="pt-2 text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
                 <span>Guaranteed viva confidence</span>
               </div>
             </div>
@@ -619,19 +619,19 @@ export const Home: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
+            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
               New 2025–2026 Releases
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Recently Added Engineering Projects
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
               Freshly architected capstone kits covering IoT telemetry, Spring Boot microservices, and smart contracts.
             </p>
           </div>
           <Link
             to="/projects"
-            className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 shrink-0"
+            className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 shrink-0"
           >
             <span>View all recent kits</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -647,7 +647,7 @@ export const Home: React.FC = () => {
 
       {/* 7. WHY CHOOSE PROJECTKIT */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-slate-900 rounded-3xl p-8 sm:p-12 text-white">
+        <div className="bg-slate-900 dark:bg-slate-900/90 rounded-3xl p-8 sm:p-12 text-white border border-transparent dark:border-slate-800">
           <div className="max-w-3xl mb-12">
             <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">
               Institutional Quality Standards
@@ -727,59 +727,59 @@ export const Home: React.FC = () => {
       {/* 8. TESTIMONIALS (Attributable) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-          <div className="text-xs font-bold text-blue-600 uppercase tracking-wider">
+          <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
             Verified Student Outcomes
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Trusted by Final Year B.Tech Students
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
             Read authentic reviews from students who defended their capstones with top grades.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col justify-between">
-            <p className="text-xs text-slate-700 leading-relaxed italic mb-6">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic mb-6">
               "The Smart Traffic Management Java project was praised by our external examiner. The multi-threading simulation and 85-page IEEE report saved our team weeks of formatting stress. We scored an O Grade (Outstanding)!"
             </p>
-            <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold text-xs flex items-center justify-center">
                 KV
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900">Karthik Venkat</div>
-                <div className="text-[11px] text-slate-500">B.Tech CSE, SRM Institute of Science</div>
+                <div className="text-xs font-bold text-slate-900 dark:text-white">Karthik Venkat</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400">B.Tech CSE, SRM Institute of Science</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col justify-between">
-            <p className="text-xs text-slate-700 leading-relaxed italic mb-6">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic mb-6">
               "I purchased the Spring Boot Student Management kit. What stood out was the 60 viva questions guide. The external examiner asked three questions directly from that cheat sheet regarding JPA entity lifecycle."
             </p>
-            <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-700 font-bold text-xs flex items-center justify-center">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-bold text-xs flex items-center justify-center">
                 SP
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900">Sneha Patel</div>
-                <div className="text-[11px] text-slate-500">B.Tech IT, Vellore Institute of Technology</div>
+                <div className="text-xs font-bold text-slate-900 dark:text-white">Sneha Patel</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400">B.Tech IT, Vellore Institute of Technology</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col justify-between">
-            <p className="text-xs text-slate-700 leading-relaxed italic mb-6">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic mb-6">
               "The Face Recognition Attendance System in Python ran right out of the box after following the 4-step terminal instructions. The anti-spoofing blink detector made our project review seminar the best in our department."
             </p>
-            <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center justify-center">
                 AN
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900">Aditya Nambiar</div>
-                <div className="text-[11px] text-slate-500">B.Tech CSE, PES University Bengaluru</div>
+                <div className="text-xs font-bold text-slate-900 dark:text-white">Aditya Nambiar</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400">B.Tech CSE, PES University Bengaluru</div>
               </div>
             </div>
           </div>

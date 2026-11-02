@@ -185,15 +185,15 @@ export const Projects: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Top Header */}
-      <div className="border-b border-slate-200 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="border-b border-slate-200 dark:border-slate-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 transition-colors">
         <div>
-          <div className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
+          <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
             Verified Academic Repository
           </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Explore Engineering Projects
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
             Browse complete capstone kits with production-grade code, IEEE reports, MySQL database dumps, and viva defense guides.
           </p>
         </div>
@@ -202,9 +202,9 @@ export const Projects: React.FC = () => {
         <div className="flex items-center gap-2 lg:hidden">
           <button
             onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-            className="flex-1 px-4 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 flex items-center justify-center gap-2 shadow-xs"
+            className="flex-1 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2 shadow-xs"
           >
-            <SlidersHorizontal className="w-4 h-4 text-blue-600" />
+            <SlidersHorizontal className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             <span>Filters {hasActiveFilters && '(Active)'}</span>
           </button>
         </div>
@@ -220,13 +220,13 @@ export const Projects: React.FC = () => {
               : 'hidden lg:block'
           }`}
         >
-          <div className="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm space-y-6 max-h-[85vh] lg:max-h-none overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-sm space-y-6 max-h-[85vh] lg:max-h-none overflow-y-auto transition-colors">
             {/* Mobile drawer header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 lg:hidden">
-              <span className="font-bold text-sm text-slate-900">Filter Projects</span>
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 lg:hidden">
+              <span className="font-bold text-sm text-slate-900 dark:text-white">Filter Projects</span>
               <button
                 onClick={() => setMobileFilterOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-700"
+                className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -235,13 +235,13 @@ export const Projects: React.FC = () => {
             {/* Filter Section 1: Categories / Disciplines */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                   Domain / Category
                 </span>
                 {selectedCategory !== 'All' && (
                   <button
                     onClick={() => setSelectedCategory('All')}
-                    className="text-[11px] text-blue-600 hover:underline"
+                    className="text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     Clear
                   </button>
@@ -253,12 +253,12 @@ export const Projects: React.FC = () => {
                   onClick={() => setSelectedCategory('All')}
                   className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                     selectedCategory === 'All'
-                      ? 'bg-blue-50 text-blue-700 font-semibold'
-                      : 'text-slate-600 hover:bg-slate-50'
+                      ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-semibold'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                   }`}
                 >
                   <span>All Categories</span>
-                  <span className="font-mono text-[11px] text-slate-400">
+                  <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">
                     {projects.length}
                   </span>
                 </button>
@@ -271,12 +271,12 @@ export const Projects: React.FC = () => {
                       onClick={() => setSelectedCategory(c.name)}
                       className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
                         isSelected
-                          ? 'bg-blue-50 text-blue-700 font-semibold'
-                          : 'text-slate-600 hover:bg-slate-50'
+                          ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-semibold'
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
                       }`}
                     >
                       <span className="truncate pr-2">{c.name}</span>
-                      <span className="font-mono text-[11px] text-slate-400">
+                      <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">
                         {getCategoryCount(c.name)}
                       </span>
                     </button>
@@ -286,15 +286,15 @@ export const Projects: React.FC = () => {
             </div>
 
             {/* Filter Section 2: Frameworks & Technologies */}
-            <div className="space-y-3 pt-4 border-t border-slate-100">
+            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                   Framework / Technology
                 </span>
                 {selectedTech !== 'All' && (
                   <button
                     onClick={() => setSelectedTech('All')}
-                    className="text-[11px] text-blue-600 hover:underline"
+                    className="text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     Clear
                   </button>
@@ -311,7 +311,7 @@ export const Projects: React.FC = () => {
                       className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors border ${
                         isSelected
                           ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                          : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-200'
+                          : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700'
                       }`}
                     >
                       {tech}
@@ -322,17 +322,17 @@ export const Projects: React.FC = () => {
             </div>
 
             {/* Filter Section 3: Programming Language */}
-            <div className="space-y-3 pt-4 border-t border-slate-100">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 block">
+            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
                 Programming Language
               </span>
               <select
                 value={selectedLanguage}
                 onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 focus:bg-white"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800"
               >
                 {programmingLanguages.map((lang) => (
-                  <option key={lang} value={lang}>
+                  <option key={lang} value={lang} className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">
                     {lang === 'All' ? 'All Languages' : lang}
                   </option>
                 ))}
@@ -340,12 +340,12 @@ export const Projects: React.FC = () => {
             </div>
 
             {/* Filter Section 4: Price Budget */}
-            <div className="space-y-3 pt-4 border-t border-slate-100">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 block">
+            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
                 Price Budget
               </span>
-              <div className="space-y-1.5 text-xs text-slate-600">
-                <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900">
+              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
+                <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 dark:hover:text-white">
                   <input
                     type="radio"
                     name="priceRange"
@@ -355,7 +355,7 @@ export const Projects: React.FC = () => {
                   />
                   <span>All Price Tiers</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900">
+                <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 dark:hover:text-white">
                   <input
                     type="radio"
                     name="priceRange"
@@ -365,7 +365,7 @@ export const Projects: React.FC = () => {
                   />
                   <span>Under ₹2,000</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900">
+                <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 dark:hover:text-white">
                   <input
                     type="radio"
                     name="priceRange"
@@ -375,7 +375,7 @@ export const Projects: React.FC = () => {
                   />
                   <span>₹2,000 – ₹2,499</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900">
+                <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 dark:hover:text-white">
                   <input
                     type="radio"
                     name="priceRange"
@@ -390,10 +390,10 @@ export const Projects: React.FC = () => {
 
             {/* Reset All Filters button */}
             {hasActiveFilters && (
-              <div className="pt-4 border-t border-slate-100">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   onClick={handleResetFilters}
-                  className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors"
+                  className="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-slate-200 dark:border-slate-700"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Reset All Filters</span>
@@ -406,7 +406,7 @@ export const Projects: React.FC = () => {
         {/* RIGHT COLUMN: MAIN CONTENT AREA */}
         <div className="lg:col-span-9 space-y-6">
           {/* Top Search & Sorting Bar */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 transition-colors">
             {/* Functional Search Input */}
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
@@ -415,12 +415,12 @@ export const Projects: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by project name, tech stack (Spring Boot, MERN, Python, Java)..."
-                className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-blue-500"
+                className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-2.5 p-0.5 text-slate-400 hover:text-slate-600"
+                  className="absolute right-2.5 top-2.5 p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -429,18 +429,18 @@ export const Projects: React.FC = () => {
 
             {/* Sorting Dropdown */}
             <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs font-semibold text-slate-500 hidden sm:inline">Sort:</span>
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline">Sort:</span>
               <div className="relative min-w-[170px]">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 focus:bg-white pr-7 appearance-none cursor-pointer"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 pr-7 appearance-none cursor-pointer"
                 >
-                  <option value="newest">Newest First (2026)</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="rating">Highest Rated</option>
-                  <option value="oldest">Oldest First</option>
+                  <option value="newest" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Newest First (2026)</option>
+                  <option value="price-asc" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Price: Low to High</option>
+                  <option value="price-desc" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Price: High to Low</option>
+                  <option value="rating" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Highest Rated</option>
+                  <option value="oldest" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Oldest First</option>
                 </select>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 pointer-events-none absolute right-2.5 top-3" />
               </div>
@@ -448,10 +448,10 @@ export const Projects: React.FC = () => {
           </div>
 
           {/* Active Filter Pills Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 px-1">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 px-1">
             <div className="flex items-center gap-2">
               <span>Showing</span>
-              <span className="font-bold text-slate-900 font-mono tabular-nums">
+              <span className="font-bold text-slate-900 dark:text-white font-mono tabular-nums">
                 {totalItems > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0}–
                 {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}
               </span>
@@ -461,27 +461,27 @@ export const Projects: React.FC = () => {
             {/* Active chips */}
             <div className="flex flex-wrap items-center gap-1.5">
               {selectedCategory !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200/60">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60">
                   <span>Domain: {selectedCategory}</span>
-                  <button onClick={() => setSelectedCategory('All')} className="hover:text-blue-900">
+                  <button onClick={() => setSelectedCategory('All')} className="hover:text-blue-900 dark:hover:text-blue-300">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {selectedTech !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200/60">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60">
                   <span>Tech: {selectedTech}</span>
-                  <button onClick={() => setSelectedTech('All')} className="hover:text-blue-900">
+                  <button onClick={() => setSelectedTech('All')} className="hover:text-blue-900 dark:hover:text-blue-300">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
               )}
 
               {selectedPriceRange !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200/60">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60">
                   <span>Price: {selectedPriceRange}</span>
-                  <button onClick={() => setSelectedPriceRange('All')} className="hover:text-blue-900">
+                  <button onClick={() => setSelectedPriceRange('All')} className="hover:text-blue-900 dark:hover:text-blue-300">
                     <X className="w-3 h-3" />
                   </button>
                 </span>
@@ -490,7 +490,7 @@ export const Projects: React.FC = () => {
               {hasActiveFilters && (
                 <button
                   onClick={handleResetFilters}
-                  className="text-blue-600 hover:text-blue-800 font-medium text-xs hover:underline ml-1"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-xs hover:underline ml-1"
                 >
                   Clear all
                 </button>
@@ -509,10 +509,10 @@ export const Projects: React.FC = () => {
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="text-xs text-slate-500 font-medium">
-                    Page <span className="font-bold text-slate-800 font-mono">{currentPage}</span> of{' '}
-                    <span className="font-bold text-slate-800 font-mono">{totalPages}</span>
+                <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
+                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                    Page <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">{currentPage}</span> of{' '}
+                    <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">{totalPages}</span>
                   </div>
 
                   <div className="flex items-center gap-1.5">
@@ -520,7 +520,7 @@ export const Projects: React.FC = () => {
                     <button
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors shadow-xs"
+                      className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors shadow-xs"
                     >
                       <ChevronLeft className="w-4 h-4" />
                       <span>Previous</span>
@@ -537,7 +537,7 @@ export const Projects: React.FC = () => {
                           className={`w-8 h-8 rounded-lg text-xs font-mono font-bold transition-colors ${
                             isCurrent
                               ? 'bg-blue-600 text-white shadow-xs'
-                              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                              : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
                           }`}
                         >
                           {pageNum}
@@ -549,7 +549,7 @@ export const Projects: React.FC = () => {
                     <button
                       onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors shadow-xs"
+                      className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors shadow-xs"
                     >
                       <span>Next</span>
                       <ChevronRight className="w-4 h-4" />
@@ -560,14 +560,14 @@ export const Projects: React.FC = () => {
             </div>
           ) : (
             /* Empty State */
-            <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center max-w-md mx-auto shadow-sm space-y-3">
-              <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-12 text-center max-w-md mx-auto shadow-sm space-y-3 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400 dark:text-slate-500">
                 <Filter className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 No project kits match your criteria
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                 Try relaxing your search keywords, exploring other technology frameworks, or resetting your filters.
               </p>
               <button
