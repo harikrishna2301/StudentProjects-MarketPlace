@@ -17,8 +17,10 @@ import {
   ChevronRight,
   ArrowLeft,
   Sparkles,
+  Heart,
 } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { useWishlist } from '../context/WishlistContext';
 
 interface DashboardLayoutProps {
   role?: 'student' | 'admin';
@@ -29,6 +31,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAdmin, logout, quickSwitchUser } = useAuth();
+  const { wishlistCount } = useWishlist();
 
   const handleLogout = () => {
     logout();
@@ -37,6 +40,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
 
   const studentNavItems = [
     { name: 'Overview', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'My Wishlist', path: '/dashboard/wishlist', icon: Heart, badge: wishlistCount },
     { name: 'My Purchases', path: '/dashboard/purchases', icon: FolderKanban },
     { name: 'Order History', path: '/dashboard/orders', icon: Receipt },
     { name: 'Downloads', path: '/dashboard/downloads', icon: Download },
@@ -113,20 +117,34 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isCurrentPath(item.path);
+              const hasBadge = (item as any).badge !== undefined && (item as any).badge > 0;
 
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors ${
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-medium transition-colors ${
                     active
                       ? 'bg-blue-600 text-white shadow-sm'
                       : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
                   }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span className="truncate">{item.name}</span>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{item.name}</span>
+                  </div>
+                  {hasBadge && (
+                    <span
+                      className={`px-1.5 py-0.5 text-[10px] font-mono tabular-nums font-bold rounded-full ${
+                        active
+                          ? 'bg-white text-blue-600'
+                          : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                      }`}
+                    >
+                      {(item as any).badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}

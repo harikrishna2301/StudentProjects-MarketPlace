@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProjects } from '../context/ProjectsContext';
 import { Project } from '../types';
+import { HighlightText } from './HighlightText';
 import {
   Search,
   X,
@@ -429,7 +430,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
                                 : 'text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400'
                             }`}
                           >
-                            {project.title}
+                            <HighlightText text={project.title} query={query} />
                           </h4>
                           <span className="text-xs font-bold text-slate-900 dark:text-white shrink-0">
                             ₹{project.price.toLocaleString('en-IN')}
@@ -446,7 +447,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
                             }`}
                           >
                             <FolderKanban className="w-2.5 h-2.5 mr-1 shrink-0" />
-                            {project.category}
+                            <HighlightText text={project.category} query={query} />
                           </span>
 
                           {/* Highlight matched technical skills */}
@@ -458,7 +459,8 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
                                   className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-200 ring-1 ring-blue-500/30"
                                 >
                                   <Code2 className="w-2.5 h-2.5 mr-0.5" />
-                                  Skill: {skill}
+                                  Skill:&nbsp;
+                                  <HighlightText text={skill} query={query} />
                                 </span>
                               ))}
                             </div>

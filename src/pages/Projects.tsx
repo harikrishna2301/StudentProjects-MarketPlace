@@ -18,13 +18,16 @@ import {
   DollarSign,
   Layers,
   ChevronDown,
+  Heart,
 } from 'lucide-react';
+import { useWishlist } from '../context/WishlistContext';
 
 const ITEMS_PER_PAGE = 6;
 
 export const Projects: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { projects, categories } = useProjects();
+  const { wishlistIds, wishlistCount } = useWishlist();
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
@@ -32,6 +35,7 @@ export const Projects: React.FC = () => {
   const [selectedTech, setSelectedTech] = useState<string>(searchParams.get('tech') || 'All');
   const [selectedLanguage, setSelectedLanguage] = useState(searchParams.get('lang') || 'All');
   const [selectedPriceRange, setSelectedPriceRange] = useState(searchParams.get('price') || 'All');
+  const [showWishlistOnly, setShowWishlistOnly] = useState(searchParams.get('wishlist') === 'true');
   const [sortBy, setSortBy] = useState<'newest' | 'price-asc' | 'price-desc' | 'rating' | 'oldest'>(
     (searchParams.get('sort') as any) || 'newest'
   );
@@ -61,7 +65,7 @@ export const Projects: React.FC = () => {
   // Reset to page 1 when any filter or search changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, selectedLanguage, selectedTech, selectedPriceRange, sortBy]);
+  }, [searchQuery, selectedCategory, selectedLanguage, selectedTech, selectedPriceRange, sortBy, showWishlistOnly]);
 
   // List of popular technology filters
   const popularTechs = [
@@ -90,6 +94,11 @@ export const Projects: React.FC = () => {
   const filteredProjects = useMemo(() => {
     return projects
       .filter((project) => {
+        // 0. Wishlist filter
+        if (showWishlistOnly && !wishlistIds.includes(project.id)) {
+          return false;
+        }
+
         // 1. Search filter across title, shortDescription, overview, techStack, primaryLanguage, and category
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase();
@@ -147,7 +156,7 @@ export const Projects: React.FC = () => {
         // default newest-first
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
-  }, [projects, searchQuery, selectedCategory, selectedTech, selectedLanguage, selectedPriceRange, sortBy]);
+  }, [projects, searchQuery, selectedCategory, selectedTech, selectedLanguage, selectedPriceRange, sortBy, showWishlistOnly, wishlistIds]);
 
   // Pagination calculation
   const totalItems = filteredProjects.length;
@@ -163,6 +172,7 @@ export const Projects: React.FC = () => {
     setSelectedTech('All');
     setSelectedLanguage('All');
     setSelectedPriceRange('All');
+    setShowWishlistOnly(false);
     setSortBy('newest');
     setCurrentPage(1);
     setSearchParams({});
@@ -174,6 +184,7 @@ export const Projects: React.FC = () => {
     selectedTech !== 'All' ||
     selectedLanguage !== 'All' ||
     selectedPriceRange !== 'All' ||
+    showWishlistOnly ||
     sortBy !== 'newest';
 
   // Count projects per category helper
@@ -229,6 +240,28 @@ export const Projects: React.FC = () => {
                 className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
               >
                 <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Quick Filter: Saved to Wishlist */}
+            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
+              <button
+                onClick={() => setShowWishlistOnly(!showWishlistOnly)}
+                className={`w-full flex items-center justify-between text-xs font-semibold rounded-lg px-2.5 py-1.5 transition-all ${
+                  showWishlistOnly
+                    ? 'bg-rose-500 text-white shadow-xs'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700/60'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Heart className={`w-3.5 h-3.5 ${showWishlistOnly ? 'fill-white text-white' : 'text-rose-500'}`} />
+                  <span>Saved to Wishlist</span>
+                </div>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-mono tabular-nums ${
+                  showWishlistOnly ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                }`}>
+                  {wishlistCount}
+                </span>
               </button>
             </div>
 
@@ -427,8 +460,23 @@ export const Projects: React.FC = () => {
               )}
             </div>
 
-            {/* Sorting Dropdown */}
+            {/* Wishlist Quick Toggle & Sorting */}
             <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setShowWishlistOnly(!showWishlistOnly)}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl border transition-colors shrink-0 ${
+                  showWishlistOnly
+                    ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-800 shadow-xs'
+                    : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60'
+                }`}
+                title={showWishlistOnly ? 'Show all projects' : 'Show wishlisted projects only'}
+                aria-pressed={showWishlistOnly}
+              >
+                <Heart className={`w-3.5 h-3.5 ${showWishlistOnly ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}`} />
+                <span className="hidden sm:inline">Wishlist</span>
+                <span className="font-mono text-[11px] tabular-nums">({wishlistCount})</span>
+              </button>
+
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline">Sort:</span>
               <div className="relative min-w-[170px]">
                 <select
@@ -460,6 +508,30 @@ export const Projects: React.FC = () => {
 
             {/* Active chips */}
             <div className="flex flex-wrap items-center gap-1.5">
+              {searchQuery.trim() && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-900/60 shadow-2xs">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  <span>Highlighting: &ldquo;{searchQuery}&rdquo;</span>
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="hover:text-amber-950 dark:hover:text-amber-100 p-0.5 rounded-xs hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors"
+                    title="Clear search highlight"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
+              {showWishlistOnly && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900/60">
+                  <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />
+                  <span>Wishlist Only ({wishlistCount})</span>
+                  <button onClick={() => setShowWishlistOnly(false)} className="hover:text-rose-900 dark:hover:text-rose-200">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+
               {selectedCategory !== 'All' && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60">
                   <span>Domain: {selectedCategory}</span>
@@ -503,7 +575,11 @@ export const Projects: React.FC = () => {
             <div className="space-y-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                 {paginatedProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} />
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    searchQuery={searchQuery}
+                  />
                 ))}
               </div>
 

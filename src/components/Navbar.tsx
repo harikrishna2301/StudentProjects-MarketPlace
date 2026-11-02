@@ -11,15 +11,18 @@ import {
   ShieldAlert,
   ChevronDown,
   Search,
+  Heart,
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { GlobalSearch } from './GlobalSearch';
+import { useWishlist } from '../context/WishlistContext';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchModalOpen, setMobileSearchModalOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const { user, isAuthenticated, isAdmin, logout, quickSwitchUser } = useAuth();
+  const { wishlistCount } = useWishlist();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -112,8 +115,23 @@ export const Navbar: React.FC = () => {
             <GlobalSearch variant="navbar" />
           </div>
 
-          {/* Zone 3: 1 primary action & ThemeToggle */}
+          {/* Zone 3: 1 primary action & ThemeToggle & Wishlist */}
           <div className="hidden md:flex items-center gap-3 shrink-0">
+            {/* Wishlist Link with Live Badge */}
+            <Link
+              to="/dashboard/wishlist"
+              className="relative p-2 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              title={`My Wishlist (${wishlistCount} saved)`}
+              aria-label={`My Wishlist (${wishlistCount} saved)`}
+            >
+              <Heart className="w-5 h-5" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-rose-500 text-white font-mono text-[10px] font-bold rounded-full flex items-center justify-center leading-none shadow-sm animate-in zoom-in-75 duration-150">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
             {/* Theme Toggle Button */}
             <ThemeToggle />
 
@@ -150,14 +168,32 @@ export const Navbar: React.FC = () => {
                     </Link>
 
                     {!isAdmin && (
-                      <Link
-                        to="/dashboard/purchases"
-                        onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60"
-                      >
-                        <FolderKanban className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
-                        <span>My Purchases</span>
-                      </Link>
+                      <>
+                        <Link
+                          to="/dashboard/wishlist"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center justify-between px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60"
+                        >
+                          <div className="flex items-center gap-2">
+                            <Heart className="w-3.5 h-3.5 text-rose-500" />
+                            <span>My Wishlist</span>
+                          </div>
+                          {wishlistCount > 0 && (
+                            <span className="px-1.5 py-0.5 rounded-full font-mono text-[10px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50">
+                              {wishlistCount}
+                            </span>
+                          )}
+                        </Link>
+
+                        <Link
+                          to="/dashboard/purchases"
+                          onClick={() => setProfileDropdownOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60"
+                        >
+                          <FolderKanban className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                          <span>My Purchases</span>
+                        </Link>
+                      </>
                     )}
 
                     <div className="border-t border-slate-100 dark:border-slate-700 my-1 pt-1">
@@ -216,7 +252,7 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Mobile buttons: Search + ThemeToggle + Hamburger */}
+          {/* Mobile buttons: Search + Wishlist + ThemeToggle + Hamburger */}
           <div className="flex md:hidden items-center gap-1.5">
             <button
               onClick={() => setMobileSearchModalOpen(true)}
@@ -225,6 +261,20 @@ export const Navbar: React.FC = () => {
             >
               <Search className="w-5 h-5" />
             </button>
+
+            <Link
+              to="/dashboard/wishlist"
+              className="relative p-2 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              aria-label={`My Wishlist (${wishlistCount} saved)`}
+            >
+              <Heart className="w-5 h-5" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 bg-rose-500 text-white font-mono text-[9px] font-bold rounded-full flex items-center justify-center leading-none shadow-sm">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
             <ThemeToggle size="sm" />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -261,6 +311,21 @@ export const Navbar: React.FC = () => {
             className="block py-2 text-sm font-medium text-slate-800 dark:text-slate-200"
           >
             Explore Projects
+          </Link>
+          <Link
+            to="/dashboard/wishlist"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center justify-between py-2 text-sm font-medium text-slate-800 dark:text-slate-200"
+          >
+            <div className="flex items-center gap-2">
+              <Heart className="w-4 h-4 text-rose-500" />
+              <span>My Wishlist</span>
+            </div>
+            {wishlistCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full font-mono text-xs font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400">
+                {wishlistCount}
+              </span>
+            )}
           </Link>
           <Link
             to="/#popular-categories"

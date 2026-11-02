@@ -12,14 +12,18 @@ import {
   FileText,
   Terminal,
   ExternalLink,
+  Heart,
 } from 'lucide-react';
+import { useWishlist } from '../context/WishlistContext';
 
 export const StudentDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user, myOrders, purchasedProjectIds, downloadProjectKit } = useAuth();
   const { projects } = useProjects();
+  const { wishlistIds, wishlistCount } = useWishlist();
 
   const purchasedProjects = projects.filter((p) => purchasedProjectIds.includes(p.id));
+  const wishlistedProjects = projects.filter((p) => wishlistIds.includes(p.id));
   const recentOrders = myOrders.slice(0, 3);
 
   // Total spent calculation
@@ -41,7 +45,15 @@ export const StudentDashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            to="/dashboard/wishlist"
+            className="px-3.5 py-2 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/50 rounded-lg text-xs font-semibold transition-colors shadow-xs flex items-center gap-1.5"
+          >
+            <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
+            <span>Wishlist ({wishlistCount})</span>
+          </Link>
+
           <Link
             to="/projects"
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm flex items-center gap-1.5"
@@ -53,7 +65,7 @@ export const StudentDashboard: React.FC = () => {
       </div>
 
       {/* Overview Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Kits Owned</span>
@@ -66,6 +78,27 @@ export const StudentDashboard: React.FC = () => {
           </div>
           <p className="text-[11px] text-slate-400 dark:text-slate-500">All downloads permanently active</p>
         </div>
+
+        <Link
+          to="/dashboard/wishlist"
+          className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2 hover:border-rose-300 dark:hover:border-rose-800 transition-colors block group"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+              Saved in Wishlist
+            </span>
+            <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+              <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
+            </div>
+          </div>
+          <div className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
+            {wishlistCount}
+          </div>
+          <p className="text-[11px] text-rose-600 dark:text-rose-400 font-medium flex items-center gap-1">
+            <span>View Wishlist</span>
+            <ArrowRight className="w-3 h-3" />
+          </p>
+        </Link>
 
         <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
           <div className="flex items-center justify-between">
@@ -190,6 +223,73 @@ export const StudentDashboard: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Bookmarked in Wishlist Section */}
+      {wishlistedProjects.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+                <Heart className="w-4 h-4 fill-rose-500 text-rose-500" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                  Saved in Your Wishlist ({wishlistedProjects.length})
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Projects shortlisted for college review and guide approval.
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/dashboard/wishlist"
+              className="text-xs font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1"
+            >
+              <span>Manage Wishlist</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {wishlistedProjects.slice(0, 3).map((p) => (
+              <div
+                key={p.id}
+                className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700 transition-colors flex flex-col justify-between space-y-3"
+              >
+                <div>
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 mb-1">
+                    <span className="text-blue-600 dark:text-blue-400 font-semibold">{p.category}</span>
+                    <span className="font-mono">{p.primaryLanguage}</span>
+                  </div>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">{p.title}</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-1">
+                    {p.shortDescription}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
+                  <span className="text-xs font-bold font-mono text-slate-900 dark:text-white tabular-nums">
+                    ₹{p.price.toLocaleString('en-IN')}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <Link
+                      to={`/projects/${p.id}`}
+                      className="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                      Spec
+                    </Link>
+                    <Link
+                      to={`/checkout/${p.id}`}
+                      className="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-semibold"
+                    >
+                      Buy Kit
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Recent Orders Table */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-4">

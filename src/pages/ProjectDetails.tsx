@@ -32,19 +32,25 @@ import {
   ExternalLink,
   Server,
   Key,
+  Heart,
+  Play,
 } from 'lucide-react';
+import { useWishlist } from '../context/WishlistContext';
+import { WatchDemoModal } from '../components/WatchDemoModal';
 
 export const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getProjectById, projects } = useProjects();
   const { purchasedProjectIds, downloadProjectKit } = useAuth();
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
   const [copiedStep, setCopiedStep] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'screenshots' | 'modules' | 'docs' | 'setup'>('overview');
   // Selected screenshot in hero gallery (0 = main cover, 1 = UI, 2 = ERD, 3 = DFD, 4 = Viva)
   const [activePreviewIndex, setActivePreviewIndex] = useState<number>(0);
   const [fullscreenModal, setFullscreenModal] = useState<boolean>(false);
+  const [demoModalOpen, setDemoModalOpen] = useState<boolean>(false);
 
   // Dynamically load project using the URL project ID
   const project = id ? getProjectById(id) : undefined;
@@ -77,6 +83,7 @@ export const ProjectDetails: React.FC = () => {
   }
 
   const isPurchased = purchasedProjectIds.includes(project.id);
+  const isWishlisted = isInWishlist(project.id);
 
   // Related projects in the same category or sharing primary language
   const relatedProjects = projects
@@ -296,6 +303,21 @@ export const ProjectDetails: React.FC = () => {
               </div>
             )}
 
+            {/* Watch AI Demo Walkthrough Floating Button */}
+            <button
+              onClick={() => setDemoModalOpen(true)}
+              className="absolute bottom-4 left-4 sm:left-6 bg-slate-900/90 hover:bg-blue-600 text-white px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all shadow-xl backdrop-blur-md border border-slate-700 hover:border-blue-500 z-20 group/play hover:scale-105"
+              title="Watch AI Video Walkthrough"
+            >
+              <div className="w-5 h-5 rounded-full bg-blue-600 group-hover/play:bg-white text-white group-hover/play:text-blue-600 flex items-center justify-center shadow-xs transition-colors">
+                <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
+              </div>
+              <span>Watch Demo</span>
+              <span className="text-[10px] bg-slate-800 group-hover/play:bg-blue-700 text-blue-300 group-hover/play:text-white px-1.5 py-0.5 rounded font-mono hidden sm:inline transition-colors">
+                AI 1080p
+              </span>
+            </button>
+
             {/* Expand Fullscreen Floating Button */}
             <button
               onClick={() => setFullscreenModal(true)}
@@ -359,9 +381,23 @@ export const ProjectDetails: React.FC = () => {
               <span className="font-mono text-slate-400 dark:text-slate-500">ID: {project.id}</span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white leading-snug">
-              {project.title}
-            </h1>
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white leading-snug">
+                {project.title}
+              </h1>
+              <button
+                onClick={() => toggleWishlist(project.id, project.title)}
+                className={`p-2.5 rounded-xl border transition-all shrink-0 ${
+                  isWishlisted
+                    ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800 shadow-xs'
+                    : 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-rose-600 dark:hover:text-rose-400 hover:border-slate-300'
+                }`}
+                title={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
+                aria-label={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
+              >
+                <Heart className={`w-4 h-4 transition-transform active:scale-125 ${isWishlisted ? 'fill-rose-500 text-rose-500' : ''}`} />
+              </button>
+            </div>
 
             {/* Ratings & reviews count */}
             <div className="flex items-center gap-2 mt-2 text-xs">
@@ -447,6 +483,33 @@ export const ProjectDetails: React.FC = () => {
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}
+
+            {/* Wishlist Action Button */}
+            <button
+              onClick={() => toggleWishlist(project.id, project.title)}
+              className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all border ${
+                isWishlisted
+                  ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-900/60 hover:bg-rose-100 dark:hover:bg-rose-900/40 shadow-xs'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 hover:border-slate-300'
+              }`}
+            >
+              <Heart className={`w-4 h-4 transition-transform active:scale-125 ${isWishlisted ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}`} />
+              <span>{isWishlisted ? 'Saved in Your Wishlist' : 'Save Project to Wishlist'}</span>
+            </button>
+
+            {/* Watch AI Video Walkthrough CTA Button */}
+            <button
+              onClick={() => setDemoModalOpen(true)}
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/50 shadow-xs"
+            >
+              <div className="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center">
+                <Play className="w-2.5 h-2.5 fill-white ml-0.5" />
+              </div>
+              <span>Watch AI Video Walkthrough</span>
+              <span className="text-[10px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-mono font-bold">
+                1080p
+              </span>
+            </button>
 
             <p className="text-[11px] text-center text-slate-500 dark:text-slate-400 pt-1">
               Demonstration checkout interface with simulated download authorization.
@@ -916,6 +979,13 @@ export const ProjectDetails: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* AI Video Walkthrough Watch Demo Modal */}
+      <WatchDemoModal
+        project={project}
+        isOpen={demoModalOpen}
+        onClose={() => setDemoModalOpen(false)}
+      />
     </div>
   );
 };
