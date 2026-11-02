@@ -1,0 +1,6 @@
+{
+  "name": "ProjectKit — Student Projects Marketplace",
+  "description": "Explore and download ready-to-use engineering project kits with source code, IEEE documentation, and step-by-step implementation guides for B.Tech students.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

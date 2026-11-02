@@ -1,0 +1,58 @@
+import { Category } from '../types';
+
+export const CATEGORIES: Category[] = [
+  {
+    id: 'cat-web',
+    name: 'Web Development',
+    slug: 'web-development',
+    iconName: 'Globe',
+    description: 'Full-stack MERN, React, Next.js, and modern single-page applications with responsive UI.',
+    projectCount: 42,
+    color: '#2563EB',
+  },
+  {
+    id: 'cat-java',
+    name: 'Java & Spring Boot',
+    slug: 'java-spring-boot',
+    iconName: 'Coffee',
+    description: 'Enterprise grade Spring Boot 3, Java 17, Hibernate, REST APIs, and microservices.',
+    projectCount: 38,
+    color: '#D97706',
+  },
+  {
+    id: 'cat-ai-ml',
+    name: 'AI & Machine Learning',
+    slug: 'ai-machine-learning',
+    iconName: 'BrainCircuit',
+    description: 'Computer vision, NLP, predictive analytics, TensorFlow, PyTorch, and deep learning pipelines.',
+    projectCount: 35,
+    color: '#7C3AED',
+  },
+  {
+    id: 'cat-python',
+    name: 'Python & Data Science',
+    slug: 'python-data-science',
+    iconName: 'FileCode2',
+    description: 'Data analytics, Flask, FastAPI, automated scraping, statistical modeling, and OpenCV.',
+    projectCount: 29,
+    color: '#059669',
+  },
+  {
+    id: 'cat-iot',
+    name: 'IoT & Embedded',
+    slug: 'iot-embedded',
+    iconName: 'Cpu',
+    description: 'Arduino, ESP32, Raspberry Pi, sensor telemetry, edge computing, and smart home kits.',
+    projectCount: 21,
+    color: '#EA580C',
+  },
+  {
+    id: 'cat-security',
+    name: 'Cybersecurity & Cloud',
+    slug: 'cybersecurity-cloud',
+    iconName: 'ShieldCheck',
+    description: 'Network anomaly intrusion detection, cryptography, Docker containerization, and AWS setups.',
+    projectCount: 18,
+    color: '#0284C7',
+  },
+];
