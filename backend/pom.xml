@@ -101,6 +101,12 @@
             <version>${springdoc.version}</version>
         </dependency>
 
+        <!-- Spring Boot Starter Mail for Transactional Emails -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <!-- Spring Boot DevTools (Optional Live Reload in Eclipse) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

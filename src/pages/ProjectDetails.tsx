@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { WatchDemoModal } from '../components/WatchDemoModal';
+import { SEOHead } from '../components/SEOHead';
 
 export const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -132,6 +133,27 @@ export const ProjectDetails: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+      <SEOHead
+        title={`${project.title} — Academic Project Kit & IEEE Docs`}
+        description={project.shortDescription || project.overview.slice(0, 155)}
+        canonicalPath={`/projects/${project.id}`}
+        ogType="product"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": project.title,
+          "description": project.shortDescription || project.overview,
+          "category": project.category,
+          "offers": {
+            "@type": "Offer",
+            "price": String(project.price),
+            "priceCurrency": "INR",
+            "availability": "https://schema.org/InStock",
+            "url": `https://projectkit.in/projects/${project.id}`
+          }
+        }}
+      />
+
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-nowrap">
         <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 font-medium">
@@ -370,19 +392,19 @@ export const ProjectDetails: React.FC = () => {
         </div>
 
         {/* Right Column: Contiguous Purchase Module */}
-        <div className="lg:col-span-5 bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-6">
+        <div className="lg:col-span-5 bg-white dark:bg-[#0B1329] p-6 sm:p-8 rounded-2xl border border-slate-200/90 dark:border-[#1A2846] shadow-sm dark:shadow-xl space-y-6 text-slate-900 dark:text-[#F8FAFC] transition-colors">
           <div>
             {/* Metadata tags */}
-            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-2">
-              <span className="font-semibold text-blue-600 dark:text-blue-400">{project.category}</span>
-              <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
-              <span className="text-slate-700 dark:text-slate-300 font-medium">{project.primaryLanguage}</span>
-              <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
-              <span className="font-mono text-slate-400 dark:text-slate-500">ID: {project.id}</span>
+            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-[#9AA6C7] mb-2">
+              <span className="font-semibold text-[#2F4BFF] dark:text-[#5B7BFF]">{project.category}</span>
+              <span aria-hidden="true" className="text-slate-300 dark:text-[#25335F]">·</span>
+              <span className="text-slate-700 dark:text-[#CBD5E1] font-medium">{project.primaryLanguage}</span>
+              <span aria-hidden="true" className="text-slate-300 dark:text-[#25335F]">·</span>
+              <span className="font-mono text-slate-400 dark:text-[#9AA6C7]">ID: {project.id}</span>
             </div>
 
             <div className="flex items-start justify-between gap-3">
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white leading-snug">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-[#F8FAFC] leading-snug">
                 {project.title}
               </h1>
               <button
@@ -390,7 +412,7 @@ export const ProjectDetails: React.FC = () => {
                 className={`p-2.5 rounded-xl border transition-all shrink-0 ${
                   isWishlisted
                     ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800 shadow-xs'
-                    : 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:text-rose-600 dark:hover:text-rose-400 hover:border-slate-300'
+                    : 'bg-slate-50 dark:bg-[#080E20] text-slate-500 dark:text-[#94A3B8] border-slate-200 dark:border-[#1A2846] hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-300 dark:hover:border-rose-800'
                 }`}
                 title={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
                 aria-label={isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
@@ -403,31 +425,31 @@ export const ProjectDetails: React.FC = () => {
             <div className="flex items-center gap-2 mt-2 text-xs">
               <div className="flex items-center text-amber-500">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                <span className="font-bold font-mono ml-1 text-slate-800 dark:text-slate-200">{project.rating}</span>
+                <span className="font-bold font-mono ml-1 text-slate-900 dark:text-[#F8FAFC]">{project.rating}</span>
               </div>
-              <span className="text-slate-400 dark:text-slate-600">·</span>
-              <span className="text-slate-500 dark:text-slate-400 font-medium">
+              <span className="text-slate-300 dark:text-[#1A2846]">·</span>
+              <span className="text-slate-600 dark:text-[#94A3B8] font-medium">
                 {project.reviewsCount} verified student reviews
               </span>
             </div>
           </div>
 
-          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+          <p className="text-xs text-slate-600 dark:text-[#CBD5E1] leading-relaxed">
             {project.shortDescription}
           </p>
 
           {/* Categorized Technology Badges */}
           <div className="space-y-2">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
               Verified Technical Stack & Libraries
             </div>
             <div className="flex flex-wrap gap-1.5">
               {project.techStack.map((tech) => (
                 <span
                   key={tech}
-                  className="px-2.5 py-1 text-[11px] font-mono font-medium text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 rounded-md border border-slate-200 dark:border-slate-700 flex items-center gap-1"
+                  className="px-2.5 py-1 text-[11px] font-mono font-medium text-slate-700 dark:text-[#BFDBFE] bg-slate-100 dark:bg-[#080E20] rounded-lg border border-slate-200 dark:border-[#1A2846] flex items-center gap-1"
                 >
-                  <Code2 className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                  <Code2 className="w-3 h-3 text-[#2563EB] dark:text-[#3B82F6]" />
                   <span>{tech}</span>
                 </span>
               ))}
@@ -435,14 +457,14 @@ export const ProjectDetails: React.FC = () => {
           </div>
 
           {/* Price Block */}
-          <div className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="p-4 bg-slate-50 dark:bg-[#080E20] rounded-xl border border-slate-200 dark:border-[#1A2846] flex items-center justify-between">
             <div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Complete Academic Kit Price</div>
+              <div className="text-[11px] text-slate-500 dark:text-[#94A3B8] font-medium">Complete Academic Kit Price</div>
               <div className="flex items-baseline gap-2.5 mt-0.5">
-                <span className="text-2xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
+                <span className="text-2xl font-extrabold text-slate-900 dark:text-[#F8FAFC] font-mono tabular-nums">
                   ₹{project.price.toLocaleString('en-IN')}
                 </span>
-                <span className="text-sm text-slate-400 dark:text-slate-500 line-through font-mono tabular-nums">
+                <span className="text-sm text-slate-400 dark:text-[#64748B] line-through font-mono tabular-nums">
                   ₹{project.originalPrice.toLocaleString('en-IN')}
                 </span>
                 <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
@@ -452,7 +474,7 @@ export const ProjectDetails: React.FC = () => {
             </div>
 
             <div className="text-right">
-              <div className="text-[10px] text-emerald-700 dark:text-emerald-300 font-semibold bg-emerald-100/80 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/50 px-2.5 py-1 rounded-md">
+              <div className="text-[10px] text-emerald-700 dark:text-emerald-300 font-semibold bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-1 rounded-md">
                 Instant Access
               </div>
             </div>
@@ -477,7 +499,7 @@ export const ProjectDetails: React.FC = () => {
             ) : (
               <button
                 onClick={() => navigate(`/checkout/${project.id}`)}
-                className="w-full py-3.5 px-6 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg"
+                className="w-full py-3.5 px-6 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg hover:shadow-[0_4px_16px_rgba(47,75,255,0.35)]"
               >
                 <span>Buy Project Kit Now</span>
                 <ArrowRight className="w-4 h-4" />
@@ -500,13 +522,13 @@ export const ProjectDetails: React.FC = () => {
             {/* Watch AI Video Walkthrough CTA Button */}
             <button
               onClick={() => setDemoModalOpen(true)}
-              className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-900/50 shadow-xs"
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all bg-blue-50 dark:bg-[#16224A] hover:bg-blue-100 dark:hover:bg-[#1E2E5D] text-[#2F4BFF] dark:text-[#5B7BFF] border border-blue-200 dark:border-[#25335F] shadow-xs"
             >
-              <div className="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center">
+              <div className="w-4 h-4 rounded-full bg-[#2F4BFF] text-white flex items-center justify-center">
                 <Play className="w-2.5 h-2.5 fill-white ml-0.5" />
               </div>
               <span>Watch AI Video Walkthrough</span>
-              <span className="text-[10px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-mono font-bold">
+              <span className="text-[10px] bg-[#2F4BFF] text-white px-1.5 py-0.2 rounded font-mono font-bold">
                 1080p
               </span>
             </button>
@@ -979,6 +1001,49 @@ export const ProjectDetails: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Mobile Sticky Bottom Buy Bar (appears on small screens, complies with 15% viewport height cap) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#080D1A]/95 backdrop-blur-md border-t border-slate-200 dark:border-[#1A2846] px-4 py-2.5 shadow-lg flex items-center justify-between gap-3">
+        <div>
+          <div className="text-[10px] text-slate-500 dark:text-[#94A3B8] font-medium">Complete Kit</div>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-base font-extrabold text-slate-900 dark:text-[#F8FAFC] font-mono tabular-nums">
+              ₹{project.price.toLocaleString('en-IN')}
+            </span>
+            <span className="text-[11px] text-slate-400 line-through font-mono tabular-nums">
+              ₹{project.originalPrice.toLocaleString('en-IN')}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => toggleWishlist(project.id, project.title)}
+            className="p-2.5 rounded-xl border border-slate-200 dark:border-[#1A2846] bg-slate-50 dark:bg-[#0B1329] text-slate-600 dark:text-slate-300"
+            aria-label="Wishlist"
+          >
+            <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-rose-500 text-rose-500' : ''}`} />
+          </button>
+
+          {isPurchased ? (
+            <button
+              onClick={() => downloadProjectKit(project, 'Complete Kit')}
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate(`/checkout/${project.id}`)}
+              className="px-5 py-2.5 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm"
+            >
+              <span>Buy Kit</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* AI Video Walkthrough Watch Demo Modal */}
       <WatchDemoModal

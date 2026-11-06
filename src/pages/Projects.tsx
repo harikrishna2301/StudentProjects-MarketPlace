@@ -1,43 +1,56 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useProjects } from '../context/ProjectsContext';
 import { ProjectCard } from '../components/ProjectCard';
 import {
   Search,
-  Filter,
   SlidersHorizontal,
-  ArrowUpDown,
   X,
   RotateCcw,
   ChevronLeft,
   ChevronRight,
-  Code2,
-  Tags,
-  Check,
-  CheckCircle2,
-  DollarSign,
-  Layers,
   ChevronDown,
   Heart,
+  LayoutGrid,
+  List,
+  Check,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  ShoppingCart,
+  Star,
+  FileText,
 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
+import { ProjectIllustration } from '../components/ProjectIllustration';
+import { HighlightText } from '../components/HighlightText';
+import { SEOHead } from '../components/SEOHead';
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 9;
 
 export const Projects: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { projects, categories } = useProjects();
   const { wishlistIds, wishlistCount } = useWishlist();
+  const { purchasedProjectIds } = useAuth();
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
-  const [selectedTech, setSelectedTech] = useState<string>(searchParams.get('tech') || 'All');
+  const [selectedTechs, setSelectedTechs] = useState<string[]>(() => {
+    const tech = searchParams.get('tech');
+    return tech && tech !== 'All' ? [tech] : [];
+  });
   const [selectedLanguage, setSelectedLanguage] = useState(searchParams.get('lang') || 'All');
-  const [selectedPriceRange, setSelectedPriceRange] = useState(searchParams.get('price') || 'All');
+  const [minPriceInput, setMinPriceInput] = useState(searchParams.get('minPrice') || '');
+  const [maxPriceInput, setMaxPriceInput] = useState(searchParams.get('maxPrice') || '');
+  const [pricePreset, setPricePreset] = useState(searchParams.get('pricePreset') || 'All');
   const [showWishlistOnly, setShowWishlistOnly] = useState(searchParams.get('wishlist') === 'true');
-  const [sortBy, setSortBy] = useState<'newest' | 'price-asc' | 'price-desc' | 'rating' | 'oldest'>(
-    (searchParams.get('sort') as any) || 'newest'
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState<'featured' | 'newest' | 'price-asc' | 'price-desc' | 'rating' | 'oldest'>(
+    (searchParams.get('sort') as any) || 'featured'
   );
 
   // Mobile filters drawer state
@@ -53,11 +66,11 @@ export const Projects: React.FC = () => {
     const cat = searchParams.get('category');
     if (cat !== null) setSelectedCategory(cat);
     const tech = searchParams.get('tech');
-    if (tech !== null) setSelectedTech(tech);
-    const lang = searchParams.get('lang');
-    if (lang !== null) setSelectedLanguage(lang);
-    const price = searchParams.get('price');
-    if (price !== null) setSelectedPriceRange(price);
+    if (tech !== null) setSelectedTechs(tech !== 'All' ? [tech] : []);
+    const minP = searchParams.get('minPrice');
+    if (minP !== null) setMinPriceInput(minP);
+    const maxP = searchParams.get('maxPrice');
+    if (maxP !== null) setMaxPriceInput(maxP);
     const sort = searchParams.get('sort');
     if (sort !== null) setSortBy(sort as any);
   }, [searchParams]);
@@ -65,11 +78,10 @@ export const Projects: React.FC = () => {
   // Reset to page 1 when any filter or search changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, selectedLanguage, selectedTech, selectedPriceRange, sortBy, showWishlistOnly]);
+  }, [searchQuery, selectedCategory, selectedLanguage, selectedTechs, minPriceInput, maxPriceInput, pricePreset, sortBy, showWishlistOnly]);
 
-  // List of popular technology filters
-  const popularTechs = [
-    'All',
+  // Curated list of popular technology brands/stacks matching Screenshot 3
+  const allAvailableTechs = [
     'Spring Boot',
     'React',
     'Java',
@@ -78,85 +90,116 @@ export const Projects: React.FC = () => {
     'OpenCV',
     'Node.js',
     'MongoDB',
-    'Solidity',
+    'Docker',
     'ESP32',
-    'BERT',
+    'FastAPI',
+    'PostgreSQL',
+    'TensorFlow',
+    'Tailwind CSS',
+    'JWT',
   ];
 
-  // Unique programming languages
-  const programmingLanguages = useMemo(() => {
-    const set = new Set<string>();
-    projects.forEach((p) => set.add(p.primaryLanguage));
-    return ['All', ...Array.from(set)];
-  }, [projects]);
+  // Toggle tech selection
+  const handleToggleTech = (tech: string) => {
+    setSelectedTechs((prev) =>
+      prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]
+    );
+  };
 
   // Filter and sort computation
   const filteredProjects = useMemo(() => {
     return projects
       .filter((project) => {
-        // 0. Wishlist filter
+        // Wishlist filter
         if (showWishlistOnly && !wishlistIds.includes(project.id)) {
           return false;
         }
 
-        // 1. Search filter across title, shortDescription, overview, techStack, primaryLanguage, and category
-        if (searchQuery.trim()) {
-          const q = searchQuery.toLowerCase();
-          const matchTitle = project.title.toLowerCase().includes(q);
-          const matchDesc = project.shortDescription.toLowerCase().includes(q);
-          const matchOverview = project.overview.toLowerCase().includes(q);
-          const matchTech = project.techStack.some((t) => t.toLowerCase().includes(q));
-          const matchLang = project.primaryLanguage.toLowerCase().includes(q);
-          const matchCat = project.category.toLowerCase().includes(q);
-          if (!matchTitle && !matchDesc && !matchOverview && !matchTech && !matchLang && !matchCat) {
-            return false;
-          }
+        // Category filter
+        if (
+          selectedCategory !== 'All' &&
+          project.category.toLowerCase() !== selectedCategory.toLowerCase()
+        ) {
+          return false;
         }
 
-        // 2. Category filter
-        if (selectedCategory !== 'All') {
-          if (project.category.toLowerCase() !== selectedCategory.toLowerCase()) {
-            return false;
-          }
+        // Language filter
+        if (
+          selectedLanguage !== 'All' &&
+          project.primaryLanguage.toLowerCase() !== selectedLanguage.toLowerCase()
+        ) {
+          return false;
         }
 
-        // 3. Technology filter
-        if (selectedTech !== 'All') {
-          const matchesTech = project.techStack.some((t) =>
-            t.toLowerCase().includes(selectedTech.toLowerCase())
+        // Selected Techs filter (match any selected)
+        if (selectedTechs.length > 0) {
+          const hasMatchingTech = selectedTechs.some((selected) =>
+            project.techStack.some((t) => t.toLowerCase().includes(selected.toLowerCase()))
           );
-          if (!matchesTech) return false;
+          if (!hasMatchingTech) return false;
         }
 
-        // 4. Programming language filter
-        if (selectedLanguage !== 'All') {
-          if (project.primaryLanguage.toLowerCase() !== selectedLanguage.toLowerCase()) {
+        // Price range numeric filter
+        if (minPriceInput) {
+          const min = parseFloat(minPriceInput);
+          if (!isNaN(min) && project.price < min) return false;
+        }
+        if (maxPriceInput) {
+          const max = parseFloat(maxPriceInput);
+          if (!isNaN(max) && project.price > max) return false;
+        }
+
+        // Price preset filter
+        if (pricePreset !== 'All') {
+          if (pricePreset === 'under-2000' && project.price >= 2000) return false;
+          if (
+            pricePreset === '2000-2499' &&
+            (project.price < 2000 || project.price > 2499)
+          )
+            return false;
+          if (pricePreset === '2500-plus' && project.price < 2500) return false;
+        }
+
+        // Search text filter
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase().trim();
+          const matchesTitle = project.title.toLowerCase().includes(q);
+          const matchesCategory = project.category.toLowerCase().includes(q);
+          const matchesDesc = project.shortDescription.toLowerCase().includes(q);
+          const matchesLang = project.primaryLanguage.toLowerCase().includes(q);
+          const matchesTech = project.techStack.some((t) => t.toLowerCase().includes(q));
+          if (!matchesTitle && !matchesCategory && !matchesDesc && !matchesLang && !matchesTech) {
             return false;
           }
-        }
-
-        // 5. Price range filter
-        if (selectedPriceRange === 'under-2000') {
-          if (project.price >= 2000) return false;
-        } else if (selectedPriceRange === '2000-2499') {
-          if (project.price < 2000 || project.price > 2499) return false;
-        } else if (selectedPriceRange === '2500-plus') {
-          if (project.price < 2500) return false;
         }
 
         return true;
       })
       .sort((a, b) => {
+        if (sortBy === 'featured') {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return (b.rating || 5.0) - (a.rating || 5.0);
+        }
         if (sortBy === 'price-asc') return a.price - b.price;
         if (sortBy === 'price-desc') return b.price - a.price;
-        if (sortBy === 'rating') return b.rating - a.rating;
-        if (sortBy === 'oldest') {
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        }
-        // default newest-first
+        if (sortBy === 'oldest') return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        if (sortBy === 'rating') return (b.rating || 5.0) - (a.rating || 5.0);
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
-  }, [projects, searchQuery, selectedCategory, selectedTech, selectedLanguage, selectedPriceRange, sortBy, showWishlistOnly, wishlistIds]);
+  }, [
+    projects,
+    searchQuery,
+    selectedCategory,
+    selectedLanguage,
+    selectedTechs,
+    minPriceInput,
+    maxPriceInput,
+    pricePreset,
+    sortBy,
+    showWishlistOnly,
+    wishlistIds,
+  ]);
 
   // Pagination calculation
   const totalItems = filteredProjects.length;
@@ -169,488 +212,566 @@ export const Projects: React.FC = () => {
   const handleResetFilters = () => {
     setSearchQuery('');
     setSelectedCategory('All');
-    setSelectedTech('All');
+    setSelectedTechs([]);
     setSelectedLanguage('All');
-    setSelectedPriceRange('All');
+    setMinPriceInput('');
+    setMaxPriceInput('');
+    setPricePreset('All');
     setShowWishlistOnly(false);
-    setSortBy('newest');
+    setSortBy('featured');
     setCurrentPage(1);
     setSearchParams({});
+  };
+
+  const handleApplyFilters = () => {
+    setMobileFilterOpen(false);
+    window.scrollTo({ top: 180, behavior: 'smooth' });
   };
 
   const hasActiveFilters =
     searchQuery !== '' ||
     selectedCategory !== 'All' ||
-    selectedTech !== 'All' ||
+    selectedTechs.length > 0 ||
     selectedLanguage !== 'All' ||
-    selectedPriceRange !== 'All' ||
+    minPriceInput !== '' ||
+    maxPriceInput !== '' ||
+    pricePreset !== 'All' ||
     showWishlistOnly ||
-    sortBy !== 'newest';
+    sortBy !== 'featured';
 
-  // Count projects per category helper
   const getCategoryCount = (categoryName: string) => {
     if (categoryName === 'All') return projects.length;
     return projects.filter((p) => p.category.toLowerCase() === categoryName.toLowerCase()).length;
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Top Header */}
-      <div className="border-b border-slate-200 dark:border-slate-800 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4 transition-colors">
-        <div>
-          <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
-            Verified Academic Repository
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 bg-slate-50 dark:bg-[#060B18] text-slate-900 dark:text-[#F8FAFC] transition-colors duration-200">
+      <SEOHead
+        title={selectedCategory !== 'All' ? `${selectedCategory} Project Kits — Source Code & IEEE Reports` : 'Browse Academic Project Kits — Source Code, IEEE Docs & DB Dumps'}
+        description={`Explore verified ${selectedCategory !== 'All' ? selectedCategory : 'engineering'} capstone project kits with full source code, IEEE reports, circuit schematics, and viva cheat sheets.`}
+        canonicalPath="/projects"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://projectkit.in/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Projects",
+              "item": "https://projectkit.in/projects"
+            }
+          ]
+        }}
+      />
+      {/* =========================================================================
+          TOP SEARCH BAR (Full Width spanning columns, matching Screenshot 3)
+          ========================================================================= */}
+      <div className="w-full">
+        <div className="relative w-full bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200/90 dark:border-[#1A2846] shadow-xs flex items-center transition-all focus-within:border-[#2563EB] focus-within:shadow-[0_4px_20px_rgba(37,99,235,0.18)]">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search products..."
+            className="w-full pl-5 pr-12 py-3.5 text-sm bg-transparent rounded-2xl text-slate-900 dark:text-[#F8FAFC] placeholder-slate-400 dark:placeholder-slate-500 outline-none"
+            aria-label="Search products"
+          />
+          <div className="absolute right-4 flex items-center gap-2">
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-[#F8FAFC]"
+                aria-label="Clear search query"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+            <Search className="w-5 h-5 text-slate-400" />
           </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Explore Engineering Projects
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-            Browse complete capstone kits with production-grade code, IEEE reports, MySQL database dumps, and viva defense guides.
-          </p>
-        </div>
-
-        {/* Mobile Filter Toggle Button */}
-        <div className="flex items-center gap-2 lg:hidden">
-          <button
-            onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
-            className="flex-1 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-2 shadow-xs"
-          >
-            <SlidersHorizontal className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            <span>Filters {hasActiveFilters && '(Active)'}</span>
-          </button>
         </div>
       </div>
 
-      {/* Main 2-Column Marketplace Grid: Sidebar Filters (Left) + Results (Right) */}
+      {/* Mobile Filter Toggle & Quick Header */}
+      <div className="flex items-center justify-between lg:hidden pb-1">
+        <div className="text-sm font-bold text-slate-900 dark:text-[#F8FAFC]">
+          {totalItems} Products
+        </div>
+        <button
+          onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
+          className="px-4 py-2 bg-white dark:bg-[#0B1329] border border-slate-200 dark:border-[#1A2846] rounded-xl text-xs font-semibold text-slate-800 dark:text-[#CBD5E1] flex items-center gap-2 shadow-xs"
+          aria-label="Open filter sidebar"
+        >
+          <SlidersHorizontal className="w-4 h-4 text-[#2563EB]" />
+          <span>Filters {hasActiveFilters && '(Active)'}</span>
+        </button>
+      </div>
+
+      {/* =========================================================================
+          MAIN 2-COLUMN MARKETPLACE GRID: FILTERS (LEFT) + PRODUCTS (RIGHT)
+          ========================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* LEFT COLUMN: SIDEBAR FILTERS (Desktop persistent, Mobile drawer) */}
+        {/* LEFT COLUMN: FILTERS PANEL (Matching Screenshot 3) */}
         <aside
           className={`lg:col-span-3 space-y-6 ${
             mobileFilterOpen
-              ? 'fixed inset-0 z-50 bg-slate-950/60 p-4 flex flex-col justify-end lg:static lg:bg-transparent lg:p-0'
+              ? 'fixed inset-0 z-50 bg-slate-950/70 dark:bg-[#060B18]/90 backdrop-blur-sm p-4 flex flex-col justify-end lg:static lg:bg-transparent lg:p-0'
               : 'hidden lg:block'
           }`}
         >
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-sm space-y-6 max-h-[85vh] lg:max-h-none overflow-y-auto transition-colors">
-            {/* Mobile drawer header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 lg:hidden">
-              <span className="font-bold text-sm text-slate-900 dark:text-white">Filter Projects</span>
+          <div className="bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200/90 dark:border-[#1A2846] p-5 shadow-xs space-y-5 max-h-[88vh] lg:max-h-none overflow-y-auto">
+            {/* Header: "Filters" matching Screenshot 3 */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#1A2846]">
+              <h2 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-[#F8FAFC] tracking-tight">
+                Filters
+              </h2>
+              {hasActiveFilters && (
+                <button
+                  onClick={handleResetFilters}
+                  className="text-[11px] text-[#2F4BFF] dark:text-[#5B7BFF] hover:underline font-semibold"
+                >
+                  Reset
+                </button>
+              )}
               <button
                 onClick={() => setMobileFilterOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                className="p-1 text-slate-400 hover:text-slate-900 dark:hover:text-white lg:hidden"
+                aria-label="Close filters drawer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Quick Filter: Saved to Wishlist */}
-            <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
-              <button
-                onClick={() => setShowWishlistOnly(!showWishlistOnly)}
-                className={`w-full flex items-center justify-between text-xs font-semibold rounded-lg px-2.5 py-1.5 transition-all ${
-                  showWishlistOnly
-                    ? 'bg-rose-500 text-white shadow-xs'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700/60'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Heart className={`w-3.5 h-3.5 ${showWishlistOnly ? 'fill-white text-white' : 'text-rose-500'}`} />
-                  <span>Saved to Wishlist</span>
-                </div>
-                <span className={`px-2 py-0.5 rounded text-[10px] font-mono tabular-nums ${
-                  showWishlistOnly ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                }`}>
-                  {wishlistCount}
-                </span>
-              </button>
+            {/* Sort By dropdown inside Filters card */}
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                Sort By
+              </label>
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="w-full bg-slate-50 dark:bg-[#16224A] border border-slate-200 dark:border-[#25335F] rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 dark:text-[#E8ECFA] outline-none focus:border-[#2F4BFF] pr-8 appearance-none cursor-pointer"
+                >
+                  <option value="featured" className="bg-white dark:bg-[#0F1830] text-slate-900 dark:text-slate-100">Featured</option>
+                  <option value="price-asc" className="bg-white dark:bg-[#0F1830] text-slate-900 dark:text-slate-100">Price: Low to High</option>
+                  <option value="price-desc" className="bg-white dark:bg-[#0F1830] text-slate-900 dark:text-slate-100">Price: High to Low</option>
+                  <option value="rating" className="bg-white dark:bg-[#0F1830] text-slate-900 dark:text-slate-100">Highest Rated</option>
+                  <option value="newest" className="bg-white dark:bg-[#0F1830] text-slate-900 dark:text-slate-100">Newest (2026)</option>
+                  <option value="oldest" className="bg-white dark:bg-[#0F1830] text-slate-900 dark:text-slate-100">Oldest First</option>
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 pointer-events-none absolute right-2.5 top-3" />
+              </div>
             </div>
 
-            {/* Filter Section 1: Categories / Disciplines */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  Domain / Category
-                </span>
-                {selectedCategory !== 'All' && (
-                  <button
-                    onClick={() => setSelectedCategory('All')}
-                    className="text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-
-              <div className="space-y-1 text-xs">
-                <button
-                  onClick={() => setSelectedCategory('All')}
-                  className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
-                    selectedCategory === 'All'
-                      ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-semibold'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                  }`}
-                >
-                  <span>All Categories</span>
-                  <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">
-                    {projects.length}
+            {/* Category list with radio buttons */}
+            <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-[#25335F]">
+              <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                Category
+              </label>
+              <div className="space-y-1.5 text-xs">
+                {/* All Categories Option */}
+                <label className="flex items-center justify-between cursor-pointer group py-0.5">
+                  <div className="flex items-center gap-2.5">
+                    <input
+                      type="radio"
+                      name="categoryGroup"
+                      checked={selectedCategory === 'All'}
+                      onChange={() => setSelectedCategory('All')}
+                      className="text-[#2F4BFF] accent-[#2F4BFF] w-3.5 h-3.5 cursor-pointer"
+                    />
+                    <span className={`transition-colors ${selectedCategory === 'All' ? 'font-bold text-[#2F4BFF] dark:text-[#5B7BFF]' : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'}`}>
+                      All Categories
+                    </span>
+                  </div>
+                  <span className="text-[11px] font-mono text-slate-400 tabular-nums">
+                    {getCategoryCount('All')}
                   </span>
-                </button>
+                </label>
 
+                {/* Specific Categories */}
                 {categories.map((c) => {
                   const isSelected = selectedCategory.toLowerCase() === c.name.toLowerCase();
                   return (
-                    <button
-                      key={c.id}
-                      onClick={() => setSelectedCategory(c.name)}
-                      className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between transition-colors ${
-                        isSelected
-                          ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-semibold'
-                          : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                      }`}
-                    >
-                      <span className="truncate pr-2">{c.name}</span>
-                      <span className="font-mono text-[11px] text-slate-400 dark:text-slate-500">
+                    <label key={c.id} className="flex items-center justify-between cursor-pointer group py-0.5">
+                      <div className="flex items-center gap-2.5 truncate pr-2">
+                        <input
+                          type="radio"
+                          name="categoryGroup"
+                          checked={isSelected}
+                          onChange={() => setSelectedCategory(c.name)}
+                          className="text-[#2F4BFF] accent-[#2F4BFF] w-3.5 h-3.5 cursor-pointer shrink-0"
+                        />
+                        <span className={`truncate transition-colors ${isSelected ? 'font-bold text-[#2F4BFF] dark:text-[#5B7BFF]' : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'}`}>
+                          {c.name}
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-mono text-slate-400 tabular-nums shrink-0">
                         {getCategoryCount(c.name)}
                       </span>
-                    </button>
+                    </label>
                   );
                 })}
               </div>
             </div>
 
-            {/* Filter Section 2: Frameworks & Technologies */}
-            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  Framework / Technology
-                </span>
-                {selectedTech !== 'All' && (
-                  <button
-                    onClick={() => setSelectedTech('All')}
-                    className="text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-
-              <div className="flex flex-wrap gap-1.5">
-                {popularTechs.map((tech) => {
-                  const isSelected = selectedTech === tech;
-                  return (
-                    <button
-                      key={tech}
-                      onClick={() => setSelectedTech(isSelected ? 'All' : tech)}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors border ${
-                        isSelected
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                          : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700'
-                      }`}
-                    >
-                      {tech}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Filter Section 3: Programming Language */}
-            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
-                Programming Language
-              </span>
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800"
-              >
-                {programmingLanguages.map((lang) => (
-                  <option key={lang} value={lang} className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">
-                    {lang === 'All' ? 'All Languages' : lang}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Filter Section 4: Price Budget */}
-            <div className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
-                Price Budget
-              </span>
-              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
-                <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 dark:hover:text-white">
+            {/* Price Range with Min / Max inputs (Matching Screenshot 3) */}
+            <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-[#1A2846]">
+              <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                Price Range
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
                   <input
-                    type="radio"
-                    name="priceRange"
-                    checked={selectedPriceRange === 'All'}
-                    onChange={() => setSelectedPriceRange('All')}
-                    className="text-blue-600"
+                    type="number"
+                    value={minPriceInput}
+                    onChange={(e) => {
+                      setMinPriceInput(e.target.value);
+                      setPricePreset('All');
+                    }}
+                    placeholder="Min"
+                    className="w-full bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl px-2.5 py-1.5 text-xs text-slate-900 dark:text-[#F8FAFC] placeholder-slate-400 outline-none focus:border-[#2563EB]"
                   />
-                  <span>All Price Tiers</span>
-                </label>
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    value={maxPriceInput}
+                    onChange={(e) => {
+                      setMaxPriceInput(e.target.value);
+                      setPricePreset('All');
+                    }}
+                    placeholder="Max"
+                    className="w-full bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl px-2.5 py-1.5 text-xs text-slate-900 dark:text-[#F8FAFC] placeholder-slate-400 outline-none focus:border-[#2563EB]"
+                  />
+                </div>
+              </div>
+
+              {/* Quick Presets */}
+              <div className="space-y-1 pt-1 text-[11px] text-slate-600 dark:text-slate-400">
                 <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 dark:hover:text-white">
                   <input
                     type="radio"
-                    name="priceRange"
-                    checked={selectedPriceRange === 'under-2000'}
-                    onChange={() => setSelectedPriceRange('under-2000')}
-                    className="text-blue-600"
+                    name="pricePreset"
+                    checked={pricePreset === 'under-2000'}
+                    onChange={() => {
+                      setPricePreset('under-2000');
+                      setMinPriceInput('');
+                      setMaxPriceInput('');
+                    }}
+                    className="accent-[#2563EB]"
                   />
                   <span>Under ₹2,000</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 dark:hover:text-white">
                   <input
                     type="radio"
-                    name="priceRange"
-                    checked={selectedPriceRange === '2000-2499'}
-                    onChange={() => setSelectedPriceRange('2000-2499')}
-                    className="text-blue-600"
+                    name="pricePreset"
+                    checked={pricePreset === '2000-2499'}
+                    onChange={() => {
+                      setPricePreset('2000-2499');
+                      setMinPriceInput('');
+                      setMaxPriceInput('');
+                    }}
+                    className="accent-[#2563EB]"
                   />
                   <span>₹2,000 – ₹2,499</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer hover:text-slate-900 dark:hover:text-white">
                   <input
                     type="radio"
-                    name="priceRange"
-                    checked={selectedPriceRange === '2500-plus'}
-                    onChange={() => setSelectedPriceRange('2500-plus')}
-                    className="text-blue-600"
+                    name="pricePreset"
+                    checked={pricePreset === '2500-plus'}
+                    onChange={() => {
+                      setPricePreset('2500-plus');
+                      setMinPriceInput('');
+                      setMaxPriceInput('');
+                    }}
+                    className="accent-[#2563EB]"
                   />
                   <span>₹2,500 and above</span>
                 </label>
               </div>
             </div>
 
-            {/* Reset All Filters button */}
-            {hasActiveFilters && (
-              <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button
-                  onClick={handleResetFilters}
-                  className="w-full py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-slate-200 dark:border-slate-700"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Reset All Filters</span>
-                </button>
+              {/* Brand / Tech Stack with scrollbar */}
+            <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-[#25335F]">
+              <div className="flex items-center justify-between">
+                <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  Brand / Tech Stack
+                </label>
+                {selectedTechs.length > 0 && (
+                  <button
+                    onClick={() => setSelectedTechs([])}
+                    className="text-[10px] text-[#2F4BFF] dark:text-[#5B7BFF] hover:underline"
+                  >
+                    Clear ({selectedTechs.length})
+                  </button>
+                )}
               </div>
-            )}
+
+              {/* Scrollable Checkbox List */}
+              <div className="max-h-44 overflow-y-auto space-y-1.5 pr-1.5 scrollbar-thin text-xs">
+                {allAvailableTechs.map((tech) => {
+                  const isChecked = selectedTechs.includes(tech);
+                  return (
+                    <label
+                      key={tech}
+                      className="flex items-center justify-between cursor-pointer group py-1 px-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#16224A] transition-colors"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => handleToggleTech(tech)}
+                          className="w-3.5 h-3.5 rounded text-[#2F4BFF] accent-[#2F4BFF] cursor-pointer"
+                        />
+                        <span className={`transition-colors ${isChecked ? 'font-bold text-[#2F4BFF] dark:text-[#5B7BFF]' : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'}`}>
+                          {tech}
+                        </span>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Apply Filters Button */}
+            <div className="pt-3 border-t border-slate-200 dark:border-[#25335F]">
+              <button
+                onClick={handleApplyFilters}
+                className="pk-btn-primary w-full py-2.5 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white rounded-xl text-xs font-bold transition-all shadow-xs hover:shadow-[0_4px_14px_rgba(47,75,255,0.35)] flex items-center justify-center gap-1.5"
+              >
+                <span>Apply Filters</span>
+              </button>
+            </div>
           </div>
         </aside>
 
-        {/* RIGHT COLUMN: MAIN CONTENT AREA */}
+        {/* RIGHT COLUMN: MAIN CONTENT */}
         <div className="lg:col-span-9 space-y-6">
-          {/* Top Search & Sorting Bar */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 transition-colors">
-            {/* Functional Search Input */}
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by project name, tech stack (Spring Boot, MERN, Python, Java)..."
-                className="w-full pl-9 pr-8 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-2.5 p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+          {/* Header Bar */}
+          <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-[#25335F]">
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+                {totalItems} Products
+              </h1>
+              {hasActiveFilters && (
+                <span className="text-xs text-slate-500 dark:text-[#9AA6C7]">
+                  (Filtered)
+                </span>
               )}
             </div>
 
-            {/* Wishlist Quick Toggle & Sorting */}
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setShowWishlistOnly(!showWishlistOnly)}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl border transition-colors shrink-0 ${
-                  showWishlistOnly
-                    ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-300 dark:border-rose-800 shadow-xs'
-                    : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60'
-                }`}
-                title={showWishlistOnly ? 'Show all projects' : 'Show wishlisted projects only'}
-                aria-pressed={showWishlistOnly}
-              >
-                <Heart className={`w-3.5 h-3.5 ${showWishlistOnly ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}`} />
-                <span className="hidden sm:inline">Wishlist</span>
-                <span className="font-mono text-[11px] tabular-nums">({wishlistCount})</span>
-              </button>
-
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline">Sort:</span>
-              <div className="relative min-w-[170px]">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none focus:border-blue-500 focus:bg-white dark:focus:bg-slate-800 pr-7 appearance-none cursor-pointer"
+            {/* View Mode Switcher */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500 dark:text-[#9AA6C7] font-medium hidden sm:inline">
+                View:
+              </span>
+              <div className="flex items-center p-0.5 bg-white dark:bg-[#0F1830] rounded-xl border border-slate-200 dark:border-[#25335F] shadow-xs">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    viewMode === 'grid'
+                      ? 'bg-[#2F4BFF] text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-700 dark:hover:text-white'
+                  }`}
+                  title="Grid View"
+                  aria-label="Grid View"
                 >
-                  <option value="newest" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Newest First (2026)</option>
-                  <option value="price-asc" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Price: Low to High</option>
-                  <option value="price-desc" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Price: High to Low</option>
-                  <option value="rating" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Highest Rated</option>
-                  <option value="oldest" className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">Oldest First</option>
-                </select>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 pointer-events-none absolute right-2.5 top-3" />
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    viewMode === 'list'
+                      ? 'bg-[#2F4BFF] text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-700 dark:hover:text-white'
+                  }`}
+                  title="List View"
+                  aria-label="List View"
+                >
+                  <List className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Active Filter Pills Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 px-1">
-            <div className="flex items-center gap-2">
-              <span>Showing</span>
-              <span className="font-bold text-slate-900 dark:text-white font-mono tabular-nums">
-                {totalItems > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0}–
-                {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}
-              </span>
-              <span>of {totalItems} academic kits</span>
-            </div>
-
-            {/* Active chips */}
-            <div className="flex flex-wrap items-center gap-1.5">
-              {searchQuery.trim() && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-900/60 shadow-2xs">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                  <span>Highlighting: &ldquo;{searchQuery}&rdquo;</span>
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="hover:text-amber-950 dark:hover:text-amber-100 p-0.5 rounded-xs hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors"
-                    title="Clear search highlight"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              )}
-
-              {showWishlistOnly && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900/60">
-                  <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />
-                  <span>Wishlist Only ({wishlistCount})</span>
-                  <button onClick={() => setShowWishlistOnly(false)} className="hover:text-rose-900 dark:hover:text-rose-200">
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              )}
-
-              {selectedCategory !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60">
-                  <span>Domain: {selectedCategory}</span>
-                  <button onClick={() => setSelectedCategory('All')} className="hover:text-blue-900 dark:hover:text-blue-300">
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              )}
-
-              {selectedTech !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60">
-                  <span>Tech: {selectedTech}</span>
-                  <button onClick={() => setSelectedTech('All')} className="hover:text-blue-900 dark:hover:text-blue-300">
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              )}
-
-              {selectedPriceRange !== 'All' && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-900/60">
-                  <span>Price: {selectedPriceRange}</span>
-                  <button onClick={() => setSelectedPriceRange('All')} className="hover:text-blue-900 dark:hover:text-blue-300">
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              )}
-
-              {hasActiveFilters && (
-                <button
-                  onClick={handleResetFilters}
-                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-xs hover:underline ml-1"
-                >
-                  Clear all
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Project Cards Grid */}
+          {/* Product Items: Grid vs List Layout */}
           {paginatedProjects.length > 0 ? (
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+            viewMode === 'grid' ? (
+              /* GRID VIEW */
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {paginatedProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    searchQuery={searchQuery}
-                  />
+                  <ProjectCard key={project.id} project={project} searchQuery={searchQuery} />
+                ))}
+              </div>
+            ) : (
+              /* LIST VIEW */
+              <div className="space-y-4">
+                {paginatedProjects.map((project) => {
+                  const isPurchased = purchasedProjectIds.includes(project.id);
+                  return (
+                    <div
+                      key={project.id}
+                      className="pk-card-3d group bg-white dark:bg-[#0F1830] rounded-2xl border border-[#E3E8F2] dark:border-[#25335F] hover:border-[#2F4BFF]/80 dark:hover:border-[#5B7BFF] p-4 sm:p-5 flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between transition-all hover:shadow-[0_16px_36px_-6px_rgba(47,75,255,0.22)] dark:hover:shadow-[0_16px_36px_-6px_rgba(91,123,255,0.3)]"
+                    >
+                      <div className="flex items-start gap-4 flex-1 min-w-0">
+                        <div className="w-28 sm:w-36 aspect-[16/9] rounded-xl overflow-hidden bg-[#0B1B3F] shrink-0 border border-[#E3E8F2] dark:border-[#25335F]">
+                          <ProjectIllustration
+                            category={project.category}
+                            primaryLanguage={project.primaryLanguage}
+                            techStack={project.techStack}
+                            title={project.title}
+                            aspect="16:9"
+                            imageUrl={project.imageUrl || project.coverImage}
+                            className="w-full h-full"
+                          />
+                        </div>
+                        <div className="space-y-1.5 min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 text-xs">
+                            <div className="flex items-center text-[#F59E0B]">
+                              <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
+                            </div>
+                            <span className="font-bold text-[#1E293B] dark:text-[#E8ECFA]">
+                              {project.rating ? project.rating.toFixed(1) : '4.9'}
+                            </span>
+                            <span className="text-xs text-[#64748B] dark:text-[#9AA6C7]">
+                              ({project.reviewsCount || 67} reviews)
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/projects/${project.id}`)}
+                            className="text-left font-bold text-sm sm:text-base text-[#0F172A] dark:text-[#E8ECFA] group-hover:text-[#2F4BFF] dark:group-hover:text-[#5B7BFF] transition-colors truncate block w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F4BFF] rounded-sm"
+                          >
+                            <HighlightText text={project.title} query={searchQuery} />
+                          </button>
+                          <p className="text-sm text-[#475569] dark:text-[#9AA6C7] line-clamp-2 leading-relaxed">
+                            <HighlightText text={project.shortDescription} query={searchQuery} />
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {project.techStack.slice(0, 4).map((t) => (
+                              <span
+                                key={t}
+                                className="text-xs font-medium bg-[#EEF2FF] text-[#1E293B] border border-[#C7D2FE] dark:bg-[#16224A] dark:text-[#E8ECFA] dark:border-[#25335F] px-2.5 py-0.5 rounded-md"
+                              >
+                                {t}
+                              </span>
+                            ))}
+                            <span className="text-xs font-medium bg-[#EEF2FF] text-[#1E293B] border border-[#C7D2FE] dark:bg-[#16224A] dark:text-[#E8ECFA] dark:border-[#25335F] px-2.5 py-0.5 rounded-md inline-flex items-center gap-1">
+                              <FileText className="w-3 h-3 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+                              <span>88+ pages report</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-[#E3E8F2] dark:border-[#25335F] gap-3 shrink-0">
+                        <div className="text-left sm:text-right">
+                          <div className="text-lg font-extrabold text-[#0F172A] dark:text-[#E8ECFA] font-mono tabular-nums">
+                            ₹{project.price.toLocaleString('en-IN')}
+                          </div>
+                          {project.originalPrice > project.price && (
+                            <div className="text-xs text-slate-400 dark:text-[#9AA6C7] line-through font-mono tabular-nums">
+                              ₹{project.originalPrice.toLocaleString('en-IN')}
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (isPurchased) navigate('/dashboard/purchases');
+                            else navigate(`/checkout/${project.id}`);
+                          }}
+                          className={`w-full sm:w-auto min-h-[40px] px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 shadow-xs flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F4BFF] ${
+                            isPurchased
+                              ? 'bg-[#16A34A] hover:bg-[#15803D] active:bg-[#14532D] text-white'
+                              : 'bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white hover:shadow-[0_4px_14px_rgba(47,75,255,0.35)]'
+                          }`}
+                        >
+                          {isPurchased ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>Download Kit</span>
+                            </>
+                          ) : (
+                            <>
+                              <ShoppingCart className="w-3.5 h-3.5" />
+                              <span>Add to Cart</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          ) : (
+            /* Empty State */
+            <div className="bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200 dark:border-[#1A2846] p-12 text-center space-y-4 shadow-xs">
+              <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] flex items-center justify-center mx-auto text-slate-400">
+                <Search className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-bold text-base text-slate-900 dark:text-[#F8FAFC]">
+                  No project kits match your criteria
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                  Try clearing some filters or searching for broader terms like "Java", "Python", "React", or "Spring Boot".
+                </p>
+              </div>
+              <button
+                onClick={handleResetFilters}
+                className="px-4 py-2 bg-[#2F4BFF] hover:bg-[#1E36D6] text-white rounded-xl text-xs font-bold shadow-xs inline-flex items-center gap-1.5"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset All Filters</span>
+              </button>
+            </div>
+          )}
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="pt-6 border-t border-slate-200 dark:border-[#1A2846] flex items-center justify-between">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3.5 py-2 bg-white dark:bg-[#0B1329] border border-slate-200 dark:border-[#1A2846] rounded-xl text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 hover:bg-slate-50 dark:hover:bg-[#101C38]"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Previous</span>
+              </button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-8 h-8 rounded-xl text-xs font-bold transition-colors ${
+                      currentPage === page
+                        ? 'bg-[#2F4BFF] text-white shadow-xs'
+                        : 'text-slate-600 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#101C38]'
+                    }`}
+                  >
+                    {page}
+                  </button>
                 ))}
               </div>
 
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
-                  <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                    Page <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">{currentPage}</span> of{' '}
-                    <span className="font-bold text-slate-800 dark:text-slate-200 font-mono">{totalPages}</span>
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    {/* Previous Button */}
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors shadow-xs"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                      <span>Previous</span>
-                    </button>
-
-                    {/* Numbered Page Buttons */}
-                    {Array.from({ length: totalPages }).map((_, index) => {
-                      const pageNum = index + 1;
-                      const isCurrent = pageNum === currentPage;
-                      return (
-                        <button
-                          key={pageNum}
-                          onClick={() => setCurrentPage(pageNum)}
-                          className={`w-8 h-8 rounded-lg text-xs font-mono font-bold transition-colors ${
-                            isCurrent
-                              ? 'bg-blue-600 text-white shadow-xs'
-                              : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
-                          }`}
-                        >
-                          {pageNum}
-                        </button>
-                      );
-                    })}
-
-                    {/* Next Button */}
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 transition-colors shadow-xs"
-                    >
-                      <span>Next</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            /* Empty State */
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-12 text-center max-w-md mx-auto shadow-sm space-y-3 transition-colors">
-              <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto text-slate-400 dark:text-slate-500">
-                <Filter className="w-6 h-6" />
-              </div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                No project kits match your criteria
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                Try relaxing your search keywords, exploring other technology frameworks, or resetting your filters.
-              </p>
               <button
-                onClick={handleResetFilters}
-                className="px-5 py-2.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-sm"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3.5 py-2 bg-white dark:bg-[#0B1329] border border-slate-200 dark:border-[#1A2846] rounded-xl text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 hover:bg-slate-50 dark:hover:bg-[#101C38]"
               >
-                Reset All Filters
+                <span>Next</span>
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           )}

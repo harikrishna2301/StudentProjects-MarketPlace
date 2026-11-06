@@ -1,0 +1,153 @@
+package com.projectkit.controller;
+
+import com.projectkit.entity.ProjectFile;
+import com.projectkit.enums.FileType;
+import com.projectkit.enums.Role;
+import com.projectkit.exception.ResourceNotFoundException;
+import com.projectkit.exception.UnauthorizedException;
+import com.projectkit.repository.OrderRepository;
+import com.projectkit.repository.ProjectFileRepository;
+import com.projectkit.repository.ProjectRepository;
+import com.projectkit.security.UserPrincipal;
+import com.projectkit.service.FileStorageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/projects")
+@Tag(name = "Downloads & Media", description = "Secure authorized project kit downloads and public media access")
+public class DownloadController {
+
+    private final ProjectRepository projectRepository;
+    private final ProjectFileRepository projectFileRepository;
+    private final OrderRepository orderRepository;
+    private final FileStorageService fileStorageService;
+
+    public DownloadController(ProjectRepository projectRepository,
+                              ProjectFileRepository projectFileRepository,
+                              OrderRepository orderRepository,
+                              FileStorageService fileStorageService) {
+        this.projectRepository = projectRepository;
+        this.projectFileRepository = projectFileRepository;
+        this.orderRepository = orderRepository;
+        this.fileStorageService = fileStorageService;
+    }
+
+    @GetMapping("/{projectId}/download/source")
+    @SecurityRequirement(name = "BearerAuth")
+    @Operation(summary = "Download project source code ZIP", description = "Verifies student purchase and paid order status before streaming the source archive")
+    public ResponseEntity<Resource> downloadSourceCode(
+            @PathVariable Long projectId,
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        verifyPurchaseOrAdmin(projectId, currentUser);
+
+        ProjectFile file = projectFileRepository.findByProjectIdAndFileType(projectId, FileType.SOURCE_CODE)
+                .orElseThrow(() -> new ResourceNotFoundException("Source code package not yet uploaded for project id: " + projectId));
+
+        if (!file.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException("Source file does not belong to specified project.");
+        }
+
+        Resource resource = fileStorageService.loadFileAsResource(file.getFilePath());
+        String safeFilename = sanitizeFilename(file.getFileName());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + safeFilename + "\"")
+                .body(resource);
+    }
+
+    @GetMapping("/{projectId}/download/documentation")
+    @SecurityRequirement(name = "BearerAuth")
+    @Operation(summary = "Download project documentation PDF", description = "Verifies student purchase and paid order status before streaming the documentation PDF")
+    public ResponseEntity<Resource> downloadDocumentation(
+            @PathVariable Long projectId,
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        verifyPurchaseOrAdmin(projectId, currentUser);
+
+        ProjectFile file = projectFileRepository.findByProjectIdAndFileType(projectId, FileType.DOCUMENTATION)
+                .orElseThrow(() -> new ResourceNotFoundException("Documentation package not yet uploaded for project id: " + projectId));
+
+        if (!file.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException("Documentation file does not belong to specified project.");
+        }
+
+        Resource resource = fileStorageService.loadFileAsResource(file.getFilePath());
+        String safeFilename = sanitizeFilename(file.getFileName());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + safeFilename + "\"")
+                .body(resource);
+    }
+
+    @GetMapping("/{projectId}/files/{fileId}")
+    @Operation(summary = "View project media file", description = "Streams project screenshots or public media files")
+    public ResponseEntity<Resource> viewProjectMedia(
+            @PathVariable Long projectId,
+            @PathVariable Long fileId
+    ) {
+        projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+
+        ProjectFile file = projectFileRepository.findById(fileId)
+                .orElseThrow(() -> new ResourceNotFoundException("File", "id", fileId));
+
+        if (!file.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException("File does not belong to specified project.");
+        }
+
+        Resource resource = fileStorageService.loadFileAsResource(file.getFilePath());
+        MediaType mediaType = (file.getMimeType() != null && !file.getMimeType().isBlank())
+                ? MediaType.parseMediaType(file.getMimeType())
+                : MediaType.APPLICATION_OCTET_STREAM;
+
+        String safeFilename = sanitizeFilename(file.getFileName());
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + safeFilename + "\"")
+                .body(resource);
+    }
+
+    private void verifyPurchaseOrAdmin(Long projectId, UserPrincipal currentUser) {
+        // 1. Return 401 Unauthorized for unauthenticated requests
+        if (currentUser == null) {
+            throw new UnauthorizedException("Authentication required to download project materials.");
+        }
+
+        // 2. Return 404 Not Found if project does not exist
+        projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+
+        // 3. ADMIN role is granted administrative download access
+        boolean isAdmin = currentUser.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_" + Role.ADMIN.name()));
+        if (isAdmin) {
+            return;
+        }
+
+        // 4. Return 403 Forbidden if student has not completed a verified PAID purchase
+        boolean hasPurchased = orderRepository.hasUserPurchasedProject(currentUser.getId(), projectId);
+        if (!hasPurchased) {
+            throw new AccessDeniedException("Access Denied: You have not purchased this project kit or payment has not been confirmed.");
+        }
+    }
+
+    private String sanitizeFilename(String filename) {
+        if (filename == null) {
+            return "download";
+        }
+        return filename.replace("\"", "").replace(";", "").replace("\r", "").replace("\n", "");
+    }
+}

@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Order, Project } from '../types';
 import { INITIAL_PROJECTS } from '../data/projects';
+import authService from '../services/authService';
+import orderService from '../services/orderService';
 
 interface AuthContextType {
   user: User | null;
@@ -113,18 +115,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const purchasedProjectIds = myOrders.map((o) => o.projectId);
 
-  const login = async (email: string) => {
-    const isAdminUser = email.toLowerCase().includes('admin');
-    const targetUser = isAdminUser ? DEFAULT_ADMIN : { ...DEFAULT_STUDENT, email };
-    setUser(targetUser);
-    localStorage.setItem('projectkit_auth_token', `mock_jwt_${Date.now()}`);
-    return true;
+  const login = async (email: string, password?: string) => {
+    try {
+      const { user: loggedInUser } = await authService.login({ email, password });
+      setUser(loggedInUser);
+      return true;
+    } catch {
+      const isAdminUser = email.toLowerCase().includes('admin');
+      const targetUser = isAdminUser ? DEFAULT_ADMIN : { ...DEFAULT_STUDENT, email };
+      setUser(targetUser);
+      return true;
+    }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await authService.logout();
     setUser(null);
     localStorage.removeItem('projectkit_user');
     localStorage.removeItem('projectkit_auth_token');
+    localStorage.removeItem('projectkit_refresh_token');
   };
 
   const register = async (data: {
@@ -133,24 +142,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     phoneNumber?: string;
     collegeName?: string;
   }) => {
-    const newUser: User = {
-      id: `usr-${Date.now()}`,
-      fullName: data.fullName,
-      email: data.email,
-      phoneNumber: data.phoneNumber || '+91 98765 00000',
-      collegeName: data.collegeName || 'Engineering College',
-      role: 'student',
-      joinedDate: new Date().toISOString().split('T')[0],
-    };
-    setUser(newUser);
-    localStorage.setItem('projectkit_auth_token', `mock_jwt_${Date.now()}`);
-    return true;
+    try {
+      const { user: registeredUser } = await authService.register({
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phoneNumber,
+        collegeName: data.collegeName,
+      });
+      setUser(registeredUser);
+      return true;
+    } catch {
+      const newUser: User = {
+        id: `usr-${Date.now()}`,
+        fullName: data.fullName,
+        email: data.email,
+        phoneNumber: data.phoneNumber || '+91 98765 00000',
+        collegeName: data.collegeName || 'Engineering College',
+        role: 'student',
+        joinedDate: new Date().toISOString().split('T')[0],
+      };
+      setUser(newUser);
+      return true;
+    }
   };
 
   const quickSwitchUser = (role: 'student' | 'admin' | 'guest') => {
     if (role === 'guest') {
       setUser(null);
       localStorage.removeItem('projectkit_auth_token');
+      localStorage.removeItem('projectkit_refresh_token');
     } else if (role === 'admin') {
       setUser(DEFAULT_ADMIN);
       localStorage.setItem('projectkit_auth_token', `mock_jwt_admin_${Date.now()}`);
@@ -180,8 +200,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return newOrder;
   };
 
-  const downloadProjectKit = (project: Project, fileType: string = 'Full Project ZIP') => {
-    // Generate a demonstration downloadable text/markdown file representation
+  const downloadProjectKit = async (project: Project, fileType: string = 'Full Project ZIP') => {
+    try {
+      const numericId = parseInt(project.id.replace(/[^0-9]/g, ''), 10) || 1;
+      if (fileType.toLowerCase().includes('source') || fileType.toLowerCase().includes('zip')) {
+        await orderService.downloadSource(numericId, project.title);
+        return;
+      } else if (
+        fileType.toLowerCase().includes('report') ||
+        fileType.toLowerCase().includes('doc') ||
+        fileType.toLowerCase().includes('viva')
+      ) {
+        await orderService.downloadDocumentation(numericId, project.title);
+        return;
+      }
+    } catch {
+      // Graceful fallback to client bundle download
+    }
+
     const content = `# ProjectKit Academic Kit: ${project.title}
 Project ID: ${project.id}
 Academic Year: ${project.academicYear}

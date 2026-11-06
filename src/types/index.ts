@@ -39,6 +39,8 @@ export interface Project {
   downloadsCount: number;
   academicYear: string;
   colorTheme: string;
+  imageUrl?: string;
+  coverImage?: string;
 }
 
 export interface Category {
@@ -60,6 +62,7 @@ export interface User {
   role: 'student' | 'admin';
   avatar?: string;
   joinedDate: string;
+  token?: string;
 }
 
 export interface Order {

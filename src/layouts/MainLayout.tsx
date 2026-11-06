@@ -1,22 +1,33 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { CartDrawer } from '../components/CartDrawer';
 import { useAuth } from '../context/AuthContext';
-import { Info, X, Shield, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 export const MainLayout: React.FC = () => {
-  const [showDemoBanner, setShowDemoBanner] = useState(true);
+  const [showDemoBanner, setShowDemoBanner] = useState(false);
   const { user, isAdmin, quickSwitchUser } = useAuth();
+  const location = useLocation();
+
+  const isHomePage = location.pathname === '/';
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans">
-      {/* Slim notice banner: single-line promotional/evaluation disclosure */}
+    <div className="min-h-screen flex flex-col bg-[#F5F7FB] dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] font-sans transition-colors duration-200 relative">
+      {/* Accessibility Skip-To-Content Link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] px-4 py-2.5 bg-[#2F4BFF] text-white font-semibold rounded-xl shadow-xl outline-none"
+      >
+        Skip to main content
+      </a>
+
+      {/* Optional Slim Demo Role Switcher (Non-intrusive) */}
       {showDemoBanner && (
         <aside
           aria-label="Frontend Demo Notice"
-          className="bg-slate-900 text-slate-300 px-4 py-2 text-xs border-b border-slate-800 transition-all"
+          className="bg-slate-900 text-slate-300 px-4 py-1.5 text-xs border-b border-slate-800 transition-all z-40 relative"
         >
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 truncate">
@@ -52,11 +63,17 @@ export const MainLayout: React.FC = () => {
         </aside>
       )}
 
-      {/* Main Top Navbar */}
+      {/* Floating Centered Frosted Pill Navbar */}
       <Navbar />
 
+      {/* Cart Drawer */}
+      <CartDrawer />
+
       {/* Main Page Content */}
-      <main className="flex-1">
+      <main
+        id="main-content"
+        className={`flex-1 ${isHomePage ? '' : 'pt-24 sm:pt-28'}`}
+      >
         <Outlet />
       </main>
 
@@ -65,3 +82,5 @@ export const MainLayout: React.FC = () => {
     </div>
   );
 };
+
+export default MainLayout;

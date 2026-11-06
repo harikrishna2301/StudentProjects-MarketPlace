@@ -4,30 +4,621 @@
 
 @theme {
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-inter: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Theme tokens */
+  --color-primary-navy: var(--primary-deep);
+  --color-primary-accent: var(--primary-accent);
+  --color-primary-accent-hover: var(--primary-accent-hover);
+  --color-secondary-violet: var(--secondary-violet);
+
+  --color-bg-page: var(--bg-page);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-elevated: var(--bg-surface-elevated);
+  --color-bg-surface-subtle: var(--bg-surface-subtle);
+
+  --color-border-subtle: var(--border-subtle);
+  --color-border-hover: var(--border-hover);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-error: var(--status-error);
+  --color-status-info: var(--status-info);
 }
 
+/* =========================================================================
+   LIGHT THEME DESIGN TOKENS (Premium Deep Navy, Royal Blue & Soft Violet)
+   ========================================================================= */
 :root {
   color-scheme: light;
+
+  /* Primary Branding */
+  --primary-deep: #0B1B3F;
+  --primary-accent: #2F4BFF;
+  --primary-accent-hover: #1E36D6;
+  --secondary-violet: #6C5CE7;
+  --secondary-violet-hover: #5B4BD8;
+
+  /* Surfaces */
+  --bg-page: #F5F7FB;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #FFFFFF;
+  --bg-surface-subtle: #F0F4FA;
+  --bg-navbar: rgba(255, 255, 255, 0.94);
+  --bg-input: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #FAFCFF;
+
+  /* Borders */
+  --border-subtle: #E3E8F2;
+  --border-card: #E3E8F2;
+  --border-hover: #2F4BFF;
+  --border-accent: rgba(47, 75, 255, 0.25);
+  --border-violet: rgba(108, 92, 231, 0.25);
+
+  /* Typography (WCAG AA compliant) */
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #5B6478;
+  --text-accent: #2F4BFF;
+  --text-accent-hover: #1E36D6;
+  --text-kicker: #2F4BFF;
+
+  /* Status Colors */
+  --status-success: #16A34A;
+  --status-warning: #F59E0B;
+  --status-error: #DC2626;
+  --status-info: #4F46E5;
+
+  /* Shadows & Depth */
+  --shadow-sm: 0 1px 2px 0 rgba(11, 27, 63, 0.05);
+  --shadow-card: 0 2px 8px -2px rgba(11, 27, 63, 0.06), 0 1px 3px -1px rgba(11, 27, 63, 0.04);
+  --shadow-card-hover: 0 16px 32px -6px rgba(47, 75, 255, 0.12), 0 4px 12px -2px rgba(11, 27, 63, 0.06);
+  --shadow-glow: 0 0 24px rgba(47, 75, 255, 0.18);
+  --shadow-navbar: 0 1px 3px 0 rgba(11, 27, 63, 0.05);
+
+  --grid-dot-color: rgba(47, 75, 255, 0.07);
 }
 
+/* =========================================================================
+   DARK THEME DESIGN TOKENS (Obsidian Navy, Luminous Royal Blue & Violet)
+   ========================================================================= */
 html.dark {
   color-scheme: dark;
+
+  /* Primary Branding */
+  --primary-deep: #070D1F;
+  --primary-accent: #5B7BFF;
+  --primary-accent-hover: #7C95FF;
+  --secondary-violet: #8C7CFF;
+  --secondary-violet-hover: #A093FF;
+
+  /* Surfaces */
+  --bg-page: #070D1F;
+  --bg-surface: #0F1830;
+  --bg-surface-elevated: #16224A;
+  --bg-surface-subtle: #0B132B;
+  --bg-navbar: rgba(7, 13, 31, 0.94);
+  --bg-input: #0A1226;
+  --bg-card: #0F1830;
+  --bg-card-hover: #14203D;
+
+  /* Borders */
+  --border-subtle: #25335F;
+  --border-card: #25335F;
+  --border-hover: #5B7BFF;
+  --border-accent: rgba(91, 123, 255, 0.35);
+  --border-violet: rgba(140, 124, 255, 0.35);
+
+  /* Typography (WCAG AA compliant) */
+  --text-primary: #E8ECFA;
+  --text-secondary: #CBD5E1;
+  --text-muted: #9AA6C7;
+  --text-accent: #5B7BFF;
+  --text-accent-hover: #7C95FF;
+  --text-kicker: #5B7BFF;
+
+  /* Status Colors */
+  --status-success: #16A34A;
+  --status-warning: #F59E0B;
+  --status-error: #DC2626;
+  --status-info: #4F46E5;
+
+  /* Shadows & Depth */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.55), 0 0 1px 1px rgba(37, 51, 95, 0.4);
+  --shadow-card-hover: 0 20px 40px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(91, 123, 255, 0.45);
+  --shadow-glow: 0 0 32px rgba(91, 123, 255, 0.28);
+  --shadow-navbar: 0 4px 20px rgba(0, 0, 0, 0.6);
+
+  --grid-dot-color: rgba(91, 123, 255, 0.1);
 }
 
+html,
 body {
   font-family: var(--font-sans);
-  background-color: #f8fafc;
-  color: #334155;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
-html.dark body {
-  background-color: #0f172a;
-  color: #cbd5e1;
-}
-
-/* Custom smooth scroll and transitions */
 html {
   scroll-behavior: smooth;
+}
+
+section[id],
+article[id],
+[id] {
+  scroll-margin-top: 6rem;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================================
+   3D CARD HOVER, LIGHTING & DEPTH SYSTEM
+   ========================================================================= */
+
+/* 3D Perspective Container */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Project Card with 3D Tilt on Hover */
+.pk-card-3d {
+  position: relative;
+  background-color: var(--bg-card);
+  border: 1px solid #E3E8F2;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px -2px rgba(11, 27, 63, 0.06), 0 1px 3px -1px rgba(11, 27, 63, 0.04);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease,
+              background-color 0.25s ease;
+  transform: translateY(0) rotateX(0) rotateY(0);
+}
+
+html.dark .pk-card-3d {
+  border-color: #25335F;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.55), 0 0 1px 1px rgba(37, 51, 95, 0.4);
+}
+
+.pk-card-3d:hover {
+  background-color: var(--bg-card-hover);
+  border-color: rgba(47, 75, 255, 0.85);
+  box-shadow: 0 16px 36px -6px rgba(47, 75, 255, 0.22), 0 0 0 1px rgba(47, 75, 255, 0.35);
+  transform: translateY(-5px) rotateX(2.5deg) rotateY(-1.5deg);
+}
+
+html.dark .pk-card-3d:hover {
+  border-color: rgba(91, 123, 255, 0.9);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(91, 123, 255, 0.45);
+}
+
+/* Elevated Surface */
+.pk-surface-elevated {
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Background Grids & Radial Glows */
+.bg-tech-grid {
+  background-image: radial-gradient(circle at 1px 1px, var(--grid-dot-color) 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+.bg-hero-glow {
+  background: radial-gradient(circle at 50% 20%, rgba(47, 75, 255, 0.15) 0%, rgba(108, 92, 231, 0.08) 45%, transparent 70%);
+}
+
+html.dark .bg-hero-glow {
+  background: radial-gradient(circle at 50% 15%, rgba(91, 123, 255, 0.18) 0%, rgba(140, 124, 255, 0.08) 50%, transparent 75%);
+}
+
+/* Floating Animation for Hero Layered Mockup Cards */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.5deg);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(8px) rotate(-0.5deg);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 7s ease-in-out infinite;
+}
+
+/* =========================================================================
+   BUTTON DESIGN SYSTEM (Press depth & soft shine sweep)
+   ========================================================================= */
+
+/* Primary Button with shine sweep */
+.pk-btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--primary-accent);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+  box-shadow: 0 2px 4px rgba(47, 75, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.2s ease;
+}
+
+.pk-btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.65s ease;
+}
+
+.pk-btn-primary:hover {
+  background-color: var(--primary-accent-hover);
+  box-shadow: 0 6px 20px rgba(47, 75, 255, 0.35);
+  transform: translateY(-1.5px);
+}
+
+.pk-btn-primary:hover::before {
+  transform: translateX(100%);
+}
+
+.pk-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(47, 75, 255, 0.2);
+}
+
+.pk-btn-primary:focus-visible {
+  outline: 2px solid var(--primary-accent);
+  outline-offset: 2px;
+}
+
+/* Secondary Button */
+.pk-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pk-btn-secondary:hover {
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--border-hover);
+  color: var(--text-accent);
+  transform: translateY(-1px);
+}
+
+.pk-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Ghost Button */
+.pk-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.pk-btn-ghost:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-subtle);
+}
+
+/* Form Controls */
+.pk-input {
+  width: 100%;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pk-input:focus {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(47, 75, 255, 0.15);
+}
+
+.pk-input::placeholder {
+  color: var(--text-muted);
+}
+
+.pk-select {
+  width: 100%;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 0.625rem 2rem 0.625rem 0.875rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pk-select:focus {
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(47, 75, 255, 0.15);
+}
+
+/* Section Dividers */
+.pk-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-subtle) 20%, var(--border-subtle) 80%, transparent);
+}
+
+/* Skeleton Loading Shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.pk-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface-subtle) 25%,
+    rgba(47, 75, 255, 0.06) 37%,
+    var(--bg-surface-subtle) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+html.dark .pk-skeleton {
+  background: linear-gradient(
+    90deg,
+    #131E38 25%,
+    rgba(91, 123, 255, 0.12) 37%,
+    #131E38 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Hero Staggered Entrance Animations & Word-by-Word Reveal */
+@keyframes wordFadeRise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes succeedShimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-word-1 {
+  animation: wordFadeRise 0.6s ease-out 0.05s both;
+}
+
+.animate-word-2 {
+  animation: wordFadeRise 0.6s ease-out 0.13s both;
+}
+
+.animate-word-3 {
+  animation: wordFadeRise 0.6s ease-out 0.21s both;
+}
+
+.animate-shimmer-succeed {
+  background: linear-gradient(90deg, #FFFFFF 0%, #A5B4FF 50%, #FFFFFF 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  animation: succeedShimmer 6s ease-in-out infinite;
+}
+
+@keyframes heroFadeRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-eyebrow {
+  animation: heroFadeRise 0.5s ease-out 0.02s both;
+}
+
+.animate-hero-subtext {
+  animation: heroFadeRise 0.6s ease-out 0.35s both;
+}
+
+.animate-hero-buttons {
+  animation: heroFadeRise 0.6s ease-out 0.48s both;
+}
+
+.animate-hero-bottom {
+  animation: heroFadeRise 0.6s ease-out 0.60s both;
+}
+
+.animate-hero-1 {
+  animation: heroFadeRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.animate-hero-2 {
+  animation: heroFadeRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+}
+
+.animate-hero-3 {
+  animation: heroFadeRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.38s both;
+}
+
+.animate-hero-4 {
+  animation: heroFadeRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both;
+}
+
+.animate-hero-5 {
+  animation: heroFadeRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+}
+
+/* Floating Frosted Pill Navbar Mount Slide Down (No -translate-x-1/2 to avoid mobile shift) */
+@keyframes navSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-nav-slide-down {
+  animation: navSlideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Subtle Slow Zoom on Hero Background Image (Scale 1 to 1.06 over 20s) */
+@keyframes heroSlowZoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.06);
+  }
+}
+
+.animate-hero-zoom {
+  animation: heroSlowZoom 20s ease-in-out infinite alternate;
+}
+
+/* 3D Perspective Tilt on Hover */
+.pk-card-tilt {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pk-card-tilt:hover {
+  transform: perspective(1000px) translateY(-5px) rotateX(2deg) rotateY(-2deg);
+}
+
+/* Accessibility: Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .pk-card-3d:hover,
+  .pk-card-tilt:hover,
+  .animate-hero-zoom {
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .animate-float-slow,
+  .animate-float-reverse,
+  .animate-word-1,
+  .animate-word-2,
+  .animate-word-3,
+  .animate-hero-eyebrow,
+  .animate-hero-subtext,
+  .animate-hero-buttons,
+  .animate-hero-bottom,
+  .animate-nav-slide-down {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .animate-shimmer-succeed {
+    animation: none !important;
+    background: none !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+  }
 }

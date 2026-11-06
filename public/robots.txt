@@ -1,0 +1,37 @@
+# ===================================================================
+# ProjectKit Search Engine Crawl Policy (robots.txt)
+# https://projectkit.in
+# ===================================================================
+
+User-agent: *
+
+# Public Storefront & Academic Catalog Pages
+Allow: /
+Allow: /projects
+Allow: /projects/*
+Allow: /about
+Allow: /terms
+Allow: /privacy
+Allow: /cookies
+Allow: /refund-policy
+Allow: /copyright
+Allow: /grievance
+
+# Private Student, Admin, Checkout & Authenticated Areas (No indexing)
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /student
+Disallow: /student/*
+Disallow: /checkout
+Disallow: /checkout/*
+Disallow: /payment
+Disallow: /payment/*
+Disallow: /login
+Disallow: /register
+Disallow: /api/
+Disallow: /uploads/
+
+# Sitemap Location
+Sitemap: https://projectkit.in/sitemap.xml

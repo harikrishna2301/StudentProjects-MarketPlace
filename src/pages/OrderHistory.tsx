@@ -55,12 +55,12 @@ Support: help@projectkit.edu
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-[#25335F] pb-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-[#E8ECFA]">
             Order & License History
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-[#9AA6C7] mt-1">
             Complete transaction records, tax invoices, and verification references.
           </p>
         </div>
@@ -72,17 +72,17 @@ Support: help@projectkit.edu
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search orders..."
-            className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg outline-none text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:border-blue-500"
+            className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-[#070D1F] border border-slate-300 dark:border-[#25335F] rounded-xl outline-none text-slate-800 dark:text-[#E8ECFA] placeholder-slate-400 dark:placeholder-[#64748B] focus:border-[#2F4BFF]"
           />
-          <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute left-2.5 top-2.5" />
+          <Search className="w-3.5 h-3.5 text-slate-400 dark:text-[#9AA6C7] absolute left-2.5 top-2.5" />
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-[#0F1830] rounded-2xl border border-slate-200 dark:border-[#25335F] shadow-xs overflow-hidden transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
+              <tr className="bg-slate-50 dark:bg-[#070D1F] border-b border-slate-200 dark:border-[#25335F] text-slate-500 dark:text-[#9AA6C7] uppercase text-[10px] tracking-wider">
                 <th className="py-3 px-4 font-semibold">Order Number</th>
                 <th className="py-3 px-4 font-semibold">Project Title</th>
                 <th className="py-3 px-4 font-semibold">Date</th>
@@ -92,22 +92,22 @@ Support: help@projectkit.edu
                 <th className="py-3 px-4 font-semibold text-right">Invoice</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100 dark:divide-[#25335F]">
               {filteredOrders.length > 0 ? (
                 filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-medium text-slate-800 dark:text-slate-300">
+                  <tr key={order.id} className="hover:bg-slate-50/80 dark:hover:bg-[#16224A]/40 transition-colors">
+                    <td className="py-3.5 px-4 font-mono font-medium text-slate-800 dark:text-[#CBD5E1]">
                       {order.orderNumber}
                     </td>
                     <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-900 dark:text-white">{order.projectTitle}</div>
-                      <div className="text-[11px] text-slate-400 dark:text-slate-500">{order.category}</div>
+                      <div className="font-semibold text-slate-900 dark:text-[#E8ECFA]">{order.projectTitle}</div>
+                      <div className="text-[11px] text-slate-400 dark:text-[#9AA6C7]">{order.category}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500 dark:text-slate-400 font-mono tabular-nums">
+                    <td className="py-3.5 px-4 text-slate-500 dark:text-[#9AA6C7] font-mono tabular-nums">
                       {order.date}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">{order.paymentMethod}</td>
-                    <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-white tabular-nums">
+                    <td className="py-3.5 px-4 text-slate-600 dark:text-[#CBD5E1]">{order.paymentMethod}</td>
+                    <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-[#E8ECFA] tabular-nums">
                       ₹{order.amount.toLocaleString('en-IN')}
                     </td>
                     <td className="py-3.5 px-4 text-center">
@@ -119,7 +119,7 @@ Support: help@projectkit.edu
                     <td className="py-3.5 px-4 text-right">
                       <button
                         onClick={() => downloadInvoice(order)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-xs transition-colors font-medium"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-slate-600 dark:text-[#CBD5E1] hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] hover:bg-slate-100 dark:hover:bg-[#16224A] rounded-lg text-xs transition-colors font-medium border border-transparent hover:border-slate-200 dark:hover:border-[#25335F]"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>Receipt</span>
@@ -129,7 +129,7 @@ Support: help@projectkit.edu
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-400 dark:text-slate-500">
+                  <td colSpan={7} className="py-8 text-center text-slate-400 dark:text-[#64748B]">
                     No orders match your search term.
                   </td>
                 </tr>

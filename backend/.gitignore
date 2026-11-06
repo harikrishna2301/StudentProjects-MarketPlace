@@ -1,0 +1,60 @@
+# ===================================================================
+# ProjectKit Spring Boot Backend .gitignore
+# ===================================================================
+
+# Maven Build Target
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse IDE
+.project
+.classpath
+.settings/
+.factorypath
+bin/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# NetBeans IDE
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.built-jar.properties
+
+# VS Code
+.vscode/
+
+# Local Environment Variables & Secrets
+.env
+.env.local
+*.local
+!*.env.example
+
+# Logs & Runtime Dumps
+*.log
+logs/
+hs_err_pid*
+replay_pid*
+
+# Uploads & Storage Deliverables
+uploads/
+*.zip
+*.pdf
+
+# OS Files
+.DS_Store
+Thumbs.db

@@ -1,49 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useProjects } from '../context/ProjectsContext';
 import { ProjectCard } from '../components/ProjectCard';
 import { CategoryCard } from '../components/CategoryCard';
-import { SearchBar } from '../components/SearchBar';
-import { ProjectIllustration } from '../components/ProjectIllustration';
+import { SEOHead } from '../components/SEOHead';
 import {
-  Code2,
-  FileCheck2,
-  HelpCircle,
-  Database,
-  Layers,
-  Sparkles,
   ArrowRight,
-  GraduationCap,
-  Users,
-  CheckCircle2,
-  Terminal,
   ShieldCheck,
-  Star,
-  ExternalLink,
+  CheckCircle2,
+  FileText,
   BookOpen,
-  Award,
+  Sparkles,
   ChevronRight,
-  Laptop,
-  FolderArchive,
-  Search,
+  Award,
+  Layers,
+  HelpCircle,
+  Code2,
+  Lock,
+  Cpu,
 } from 'lucide-react';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { projects, categories } = useProjects();
 
-  // Active filter for featured showcase
   const [featuredDomain, setFeaturedDomain] = useState<string>('All');
-  // Interactive inspector preview tab on hero
-  const [inspectorTab, setInspectorTab] = useState<'code' | 'docs' | 'viva'>('code');
 
-  const sampleHeroProject = projects.find((p) => p.id === 'proj-003') || projects[0];
-
-  // Auto-scroll to #popular-categories if navigated with hash
-  React.useEffect(() => {
-    if (window.location.hash === '#popular-categories') {
+  // Handle smooth scroll if navigated with hash
+  useEffect(() => {
+    if (window.location.hash) {
+      const id = window.location.hash.replace('#', '');
       setTimeout(() => {
-        const el = document.getElementById('popular-categories');
+        const el = document.getElementById(id);
         if (el) {
           el.scrollIntoView({ behavior: 'smooth' });
         }
@@ -51,769 +39,524 @@ export const Home: React.FC = () => {
     }
   }, []);
 
-  const handleHeroSearch = (query: string, category?: string) => {
-    let url = `/projects?search=${encodeURIComponent(query)}`;
-    if (category) {
-      url += `&category=${encodeURIComponent(category)}`;
+  const scrollToHowItWorks = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const el = document.getElementById('how-it-works');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
     }
-    navigate(url);
   };
 
-  // Featured projects filtered by domain tab
+  // Filtered featured projects
   const filteredFeatured = projects
     .filter((p) => {
-      if (featuredDomain === 'All') return p.featured;
+      if (featuredDomain === 'All') return true;
       return p.category.toLowerCase().includes(featuredDomain.toLowerCase());
     })
-    .slice(0, 3);
+    .slice(0, 6);
 
-  const recentProjects = [...projects].reverse().slice(0, 3);
+  // Popular category quick links for the hero bottom strip
+  const popularCategories = [
+    { name: 'Web Apps', query: 'Web Development' },
+    { name: 'Java', query: 'Java & Spring Boot' },
+    { name: 'Python', query: 'Python Full Stack' },
+    { name: 'AI/ML', query: 'AI & Machine Learning' },
+    { name: 'IoT', query: 'IoT & Embedded' },
+  ];
 
   return (
-    <div className="space-y-16 sm:space-y-24 pb-20">
-      {/* 1. HERO SECTION */}
-      <section className="relative pt-10 sm:pt-16 pb-12 sm:pb-20 bg-gradient-to-b from-white via-slate-50/50 to-white dark:from-slate-950 dark:via-slate-900/60 dark:to-slate-950 border-b border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
-        {/* Subtle engineering blueprint grid pattern */}
+    <div className="bg-[#F5F7FB] dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] transition-colors duration-200">
+      <SEOHead
+        title="ProjectKit — Verified Student Projects Marketplace | B.Tech & Engineering"
+        description="Verified B.Tech final year project kits with source code, IEEE standard reports, and viva voce cheat sheets at student-friendly prices."
+        canonicalPath="/"
+      />
+
+      {/* =========================================================================
+          1. FULL-VIEWPORT HERO SECTION (min-height: 100svh)
+          ========================================================================= */}
+      <section
+        aria-label="Hero Introduction"
+        className="relative w-full min-h-[100svh] flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0B1B3F] to-[#16224A]"
+      >
+        {/* Full-viewport Hero Background Image (with slow subtle zoom & responsive focal point) */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
+          <picture>
+            <source srcSet="/hero-bg.webp" type="image/webp" />
+            <img
+              src="/hero-bg.jpg"
+              alt=""
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-full object-cover object-[70%_center] sm:object-center animate-hero-zoom"
+            />
+          </picture>
+        </div>
+
+        {/* Readability Overlays: Navy gradient (0.55 top/left, 0.25 middle, 0.60 bottom) */}
+        {/* 1. Vertical Navy Gradient: Keeps text readable while girl and laptop remain clearly visible */}
         <div
-          className="absolute inset-0 opacity-[0.035] dark:opacity-[0.08] pointer-events-none"
+          className="absolute inset-0 pointer-events-none z-[1]"
           style={{
-            backgroundImage:
-              'radial-gradient(circle at 1px 1px, #0f172a 1px, transparent 0)',
-            backgroundSize: '24px 24px',
+            background:
+              'linear-gradient(to bottom, rgba(7,13,31,0.55) 0%, rgba(7,13,31,0.25) 45%, rgba(7,13,31,0.60) 100%)',
           }}
         />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-            {/* Left Column: Heading, Subtitle & Commercial Search Bar */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Trust Pill */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold text-blue-700 dark:text-blue-400 bg-blue-50/90 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900/60 rounded-full shadow-xs">
-                <span className="flex items-center text-amber-500">
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                </span>
-                <span className="text-slate-800 dark:text-slate-200 font-bold ml-0.5">4.9/5</span>
-                <span className="text-slate-400 dark:text-slate-500">·</span>
-                <span>12,000+ B.Tech Students Guided</span>
-              </div>
+        {/* 2. Horizontal Left Gradient: Enhances text legibility on desktop while leaving the right half open for the girl */}
+        <div
+          className="absolute inset-0 pointer-events-none z-[1]"
+          style={{
+            background:
+              'linear-gradient(to right, rgba(7,13,31,0.60) 0%, rgba(7,13,31,0.40) 35%, rgba(7,13,31,0.10) 65%, transparent 100%)',
+          }}
+        />
 
-              {/* Main Heading */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.12] text-balance">
-                Build Your Future With The{' '}
-                <span className="text-blue-600 dark:text-blue-400">Right Project.</span>
-              </h1>
+        {/* 3. Subtle ambient glow */}
+        <div
+          className="absolute inset-0 pointer-events-none z-[1]"
+          style={{
+            background:
+              'radial-gradient(circle at 35% 20%, rgba(47,75,255,0.18) 0%, transparent 65%)',
+          }}
+        />
 
-              {/* Subtitle */}
-              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
-                Explore ready-to-use engineering projects with source code, documentation and implementation guides.
-              </p>
+        {/* Hero Content: Desktop left-aligned (max-w-[560px]), Mobile centered upper area */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[13vh] sm:pt-[16vh] pb-8 flex-1 flex flex-col justify-start">
+          <div className="max-w-[560px] text-center lg:text-left mx-auto lg:mx-0 flex flex-col items-center lg:items-start">
+            {/* Eyebrow Frosted Pill */}
+            <div className="animate-hero-eyebrow mb-5">
+              <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-[rgba(255,255,255,0.14)] border border-[rgba(255,255,255,0.35)] backdrop-blur-[8px] text-[11px] sm:text-xs font-semibold text-[#FFFFFF] tracking-wide shadow-xs">
+                Ready-to-submit final year projects
+              </span>
+            </div>
 
-              {/* Professional Search Bar */}
-              <div className="pt-2 max-w-2xl space-y-3">
-                <SearchBar
-                  size="large"
-                  onSearch={handleHeroSearch}
-                  placeholder="Search Spring Boot, MERN, Python AI, Java MySQL..."
-                />
+            {/* H1: Build. Submit. Succeed. (Word-by-word reveal) */}
+            <h1
+              className="font-inter font-bold text-[clamp(2.1rem,4.8vw,3.25rem)] leading-[1.12] tracking-[-0.025em] text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mb-4"
+              style={{ textWrap: 'balance' }}
+            >
+              <span className="animate-word-1 inline-block text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mr-2.5">Build.</span>
+              <span className="animate-word-2 inline-block text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mr-2.5">Submit.</span>
+              <span className="animate-word-3 inline-block text-[#A5B4FF] animate-shimmer-succeed [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">Succeed.</span>
+            </h1>
 
-                {/* Popular Keywords Strip */}
-                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">Popular searches:</span>
-                  <button
-                    onClick={() => handleHeroSearch('Spring Boot')}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
-                  >
-                    Spring Boot
-                  </button>
-                  <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
-                  <button
-                    onClick={() => handleHeroSearch('MERN')}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
-                  >
-                    MERN Stack
-                  </button>
-                  <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
-                  <button
-                    onClick={() => handleHeroSearch('Machine Learning')}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
-                  >
-                    Machine Learning
-                  </button>
-                  <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
-                  <button
-                    onClick={() => handleHeroSearch('Java')}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
-                  >
-                    Java
-                  </button>
-                  <span aria-hidden="true" className="text-slate-300 dark:text-slate-700">·</span>
-                  <button
-                    onClick={() => handleHeroSearch('IoT')}
-                    className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline font-medium"
-                  >
-                    IoT
-                  </button>
-                </div>
-              </div>
+            {/* Subtext: rgba(255,255,255,0.88) with text-shadow */}
+            <p className="animate-hero-subtext text-sm sm:text-base text-[rgba(255,255,255,0.88)] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] leading-relaxed mb-8 max-w-[480px]">
+              Verified B.Tech project kits with source code, report and documentation, at student-friendly prices.
+            </p>
 
-              {/* Action Buttons */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
+            {/* Two Buttons: Primary "Browse Projects" and Secondary "How It Works" */}
+            <div className="animate-hero-buttons flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 w-full sm:w-auto">
+              <Link
+                to="/projects"
+                className="w-full sm:w-auto px-6 py-3 bg-[#0B1B3F] hover:bg-[#152857] active:bg-[#071129] text-white text-xs font-semibold rounded-[9px] border border-[rgba(255,255,255,0.25)] shadow-lg shadow-[#0B1B3F]/40 flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.04] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B7BFF] focus-visible:ring-offset-2 min-h-[44px]"
+              >
+                <span>Browse Projects</span>
+                <ArrowRight className="w-4 h-4 text-white" />
+              </Link>
+
+              <a
+                href="#how-it-works"
+                onClick={scrollToHowItWorks}
+                className="w-full sm:w-auto px-6 py-3 bg-[rgba(255,255,255,0.14)] hover:bg-[rgba(255,255,255,0.22)] border border-[rgba(255,255,255,0.4)] backdrop-blur-md text-[#FFFFFF] text-xs font-semibold rounded-[9px] shadow-xs flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.04] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B7BFF] focus-visible:ring-offset-2 min-h-[44px]"
+              >
+                <span>How It Works</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Strip Pinned to Hero: Popular Categories with subtle dark gradient backdrop */}
+        <div className="relative z-10 w-full bg-gradient-to-t from-black/50 via-black/30 to-transparent border-t border-white/15 animate-hero-bottom">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-xs">
+            <span className="uppercase tracking-wider font-bold text-[10px] text-white/90 shrink-0 drop-shadow-xs">
+              Popular categories:
+            </span>
+            <div className="flex flex-wrap items-center gap-3">
+              {popularCategories.map((cat) => (
                 <Link
-                  to="/projects"
-                  className="px-6 py-3.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2"
+                  key={cat.name}
+                  to={`/projects?category=${encodeURIComponent(cat.query)}`}
+                  className="text-white/90 hover:text-white font-medium text-xs transition-colors drop-shadow-xs hover:underline underline-offset-4 focus:outline-none focus-visible:ring-1 focus-visible:ring-white rounded"
                 >
-                  <span>Explore Projects</span>
-                  <ArrowRight className="w-4 h-4" />
+                  {cat.name}
                 </Link>
-
-                <a
-                  href="#popular-categories"
-                  className="px-6 py-3.5 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-800 transition-colors shadow-xs"
-                >
-                  Browse Categories
-                </a>
-              </div>
-
-              {/* Guarantees Row */}
-              <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800 flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-slate-600 dark:text-slate-400">
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Verified Java 17 & Node 20 runtimes</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>IEEE 830 standard documentation</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>60+ Viva Voce examiner Q&A</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Interactive Live Project Kit Inspector */}
-            <div className="lg:col-span-5">
-              <div className="bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 text-white overflow-hidden">
-                {/* Inspector Header with Tab Toggles */}
-                <div className="p-4 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
-                    <span className="text-xs font-mono text-slate-400 ml-2 font-medium">
-                      kit_inspector.sh
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1 bg-slate-800/80 p-0.5 rounded-lg text-[11px] font-mono">
-                    <button
-                      onClick={() => setInspectorTab('code')}
-                      className={`px-2.5 py-1 rounded transition-colors ${
-                        inspectorTab === 'code'
-                          ? 'bg-blue-600 text-white font-semibold'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Code
-                    </button>
-                    <button
-                      onClick={() => setInspectorTab('docs')}
-                      className={`px-2.5 py-1 rounded transition-colors ${
-                        inspectorTab === 'docs'
-                          ? 'bg-blue-600 text-white font-semibold'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Report
-                    </button>
-                    <button
-                      onClick={() => setInspectorTab('viva')}
-                      className={`px-2.5 py-1 rounded transition-colors ${
-                        inspectorTab === 'viva'
-                          ? 'bg-blue-600 text-white font-semibold'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Viva
-                    </button>
-                  </div>
-                </div>
-
-                {/* Inspector Dynamic Viewport */}
-                <div className="p-5 space-y-4">
-                  {/* TAB 1: CODEBASE INSPECTION */}
-                  {inspectorTab === 'code' && (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400 font-mono">Project: {sampleHeroProject.title}</span>
-                        <span className="text-emerald-400 font-semibold font-mono text-[11px]">
-                          ✓ Build Passing
-                        </span>
-                      </div>
-
-                      <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 space-y-1.5 overflow-hidden">
-                        <div className="text-slate-500 text-[10px]"># Repository Directory Structure</div>
-                        <div className="text-blue-400">├── /src/main/java/com/projectkit/</div>
-                        <div className="text-slate-400 pl-4">├── controller/ (38 REST Endpoints)</div>
-                        <div className="text-slate-400 pl-4">├── service/ (Transactional Logic)</div>
-                        <div className="text-slate-400 pl-4">└── repository/ (Spring Data JPA)</div>
-                        <div className="text-emerald-400">├── /database/schema_mysql_3nf.sql</div>
-                        <div className="text-amber-400">├── /docs/IEEE_Report_88_Pages.docx</div>
-                        <div className="text-purple-400">└── /viva/Examiner_Questions_60.pdf</div>
-                      </div>
-
-                      <div className="p-2.5 bg-slate-950/70 rounded-lg border border-slate-800 font-mono text-[11px] text-slate-400 flex items-center justify-between">
-                        <span className="text-blue-300 truncate">$ mvn clean install && mvn spring-boot:run</span>
-                        <span className="text-emerald-400 font-semibold shrink-0 text-[10px]">Port 8080</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* TAB 2: IEEE REPORT INSPECTION */}
-                  {inspectorTab === 'docs' && (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400 font-mono">IEEE 830 Specification Report</span>
-                        <span className="text-blue-400 font-semibold text-[11px]">88 Pages · Word & PDF</span>
-                      </div>
-
-                      <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-xs">
-                        <div className="text-slate-400 font-medium">Chapter Index & Deliverables:</div>
-                        <ul className="space-y-1.5 text-slate-300 text-[11px]">
-                          <li className="flex items-center gap-2">
-                            <span className="text-blue-400 font-mono">01.</span>
-                            <span>Literature Survey & Comparative Analysis (18 Citations)</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-blue-400 font-mono">02.</span>
-                            <span>Software Requirements Specification (SRS IEEE 830)</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-blue-400 font-mono">03.</span>
-                            <span>UML Architecture: Class, Sequence & DFD Diagrams</span>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <span className="text-blue-400 font-mono">04.</span>
-                            <span>Software Testing Matrices (Unit, Integration, Blackbox)</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* TAB 3: VIVA VOCE DEFENSE */}
-                  {inspectorTab === 'viva' && (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-slate-400 font-mono">External Viva Voce Cheat Sheet</span>
-                        <span className="text-purple-400 font-semibold text-[11px]">60+ Examiner Q&A</span>
-                      </div>
-
-                      <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-xs">
-                        <div className="font-semibold text-amber-300 text-[11px]">
-                          Q: How do you handle concurrency & race conditions in this project?
-                        </div>
-                        <p className="text-slate-300 text-[11px] leading-relaxed">
-                          "We implement pessimistic locking in Spring Data JPA alongside @Transactional isolation levels to prevent phantom reads during state changes."
-                        </p>
-                        <div className="text-slate-500 text-[10px] pt-1">
-                          ✓ Includes model answers for Java, Spring Boot, React, and MySQL.
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Pricing and Direct Link to Featured Kit */}
-                  <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div className="text-[11px] text-slate-400">Featured Capstone Kit</div>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-base font-bold text-white font-mono">
-                          ₹{sampleHeroProject.price.toLocaleString('en-IN')}
-                        </span>
-                        <span className="text-xs text-slate-500 line-through font-mono">
-                          ₹{sampleHeroProject.originalPrice.toLocaleString('en-IN')}
-                        </span>
-                      </div>
-                    </div>
-
-                    <Link
-                      to={`/projects/${sampleHeroProject.id}`}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
-                    >
-                      <span>Inspect Kit Details</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. MODERN STATISTICS SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 sm:p-8 shadow-sm transition-colors">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-800">
-            {/* Stat 1 */}
-            <div className="pt-4 sm:pt-0 sm:px-4 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Verified Repositories
-                </span>
-                <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <Code2 className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-blue-600 dark:text-blue-400 font-mono tabular-nums">
-                500+
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Full-stack engineering kits across Java, Python, and Web stacks.
-              </p>
-            </div>
+      {/* Subtle Divider between Hero and Rest of Site */}
+      <div className="pk-divider" />
 
-            {/* Stat 2 */}
-            <div className="pt-4 sm:pt-0 sm:px-4 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Students Guided
-                </span>
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                  <Users className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
-                12,000+
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Graduates across VIT, SRM, PES, Anna University, and NITs.
-              </p>
-            </div>
-
-            {/* Stat 3 */}
-            <div className="pt-4 sm:pt-0 sm:px-4 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Viva Clearance
-                </span>
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                  <Award className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono tabular-nums">
-                98.4%
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                First-attempt pass rate in final external evaluation seminars.
-              </p>
-            </div>
-
-            {/* Stat 4 */}
-            <div className="pt-4 sm:pt-0 sm:px-4 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Specializations
-                </span>
-                <div className="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                  <Layers className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tabular-nums">
-                45+
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Academic disciplines including CSE, IT, ECE, AI & Data Science.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. POPULAR CATEGORIES */}
-      <section id="popular-categories" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+      {/* =========================================================================
+          2. FEATURED PROJECTS SECTION (3D Tilt & Layered Depth)
+          ========================================================================= */}
+      <section id="featured-projects" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-24">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#25335F]">
           <div>
-            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
-              Academic Disciplines
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF] mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#6C5CE7] dark:text-[#8C7CFF]" />
+              <span>Recommended Kits</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Popular Engineering Categories
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+              Featured Final-Year Project Kits
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Select your academic branch and preferred technology stack.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7] mt-1">
+              Fully runnable applications verified by experienced university evaluators.
             </p>
           </div>
-          <Link
-            to="/projects"
-            className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 shrink-0"
-          >
-            <span>View all collections</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+
+          {/* Domain Filter Switcher */}
+          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white dark:bg-[#0F1830] rounded-xl border border-slate-200 dark:border-[#25335F] shadow-xs">
+            {['All', 'Java', 'Python', 'Web', 'IoT'].map((domain) => (
+              <button
+                key={domain}
+                onClick={() => setFeaturedDomain(domain)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  featuredDomain === domain
+                    ? 'bg-[#2F4BFF] text-white shadow-xs'
+                    : 'text-slate-600 dark:text-[#CBD5E1] hover:text-slate-900 dark:hover:text-[#E8ECFA]'
+                }`}
+              >
+                {domain === 'All' ? 'All Focus' : domain}
+              </button>
+            ))}
+          </div>
         </div>
 
+        {/* 6 Featured Project Cards with 3D Depth */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category) => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
-        </div>
-      </section>
-
-      {/* 4. FEATURED PROJECTS WITH DOMAIN SWITCHER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-          <div>
-            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
-              Hand-Curated Blueprints
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Featured Final-Year Projects
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Top reviewed kits selected for comprehensive documentation, clean architecture, and viva readiness.
-            </p>
-          </div>
-
-          {/* Interactive domain pill tabs */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl overflow-x-auto shrink-0">
-            <button
-              onClick={() => setFeaturedDomain('All')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-                featuredDomain === 'All'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              All Kits
-            </button>
-            <button
-              onClick={() => setFeaturedDomain('Java')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-                featuredDomain === 'Java'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Java & Spring Boot
-            </button>
-            <button
-              onClick={() => setFeaturedDomain('Web')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-                featuredDomain === 'Web'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              MERN Stack
-            </button>
-            <button
-              onClick={() => setFeaturedDomain('AI')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-                featuredDomain === 'AI'
-                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              AI & Machine Learning
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
           {filteredFeatured.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <div key={project.id} className="pk-card-tilt h-full">
+              <ProjectCard project={project} />
+            </div>
           ))}
         </div>
-      </section>
 
-      {/* 5. PROFESSIONAL HOW IT WORKS SECTION */}
-      <section className="bg-white dark:bg-slate-950 py-16 sm:py-20 border-y border-slate-200 dark:border-slate-800 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14 space-y-2">
-            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
-              Step-by-Step Pathway
-            </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              How ProjectKit Works
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-              Four structured milestones from capstone selection to a high-scoring university viva defense.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-            {/* Step 1 */}
-            <div className="p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 hover:shadow-md transition-all space-y-3 relative">
-              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-mono font-bold text-sm flex items-center justify-center shadow-xs">
-                01
-              </div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Browse Verified Blueprints
-              </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Filter by department, programming language (Java, Python, MERN), and budget. Inspect detailed modules, problem statements, and requirements before ordering.
-              </p>
-              <div className="pt-2 text-[11px] text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
-                <span>Filter by university syllabus</span>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 hover:shadow-md transition-all space-y-3 relative">
-              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-mono font-bold text-sm flex items-center justify-center shadow-xs">
-                02
-              </div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Instant Kit Delivery
-              </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Download the complete codebase archive, normalized MySQL database script, IEEE format 80+ page report in Word & PDF, and seminar PowerPoint deck.
-              </p>
-              <div className="pt-2 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                <span>Direct ZIP archive unlock</span>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 hover:shadow-md transition-all space-y-3 relative">
-              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-mono font-bold text-sm flex items-center justify-center shadow-xs">
-                03
-              </div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                10-Minute Local Setup
-              </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Follow copy-paste execution commands in IntelliJ, Eclipse, VS Code, or terminal. Pre-tested dependencies eliminate version mismatches.
-              </p>
-              <div className="pt-2 text-[11px] text-purple-600 dark:text-purple-400 font-semibold flex items-center gap-1">
-                <span>Tested on Windows, Mac, Linux</span>
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div className="p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/60 hover:bg-white dark:hover:bg-slate-900 hover:shadow-md transition-all space-y-3 relative">
-              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-mono font-bold text-sm flex items-center justify-center shadow-xs">
-                04
-              </div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Ace Your Final Viva
-              </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Master external examiner scrutiny with our 60+ question viva cheat sheet covering system architecture, ER models, and concurrency.
-              </p>
-              <div className="pt-2 text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
-                <span>Guaranteed viva confidence</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. RECENTLY ADDED PROJECTS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
-          <div>
-            <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">
-              New 2025–2026 Releases
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Recently Added Engineering Projects
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Freshly architected capstone kits covering IoT telemetry, Spring Boot microservices, and smart contracts.
-            </p>
-          </div>
+        <div className="text-center pt-2">
           <Link
             to="/projects"
-            className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 shrink-0"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-[#0F1830] hover:bg-slate-50 dark:hover:bg-[#16224A] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold border border-slate-200 dark:border-[#25335F] hover:border-[#2F4BFF] transition-all shadow-xs hover:scale-[1.02]"
           >
-            <span>View all recent kits</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>Browse Full Project Directory ({projects.length}+ Kits)</span>
+            <ArrowRight className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+          </Link>
+        </div>
+      </section>
+
+      {/* Subtle Divider */}
+      <div className="pk-divider" />
+
+      {/* =========================================================================
+          3. CATEGORIES SECTION (10 Academic Domains)
+          ========================================================================= */}
+      <section id="popular-categories" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-20">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#25335F]">
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF] mb-1">
+              Curriculum Specializations
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+              Explore by Academic Category
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7] mt-1">
+              Find complete project kits aligned with engineering department guidelines.
+            </p>
+          </div>
+
+          <Link
+            to="/projects"
+            className="text-xs font-semibold text-[#2F4BFF] hover:text-[#1E36D6] dark:text-[#5B7BFF] dark:hover:text-[#8C7CFF] flex items-center gap-1 transition-colors self-start sm:self-auto"
+          >
+            <span>View All Categories</span>
+            <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
-          {recentProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+        {/* 10 Categories Responsive Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
+          {categories.map((category) => (
+            <div key={category.id} className="pk-card-tilt h-full">
+              <CategoryCard category={category} />
+            </div>
           ))}
         </div>
       </section>
 
-      {/* 7. WHY CHOOSE PROJECTKIT */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-slate-900 dark:bg-slate-900/90 rounded-3xl p-8 sm:p-12 text-white border border-transparent dark:border-slate-800">
-          <div className="max-w-3xl mb-12">
-            <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">
-              Institutional Quality Standards
+      {/* Subtle Divider */}
+      <div className="pk-divider" />
+
+      {/* =========================================================================
+          4. HOW IT WORKS SECTION (Clean 3-Step Process)
+          ========================================================================= */}
+      <section id="how-it-works" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-20">
+        <div className="text-center max-w-2xl mx-auto space-y-3">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+            Simple 3-Step Workflow
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+            How ProjectKit Works
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7]">
+            From selection to execution in three straightforward, verified steps.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+          {/* Step 1 */}
+          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#25335F] hover:border-[#2F4BFF] shadow-xs hover:shadow-md transition-all space-y-4">
+            <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#16224A] border border-slate-200 dark:border-[#25335F] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center font-bold text-sm font-mono">
+              01
             </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-              Why 12,000+ Engineering Students Rely on ProjectKit
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-2">
-              Every project kit is built by senior software engineers and reviewed against university academic syllabi.
+            <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA]">1. Pick Your Capstone Kit</h3>
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+              Explore curated project kits categorized by branch, domain, and university semester. Review technical architectures, ER diagrams, and package deliverables.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+          {/* Step 2 */}
+          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#25335F] hover:border-[#6C5CE7] shadow-xs hover:shadow-md transition-all space-y-4">
+            <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#16224A] border border-slate-200 dark:border-[#25335F] text-[#6C5CE7] dark:text-[#8C7CFF] flex items-center justify-center font-bold text-sm font-mono">
+              02
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA]">2. Complete Verified Checkout</h3>
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+              Pay securely via Razorpay gateway using UPI, Cards, or Net Banking. Every order is verified with server-side HMAC signatures for payment protection.
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#25335F] hover:border-[#2F4BFF] shadow-xs hover:shadow-md transition-all space-y-4">
+            <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#16224A] border border-slate-200 dark:border-[#25335F] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center font-bold text-sm font-mono">
+              03
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA]">3. Instant Deliverables Access</h3>
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+              Instantly unlock and download your full runnable source code ZIP, IEEE format report (.docx / .pdf), database SQL dumps, and comprehensive viva preparation guides.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Subtle Divider */}
+      <div className="pk-divider" />
+
+      {/* =========================================================================
+          5. WHY PROJECTKIT SECTION (Platform Integrity)
+          ========================================================================= */}
+      <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white dark:bg-[#0F1830] border border-slate-200 dark:border-[#25335F] rounded-3xl p-8 sm:p-12 space-y-8 shadow-xs">
+          <div className="max-w-3xl space-y-3">
+            <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+              Platform Integrity
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+              Why Engineering Students Trust ProjectKit
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+              Every project kit is built following industry design patterns and structured to help you understand, defend, and present your final-year capstone.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+            <div className="bg-slate-50 dark:bg-[#16224A]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F1830] border border-slate-200 dark:border-[#25335F] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shadow-xs">
                 <Code2 className="w-5 h-5" />
               </div>
-              <h4 className="text-base font-bold text-white">100% Tested Source Code</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Zero broken imports or outdated packages. Maven, npm, and pip dependencies are locked and tested on Java 17, Node 18, and Python 3.10.
+              <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">Verified Runnable Code</h3>
+              <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+                Pre-configured Maven / Gradle / npm workspaces with Dockerfiles and setup guides to ensure you run the project in minutes without dependency conflicts.
               </p>
             </div>
 
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                <FileCheck2 className="w-5 h-5" />
+            <div className="bg-slate-50 dark:bg-[#16224A]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F1830] border border-slate-200 dark:border-[#25335F] text-[#6C5CE7] dark:text-[#8C7CFF] flex items-center justify-center shadow-xs">
+                <FileText className="w-5 h-5" />
               </div>
-              <h4 className="text-base font-bold text-white">IEEE Standard Documentation</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Includes literature surveys, SRS according to IEEE 830, software design documents (SDD), and testing matrices ready for university submission.
+              <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">IEEE Standard Reports</h3>
+              <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+                Includes full 80+ page standard IEEE format documentation, complete with UML diagrams, system architecture blueprints, and entity relationships.
               </p>
             </div>
 
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
-                <HelpCircle className="w-5 h-5" />
+            <div className="bg-slate-50 dark:bg-[#16224A]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F1830] border border-slate-200 dark:border-[#25335F] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shadow-xs">
+                <BookOpen className="w-5 h-5" />
               </div>
-              <h4 className="text-base font-bold text-white">Viva Voce Q&A Cheat Sheet</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Curated compilation of 60+ tricky viva questions asked by external university examiners, complete with concise model answers.
-              </p>
-            </div>
-
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                <Database className="w-5 h-5" />
-              </div>
-              <h4 className="text-base font-bold text-white">Normalized Database Dumps</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Complete MySQL / PostgreSQL SQL scripts with 3NF normalization, foreign key constraints, and 50+ rows of realistic dummy data.
-              </p>
-            </div>
-
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
-                <Layers className="w-5 h-5" />
-              </div>
-              <h4 className="text-base font-bold text-white">High-Res UML Diagrams</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Editable StarUML and high-resolution PNG exports of Class diagrams, Sequence diagrams, Use Case diagrams, and Entity-Relationship models.
-              </p>
-            </div>
-
-            <div className="space-y-2.5">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <h4 className="text-base font-bold text-white">Turnkey Setup Commands</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Clear copy-paste instructions for IntelliJ, Eclipse, VS Code, and terminal runtimes so your project runs smoothly in under 10 minutes.
+              <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">Viva Voce Preparation</h3>
+              <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+                Comprehensive viva cheat sheets with answers to anticipated faculty questions, design decisions, and architectural trade-off justifications.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 8. TESTIMONIALS (Attributable) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-          <div className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
-            Verified Student Outcomes
+      {/* Subtle Divider */}
+      <div className="pk-divider" />
+
+      {/* =========================================================================
+          6. TESTIMONIALS SECTION (Student Success Proof)
+          ========================================================================= */}
+      <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="text-center max-w-2xl mx-auto space-y-3">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+            Student Success Stories
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Trusted by Final Year B.Tech Students
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+            Trusted by Final-Year Engineers Across India
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-            Read authentic reviews from students who defended their capstones with top grades.
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7]">
+            Real feedback from engineering students who successfully defended their capstone projects.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic mb-6">
-              "The Smart Traffic Management Java project was praised by our external examiner. The multi-threading simulation and 85-page IEEE report saved our team weeks of formatting stress. We scored an O Grade (Outstanding)!"
+          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200/90 dark:border-[#25335F] space-y-4 shadow-xs">
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
+              "The Spring Boot & React kit saved our team during the final internal review. The IEEE report was accepted on the first submission without major formatting revisions."
             </p>
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-bold text-xs flex items-center justify-center">
-                KV
+            <div className="pt-2 border-t border-slate-100 dark:border-[#25335F] flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#2F4BFF] text-white flex items-center justify-center font-bold text-xs">
+                RS
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">Karthik Venkat</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400">B.Tech CSE, SRM Institute of Science</div>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-[#E8ECFA]">Rahul Sharma</h4>
+                <p className="text-[11px] text-slate-500 dark:text-[#9AA6C7]">B.Tech CSE, VIT Vellore</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic mb-6">
-              "I purchased the Spring Boot Student Management kit. What stood out was the 60 viva questions guide. The external examiner asked three questions directly from that cheat sheet regarding JPA entity lifecycle."
+          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200/90 dark:border-[#25335F] space-y-4 shadow-xs">
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
+              "The viva voce cheat sheet was a game changer. The external examiner asked specifically about JWT replay prevention and database indexes, exactly as explained in the guide."
             </p>
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-bold text-xs flex items-center justify-center">
+            <div className="pt-2 border-t border-slate-100 dark:border-[#25335F] flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#6C5CE7] text-white flex items-center justify-center font-bold text-xs">
                 SP
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">Sneha Patel</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400">B.Tech IT, Vellore Institute of Technology</div>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-[#E8ECFA]">Sneha Patel</h4>
+                <p className="text-[11px] text-slate-500 dark:text-[#9AA6C7]">B.Tech IT, BITS Pilani</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic mb-6">
-              "The Face Recognition Attendance System in Python ran right out of the box after following the 4-step terminal instructions. The anti-spoofing blink detector made our project review seminar the best in our department."
+          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200/90 dark:border-[#25335F] space-y-4 shadow-xs">
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
+              "Clean source code with zero deprecated libraries. Running Docker Compose set up the backend and MySQL container in under 3 minutes on our lab machine."
             </p>
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center justify-center">
-                AN
+            <div className="pt-2 border-t border-slate-100 dark:border-[#25335F] flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#2F4BFF] text-white flex items-center justify-center font-bold text-xs">
+                KR
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">Aditya Nambiar</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400">B.Tech CSE, PES University Bengaluru</div>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-[#E8ECFA]">Karthik Raja</h4>
+                <p className="text-[11px] text-slate-500 dark:text-[#9AA6C7]">B.Tech ECE, NIT Trichy</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 9. BOTTOM CONVERSION CTA */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-blue-600 rounded-3xl p-8 sm:p-12 text-white text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
-          <div className="max-w-xl space-y-2">
-            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Ready to Ace Your Final Year Project Review?
+      {/* Subtle Divider */}
+      <div className="pk-divider" />
+
+      {/* =========================================================================
+          7. FAQ SECTION
+          ========================================================================= */}
+      <section className="py-16 sm:py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="text-center space-y-3">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+            Frequently Asked Questions
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+            Everything You Need to Know
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7]">
+            Clear answers about deliverables, licensing, and payment processing.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-2">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
+              Are these project kits fully runnable and tested?
             </h3>
-            <p className="text-xs sm:text-sm text-blue-100">
-              Browse through our library of verified engineering kits and get complete code, documentation, and viva guides.
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+              Yes. Each kit is tested across clean environments with modern JDK versions (Java 17 / Python 3.10+) and includes step-by-step installation instructions, database schemas, and sample test accounts.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-2">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
+              What files do I receive immediately after payment?
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+              You receive instant access to download the full source code archive (.zip), the 80+ page standard IEEE documentation in both editable Word (.docx) and PDF formats, MySQL database dumps, and the viva voce cheat sheet.
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-2">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
+              Can I customize the code and add my own features?
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+              Absolutely. All projects are provided as clean starter kits and reference implementations. You are encouraged to modify the UI, add custom algorithms, and tailor the logic to match your specific college project objectives.
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-2">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
+              What payment methods are supported?
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+              We support UPI (Google Pay, PhonePe, Paytm), all major Debit/Credit cards, and Indian Net Banking through our Razorpay integration with 256-bit encryption.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          8. CALL TO ACTION SECTION (Dark Navy Deep Card)
+          ========================================================================= */}
+      <section className="pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-br from-[#0B1B3F] to-[#070D1F] border border-[#25335F] rounded-3xl p-8 sm:p-14 text-center relative overflow-hidden shadow-2xl space-y-6">
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#2F4BFF]/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 max-w-2xl mx-auto space-y-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#5B7BFF]">
+              Get Started Today
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Ready to Complete Your Final Year Project?
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Explore 24+ engineering capstone kits with verified source code and standard IEEE documentation.
+            </p>
+          </div>
+
+          <div className="relative z-10 flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link
               to="/projects"
-              className="px-6 py-3.5 text-xs sm:text-sm font-semibold text-blue-600 bg-white hover:bg-slate-50 rounded-xl shadow-sm transition-all"
+              className="px-7 py-3.5 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white text-xs font-semibold rounded-[9px] shadow-lg shadow-[#2F4BFF]/30 transition-transform hover:scale-[1.04] active:scale-[0.97]"
             >
-              Browse All Projects
+              Browse Complete Catalog
             </Link>
-            <Link
-              to="/register"
-              className="px-6 py-3.5 text-xs sm:text-sm font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition-all border border-blue-500/80"
+            <a
+              href="#how-it-works"
+              onClick={scrollToHowItWorks}
+              className="px-7 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold rounded-[9px] transition-transform hover:scale-[1.04] active:scale-[0.97]"
             >
-              Create Student Account
-            </Link>
+              Learn More
+            </a>
           </div>
         </div>
       </section>
     </div>
   );
 };
+
+export default Home;

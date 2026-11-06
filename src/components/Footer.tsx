@@ -1,254 +1,223 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { BrandLogo } from './BrandLogo';
 import {
-  FolderKanban,
-  ShieldCheck,
-  Award,
-  BookCheck,
-  FileCheck2,
-  Database,
-  HelpCircle,
   Mail,
-  ArrowRight,
-  CheckCircle2,
+  ShieldCheck,
+  Github,
+  Linkedin,
+  Twitter,
+  BookOpen,
+  FolderCode,
+  Sliders,
+  Scale,
+  Award,
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
+  const openCookiePreferences = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-      setTimeout(() => setSubscribed(false), 4000);
-      setEmail('');
-    }
+    window.dispatchEvent(new CustomEvent('open-cookie-preferences'));
   };
 
   return (
-    <footer className="bg-slate-900 dark:bg-slate-950 text-slate-300 pt-16 pb-12 border-t border-slate-800 dark:border-slate-800/80 transition-colors">
+    <footer className="bg-slate-100 dark:bg-[#070D1F] border-t border-slate-200 dark:border-[#25335F] text-slate-600 dark:text-[#9AA6C7] pt-16 pb-12 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Top Trust Guarantees Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-12 border-b border-slate-800">
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <div>
-              <h5 className="text-sm font-bold text-white">Verified Repositories</h5>
-              <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                Tested against Java 17, Node 18, and Python 3.10 with zero broken imports.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
-              <FileCheck2 className="w-5 h-5" />
-            </div>
-            <div>
-              <h5 className="text-sm font-bold text-white">IEEE 830 Documentation</h5>
-              <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                Complete 80+ page Word & PDF reports meeting university syndicate guidelines.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-purple-600/20 text-purple-400 border border-purple-500/30 flex items-center justify-center shrink-0">
-              <Database className="w-5 h-5" />
-            </div>
-            <div>
-              <h5 className="text-sm font-bold text-white">MySQL 3NF Schemas</h5>
-              <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                Normalized relational tables populated with realistic sample data records.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-amber-600/20 text-amber-400 border border-amber-500/30 flex items-center justify-center shrink-0">
-              <HelpCircle className="w-5 h-5" />
-            </div>
-            <div>
-              <h5 className="text-sm font-bold text-white">Viva Voce Master Guide</h5>
-              <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                60+ examiner question answers tailored to your exact architectural stack.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Newsletter & Main Navigation Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
-          {/* Brand & Newsletter Box */}
+        {/* Main 5-Column Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+          {/* Col 1 & 2: Brand & Mission */}
           <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="flex items-center gap-2.5 text-xl font-extrabold text-white">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm">
-                <FolderKanban className="w-4 h-4" />
-              </div>
-              <span>ProjectKit</span>
-            </Link>
-            <p className="text-xs sm:text-sm text-slate-400 max-w-sm leading-relaxed">
-              The premier academic project marketplace for B.Tech engineering graduates. Access production-style source code, IEEE reports, and viva defense kits.
+            <BrandLogo size="lg" variant="full" tagline="Build. Learn. Launch." />
+
+            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed max-w-sm pt-2">
+              A curated technology marketplace for B.Tech & engineering students. Explore verified
+              project kits complete with full source code, IEEE standard documentation, and
+              viva voce preparation guides.
             </p>
 
-            {/* Newsletter Subscription */}
-            <div className="pt-2 max-w-sm">
-              <div className="text-xs font-semibold text-white mb-2">
-                Get New Project Kits & Viva Alerts:
-              </div>
-              {subscribed ? (
-                <div className="p-2.5 bg-emerald-950/60 border border-emerald-800/80 rounded-xl text-xs text-emerald-400 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Subscribed! Academic project alerts activated.</span>
-                </div>
-              ) : (
-                <form onSubmit={handleSubscribe} className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="student@college.edu"
-                      className="w-full pl-8 pr-3 py-2 text-xs bg-slate-800/80 border border-slate-700 rounded-lg text-white placeholder-slate-500 outline-none focus:border-blue-500"
-                    />
-                    <Mail className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" />
-                  </div>
-                  <button
-                    type="submit"
-                    className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shrink-0 transition-colors"
-                  >
-                    Join
-                  </button>
-                </form>
-              )}
+            <div className="flex items-center gap-3 pt-2">
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="w-8 h-8 rounded-lg bg-white dark:bg-[#0F1830] hover:bg-slate-50 dark:hover:bg-[#16224A] border border-slate-200 dark:border-[#25335F] hover:border-[#2F4BFF] flex items-center justify-center text-slate-600 dark:text-[#9AA6C7] hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors shadow-xs"
+                aria-label="GitHub Repository"
+              >
+                <Github className="w-4 h-4" />
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="w-8 h-8 rounded-lg bg-white dark:bg-[#0F1830] hover:bg-slate-50 dark:hover:bg-[#16224A] border border-slate-200 dark:border-[#25335F] hover:border-[#2F4BFF] flex items-center justify-center text-slate-600 dark:text-[#9AA6C7] hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors shadow-xs"
+                aria-label="LinkedIn Profile"
+              >
+                <Linkedin className="w-4 h-4" />
+              </a>
+              <a
+                href="mailto:support@projectkit.edu"
+                className="w-8 h-8 rounded-lg bg-white dark:bg-[#0F1830] hover:bg-slate-50 dark:hover:bg-[#16224A] border border-slate-200 dark:border-[#25335F] hover:border-[#2F4BFF] flex items-center justify-center text-slate-600 dark:text-[#9AA6C7] hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors shadow-xs"
+                aria-label="Email Support"
+              >
+                <Mail className="w-4 h-4" />
+              </a>
             </div>
           </div>
 
-          {/* Col 2: Engineering Domains */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-4">
-              Project Domains
+          {/* Col 3: Explore Catalog */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-[#E8ECFA]">
+              Explore Projects
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
+            <ul className="space-y-2 text-xs text-slate-600 dark:text-[#9AA6C7]">
               <li>
-                <Link to="/projects?category=Web+Development" className="hover:text-white transition-colors">
-                  Web & Full-Stack
+                <Link to="/projects?category=Java+%26+Spring+Boot" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Java & Spring Boot
                 </Link>
               </li>
               <li>
-                <Link to="/projects?category=Java+%26+Spring+Boot" className="hover:text-white transition-colors">
-                  Java 17 & Spring Boot 3
-                </Link>
-              </li>
-              <li>
-                <Link to="/projects?category=AI+%26+Machine+Learning" className="hover:text-white transition-colors">
+                <Link to="/projects?category=AI+%26+Machine+Learning" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
                   AI & Machine Learning
                 </Link>
               </li>
               <li>
-                <Link to="/projects?category=Python+%26+Data+Science" className="hover:text-white transition-colors">
-                  Python & Data Analytics
+                <Link to="/projects?category=Web+Development" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Full-Stack MERN
                 </Link>
               </li>
               <li>
-                <Link to="/projects?category=IoT+%26+Embedded" className="hover:text-white transition-colors">
-                  IoT & Embedded Telemetry
+                <Link to="/projects?category=Cybersecurity+%26+Cloud" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Cyber Security & Cloud
                 </Link>
               </li>
               <li>
-                <Link to="/projects?category=Cybersecurity+%26+Cloud" className="hover:text-white transition-colors">
-                  Cybersecurity & Cloud
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Documentation & Deliverables */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-4">
-              Kit Deliverables
-            </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
-              <li>
-                <Link to="/about" className="hover:text-white transition-colors">
-                  IEEE 830 Standard SRS
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-white transition-colors">
-                  StarUML Class & Sequence Models
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-white transition-colors">
-                  MySQL 8 Relational Schema
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-white transition-colors">
-                  60+ Viva Voce Question Bank
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-white transition-colors">
-                  Seminar Presentation PPTX
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-white transition-colors">
-                  Installation Runbooks
+                <Link to="/projects?category=IoT+%26+Embedded" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  IoT & Embedded
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Platform */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-4">
-              Platform & Accounts
+          {/* Col 4: Student Hub */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-[#E8ECFA]">
+              Student Hub
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
+            <ul className="space-y-2 text-xs text-slate-600 dark:text-[#9AA6C7]">
               <li>
-                <Link to="/dashboard" className="hover:text-white transition-colors">
+                <Link to="/dashboard" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
                   Student Dashboard
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard/purchases" className="hover:text-white transition-colors">
-                  My Purchases & Downloads
+                <Link to="/dashboard/purchases" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  My Purchased Kits
                 </Link>
               </li>
               <li>
-                <Link to="/admin" className="hover:text-white transition-colors">
-                  Admin Management Portal
+                <Link to="/dashboard/wishlist" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Saved Wishlist
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-white transition-colors">
-                  Academic License & Fair Use
+                <Link to="/dashboard/downloads" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Download Manager
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-white transition-colors">
-                  Spring Boot 3 API Roadmap
+                <Link to="/about" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  About ProjectKit
                 </Link>
+              </li>
+              <li>
+                <Link to="/admin" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors font-mono">
+                  Admin Console
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 5: Legal & Compliance */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-[#E8ECFA]">
+              Legal & Compliance
+            </h4>
+            <ul className="space-y-2 text-xs text-slate-600 dark:text-[#9AA6C7]">
+              <li>
+                <Link to="/terms" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Privacy Policy (DPDPA)
+                </Link>
+              </li>
+              <li>
+                <Link to="/cookies" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/refund-policy" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Refund & Cancellation
+                </Link>
+              </li>
+              <li>
+                <Link to="/copyright" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Intellectual Property
+                </Link>
+              </li>
+              <li>
+                <Link to="/grievance" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF] transition-colors">
+                  Grievance Redressal
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={openCookiePreferences}
+                  className="flex items-center gap-1.5 text-[#2F4BFF] dark:text-[#5B7BFF] hover:underline transition-colors pt-1"
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>Cookie Preferences</span>
+                </button>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-          <p>© 2026 ProjectKit Marketplace. Engineered for B.Tech, M.Tech, and MCA academic capstones.</p>
-          <div className="flex items-center gap-4 text-slate-400">
-            <span>Frontend Preview · Java 17, Spring Boot 3 & MySQL Architecture Ready</span>
+        {/* Academic Purpose Disclaimer Banner */}
+        <div className="pt-8 border-t border-slate-200 dark:border-[#25335F] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs text-slate-500 dark:text-[#9AA6C7]">
+          <div className="flex items-start gap-2.5 max-w-3xl">
+            <ShieldCheck className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong className="text-slate-800 dark:text-[#E8ECFA]">Academic Research Notice:</strong>{' '}
+              All projects hosted on ProjectKit are provided strictly as reference implementations and educational
+              starter kits for research, conceptual understanding, and final-year university laboratory study.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 shrink-0 text-slate-500 dark:text-[#9AA6C7]">
+            <span>India DPDPA 2023 Compliant</span>
+            <span>·</span>
+            <span>₹ INR Verified Payments</span>
+          </div>
+        </div>
+
+        {/* Bottom Bar: Copyright and Badges */}
+        <div className="pt-6 border-t border-slate-200 dark:border-[#25335F] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-[#9AA6C7]">
+          <p>© {new Date().getFullYear()} ProjectKit. All rights reserved.</p>
+          <div className="flex items-center gap-4 text-[11px] font-mono">
+            <span className="text-[#2F4BFF] dark:text-[#5B7BFF]">Spring Boot 3.3.5</span>
+            <span>·</span>
+            <span className="text-[#2F4BFF] dark:text-[#5B7BFF]">Java 17</span>
+            <span>·</span>
+            <span className="text-[#2F4BFF] dark:text-[#5B7BFF]">React 19</span>
           </div>
         </div>
       </div>
     </footer>
   );
 };
+
+export default Footer;

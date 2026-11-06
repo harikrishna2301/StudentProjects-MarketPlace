@@ -11,10 +11,16 @@ import {
   FileText,
   ArrowRight,
 } from 'lucide-react';
+import { SEOHead } from '../components/SEOHead';
 
 export const About: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+      <SEOHead
+        title="About ProjectKit — Academic Technology Marketplace for Engineering Students"
+        description="Learn how ProjectKit empowers engineering students with verified, runnable capstone project kits, clean architectures, and IEEE academic documentation."
+        canonicalPath="/about"
+      />
       {/* Hero Header */}
       <div className="text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-300 text-xs font-semibold">

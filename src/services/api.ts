@@ -1,188 +1,148 @@
-import axios from 'axios';
-import { Project, User, Order } from '../types';
-import { INITIAL_PROJECTS } from '../data/projects';
-import { CATEGORIES } from '../data/categories';
+import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
-// Spring Boot 3 backend baseURL target
-const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+// Vite environment variable with relative fallback that routes through the Vite /api proxy
+export const API_BASE_URL =
+  (import.meta as any).env?.VITE_API_BASE_URL || '';
 
-export const apiClient = axios.create({
+/**
+ * Standard Spring Boot ApiResponse envelope format
+ */
+export interface BackendApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  timestamp: string;
+}
+
+/**
+ * Centralized Axios instance for ProjectKit.
+ * Features:
+ * - Bearer JWT injection
+ * - 15-second timeout
+ * - 401 Token Refresh with queue mechanism
+ * - Safe error handling (prevents duplicate retries for payment creation)
+ */
+export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
-  timeout: 10000,
+  timeout: 15000,
 });
 
-// Attach JWT token if present in localStorage
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}> = [];
+
+const processQueue = (error: AxiosError | null, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
+// Request Interceptor: Attach JWT Bearer Token if present
 apiClient.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('projectkit_auth_token');
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error: AxiosError) => Promise.reject(error)
 );
 
-// Response interceptor
+// Response Interceptor: Handle 401 token refresh and structured responses
 apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Graceful error logging for frontend demo when Spring Boot is offline
-    if (error.code === 'ERR_NETWORK' || !error.response) {
-      // Expected during standalone frontend evaluation
+  (response) => {
+    return response;
+  },
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    if (!error.response) {
+      // Network disconnect or backend offline
+      return Promise.reject(error);
     }
+
+    const { status } = error.response;
+
+    // Do NOT auto-retry payment creation or verification to preserve idempotency
+    const url = originalRequest?.url || '';
+    const isPaymentRequest = url.includes('/api/payments') || url.includes('/api/orders');
+
+    if (status === 401 && !originalRequest._retry && !isPaymentRequest) {
+      const refreshToken = localStorage.getItem('projectkit_refresh_token');
+
+      if (!refreshToken) {
+        localStorage.removeItem('projectkit_auth_token');
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('projectkit:auth-expired'));
+        }
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            return apiClient(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshResponse = await axios.post(`${API_BASE_URL}/api/auth/refresh`, {
+          refreshToken,
+        });
+
+        const newAuthData = refreshResponse.data?.data;
+        if (newAuthData?.accessToken) {
+          localStorage.setItem('projectkit_auth_token', newAuthData.accessToken);
+          if (newAuthData.refreshToken) {
+            localStorage.setItem('projectkit_refresh_token', newAuthData.refreshToken);
+          }
+
+          apiClient.defaults.headers.common.Authorization = `Bearer ${newAuthData.accessToken}`;
+          processQueue(null, newAuthData.accessToken);
+
+          if (originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${newAuthData.accessToken}`;
+          }
+          return apiClient(originalRequest);
+        } else {
+          throw new Error('Refresh response missing token');
+        }
+      } catch (refreshErr) {
+        processQueue(refreshErr as AxiosError, null);
+        localStorage.removeItem('projectkit_auth_token');
+        localStorage.removeItem('projectkit_refresh_token');
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('projectkit:auth-expired'));
+        }
+        return Promise.reject(refreshErr);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
     return Promise.reject(error);
   }
 );
 
-/**
- * Service abstractions for future Java 17 + Spring Boot 3 integration.
- * Each method returns mock data promises if backend is not yet attached.
- */
-export const projectService = {
-  async getAll(params?: { category?: string; search?: string; sort?: string }): Promise<Project[]> {
-    try {
-      const res = await apiClient.get('/projects', { params });
-      return res.data;
-    } catch {
-      // Fallback to local dataset
-      let list = [...INITIAL_PROJECTS];
-      if (params?.category && params.category !== 'All') {
-        list = list.filter((p) => p.category.toLowerCase() === params.category?.toLowerCase());
-      }
-      if (params?.search) {
-        const query = params.search.toLowerCase();
-        list = list.filter(
-          (p) =>
-            p.title.toLowerCase().includes(query) ||
-            p.shortDescription.toLowerCase().includes(query) ||
-            p.primaryLanguage.toLowerCase().includes(query)
-        );
-      }
-      return list;
-    }
-  },
-
-  async getById(id: string): Promise<Project | null> {
-    try {
-      const res = await apiClient.get(`/projects/${id}`);
-      return res.data;
-    } catch {
-      const match = INITIAL_PROJECTS.find((p) => p.id === id || p.slug === id);
-      return match || null;
-    }
-  },
-
-  async create(data: Partial<Project>): Promise<Project> {
-    try {
-      const res = await apiClient.post('/projects', data);
-      return res.data;
-    } catch {
-      const newProj = {
-        ...INITIAL_PROJECTS[0],
-        id: `proj-${Date.now()}`,
-        title: data.title || 'Untitled Project',
-        slug: (data.title || 'untitled').toLowerCase().replace(/\s+/g, '-'),
-        price: data.price || 1999,
-        originalPrice: (data.price || 1999) + 1500,
-        createdAt: new Date().toISOString().split('T')[0],
-        ...data,
-      } as Project;
-      return newProj;
-    }
-  },
-
-  async delete(id: string): Promise<boolean> {
-    try {
-      await apiClient.delete(`/projects/${id}`);
-      return true;
-    } catch {
-      return true;
-    }
-  },
-};
-
-export const categoryService = {
-  async getAll() {
-    try {
-      const res = await apiClient.get('/categories');
-      return res.data;
-    } catch {
-      return CATEGORIES;
-    }
-  },
-};
-
-export const orderService = {
-  async create(orderData: Partial<Order>): Promise<Order> {
-    try {
-      const res = await apiClient.post('/orders', orderData);
-      return res.data;
-    } catch {
-      const order: Order = {
-        id: `ord-${Date.now()}`,
-        orderNumber: `PK-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-        userId: orderData.userId || 'usr-student-01',
-        projectId: orderData.projectId || 'proj-001',
-        projectTitle: orderData.projectTitle || 'Online Job Portal',
-        category: orderData.category || 'Web Development',
-        amount: orderData.amount || 1999,
-        date: new Date().toISOString().split('T')[0],
-        status: 'Completed',
-        paymentMethod: orderData.paymentMethod || 'UPI (Fast & Direct)',
-        invoiceId: `INV-${Date.now().toString().slice(-6)}`,
-        downloadToken: `pk_dl_${Math.random().toString(36).substring(2, 10)}`,
-      };
-      return order;
-    }
-  },
-};
-
-export const authService = {
-  async login(email: string, _password?: string): Promise<{ user: User; token: string }> {
-    try {
-      const res = await apiClient.post('/auth/login', { email, _password });
-      return res.data;
-    } catch {
-      const isAdmin = email.toLowerCase().includes('admin');
-      const user: User = {
-        id: isAdmin ? 'usr-admin-01' : 'usr-student-01',
-        fullName: isAdmin ? 'Prof. Anita Sharma (Admin)' : 'Rahul Varma',
-        email: email,
-        phoneNumber: '+91 98765 43210',
-        collegeName: isAdmin ? 'National Institute of Engineering' : 'Vellore Institute of Technology',
-        role: isAdmin ? 'admin' : 'student',
-        joinedDate: '2025-08-10',
-      };
-      const token = `mock_jwt_token_${Date.now()}`;
-      return { user, token };
-    }
-  },
-
-  async register(data: {
-    fullName: string;
-    email: string;
-    phoneNumber?: string;
-    collegeName?: string;
-  }): Promise<{ user: User; token: string }> {
-    try {
-      const res = await apiClient.post('/auth/register', data);
-      return res.data;
-    } catch {
-      const user: User = {
-        id: `usr-${Date.now()}`,
-        fullName: data.fullName,
-        email: data.email,
-        phoneNumber: data.phoneNumber || '+91 98765 00000',
-        collegeName: data.collegeName || 'Indian Institute of Engineering',
-        role: 'student',
-        joinedDate: new Date().toISOString().split('T')[0],
-      };
-      const token = `mock_jwt_token_${Date.now()}`;
-      return { user, token };
-    }
-  },
-};
+export default apiClient;

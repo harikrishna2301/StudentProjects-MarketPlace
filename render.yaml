@@ -1,0 +1,51 @@
+services:
+  # -------------------------------------------------------------------
+  # Backend Web Service: Spring Boot Java 17
+  # -------------------------------------------------------------------
+  - type: web
+    name: projectkit-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    region: oregon
+    healthCheckPath: /api/health
+    disk:
+      name: projectkit-data
+      mountPath: /var/data/projectkit
+      sizeGB: 10
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_MS
+        value: "86400000"
+      - key: JWT_REFRESH_EXPIRATION_MS
+        value: "604800000"
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        value: https://projectkit.netlify.app
+      - key: SMTP_HOST
+        value: smtp.sendgrid.net
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: PROJECTKIT_MAIL_FROM
+        value: noreply@projectkit.in
+      - key: STORAGE_DIR
+        value: /var/data/projectkit/uploads

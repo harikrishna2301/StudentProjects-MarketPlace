@@ -170,24 +170,24 @@ export const Downloads: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="border-b border-slate-200 dark:border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="border-b border-slate-200 dark:border-[#1A2846] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-[#F8FAFC]">
             Downloads & Download History
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-[#94A3B8] mt-1">
             Access verified source codebundles, IEEE documentation, database dumps, and audit your past download history.
           </p>
         </div>
 
         {/* View Switcher: Available Assets vs Download History */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl">
           <button
             onClick={() => setActiveTab('assets')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === 'assets'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-[#0B1329] text-slate-900 dark:text-[#F8FAFC] shadow-xs border border-slate-200 dark:border-[#1A2846]'
+                : 'text-slate-600 dark:text-[#94A3B8] hover:text-slate-900 dark:hover:text-[#F8FAFC]'
             }`}
           >
             Available Assets ({downloadItems.length})
@@ -196,8 +196,8 @@ export const Downloads: React.FC = () => {
             onClick={() => setActiveTab('history')}
             className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === 'history'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-[#0B1329] text-slate-900 dark:text-[#F8FAFC] shadow-xs border border-slate-200 dark:border-[#1A2846]'
+                : 'text-slate-600 dark:text-[#94A3B8] hover:text-slate-900 dark:hover:text-[#F8FAFC]'
             }`}
           >
             Download History ({downloadHistory.length})
@@ -273,13 +273,13 @@ export const Downloads: React.FC = () => {
               </div>
 
               {/* Downloads List */}
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm divide-y divide-slate-100 dark:divide-slate-800">
+              <div className="bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200 dark:border-[#1A2846] shadow-xs divide-y divide-slate-100 dark:divide-[#1A2846] transition-colors">
                 {filteredItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={item.id}
-                      className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                      className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/60 dark:hover:bg-[#101C38]/40 transition-colors"
                     >
                       <div className="flex items-start gap-3.5">
                         <div
@@ -288,13 +288,13 @@ export const Downloads: React.FC = () => {
                           <Icon className="w-5 h-5" />
                         </div>
                         <div className="space-y-0.5">
-                          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
-                            <span className="font-semibold text-blue-600 dark:text-blue-400">{item.typeLabel}</span>
-                            <span aria-hidden="true">·</span>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-[#9AA6C7]">
+                            <span className="font-semibold text-[#2F4BFF] dark:text-[#5B7BFF]">{item.typeLabel}</span>
+                            <span aria-hidden="true" className="text-slate-300 dark:text-[#1A2846]">·</span>
                             <span>{item.project.title}</span>
                           </div>
-                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{item.title}</h4>
-                          <div className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-[#F8FAFC]">{item.title}</h4>
+                          <div className="text-[11px] text-slate-400 dark:text-[#94A3B8] font-mono">
                             {item.format} · Size: {item.fileSize}
                           </div>
                         </div>
@@ -310,7 +310,7 @@ export const Downloads: React.FC = () => {
                               item.fileSize
                             )
                           }
-                          className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition-colors shadow-sm"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs"
                         >
                           <Download className="w-3.5 h-3.5" />
                           <span>Download Asset</span>
@@ -325,15 +325,15 @@ export const Downloads: React.FC = () => {
 
           {/* TAB 2: DOWNLOAD HISTORY */}
           {activeTab === 'history' && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200 dark:border-[#1A2846] shadow-xs overflow-hidden transition-colors">
+              <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-[#1A2846] flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">Download Audit Trail</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-[#F8FAFC]">Download Audit Trail</h3>
+                  <p className="text-xs text-slate-500 dark:text-[#94A3B8]">
                     Timestamped record of all academic packages unlocked and downloaded by your student account.
                   </p>
                 </div>
-                <span className="text-xs font-mono text-slate-400 dark:text-slate-500">
+                <span className="text-xs font-mono text-slate-400 dark:text-[#94A3B8]">
                   {downloadHistory.length} Total Downloads
                 </span>
               </div>
@@ -341,7 +341,7 @@ export const Downloads: React.FC = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
+                    <tr className="bg-slate-50 dark:bg-[#080E20] border-b border-slate-200 dark:border-[#1A2846] text-slate-500 dark:text-[#94A3B8] uppercase text-[10px] tracking-wider">
                       <th className="py-3 px-4 font-semibold">Timestamp</th>
                       <th className="py-3 px-4 font-semibold">Asset File</th>
                       <th className="py-3 px-4 font-semibold">Project Kit</th>
@@ -351,20 +351,20 @@ export const Downloads: React.FC = () => {
                       <th className="py-3 px-4 font-semibold text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-slate-100 dark:divide-[#1A2846]">
                     {downloadHistory.map((log) => (
-                      <tr key={log.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-                        <td className="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400 tabular-nums">
+                      <tr key={log.id} className="hover:bg-slate-50/80 dark:hover:bg-[#101C38]/40 transition-colors">
+                        <td className="py-3.5 px-4 font-mono text-slate-500 dark:text-[#94A3B8] tabular-nums">
                           {log.timestamp}
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">
+                        <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-[#F8FAFC]">
                           {log.assetName}
                         </td>
-                        <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 max-w-xs truncate">
+                        <td className="py-3.5 px-4 text-slate-600 dark:text-[#CBD5E1] max-w-xs truncate">
                           {log.projectTitle}
                         </td>
-                        <td className="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400">{log.fileSize}</td>
-                        <td className="py-3.5 px-4 font-mono text-slate-400 dark:text-slate-500 text-[11px]">
+                        <td className="py-3.5 px-4 font-mono text-slate-500 dark:text-[#94A3B8]">{log.fileSize}</td>
+                        <td className="py-3.5 px-4 font-mono text-slate-400 dark:text-[#94A3B8] text-[11px]">
                           {log.token}
                         </td>
                         <td className="py-3.5 px-4 text-center">
