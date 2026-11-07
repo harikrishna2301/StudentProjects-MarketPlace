@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Hero } from '../components/Hero';
 import { useProjects } from '../context/ProjectsContext';
 import { ProjectCard } from '../components/ProjectCard';
 import { CategoryCard } from '../components/CategoryCard';
@@ -18,6 +19,12 @@ import {
   Code2,
   Lock,
   Cpu,
+  Mail,
+  Phone,
+  Clock,
+  Send,
+  Check,
+  Zap,
 } from 'lucide-react';
 
 export const Home: React.FC = () => {
@@ -26,24 +33,47 @@ export const Home: React.FC = () => {
 
   const [featuredDomain, setFeaturedDomain] = useState<string>('All');
 
-  // Handle smooth scroll if navigated with hash
+  // Handle smooth scroll if navigated with hash or on hash change
   useEffect(() => {
-    if (window.location.hash) {
-      const id = window.location.hash.replace('#', '');
-      setTimeout(() => {
+    const handleHash = () => {
+      if (window.location.hash) {
+        const id = window.location.hash.replace('#', '');
         const el = document.getElementById(id);
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
+          const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          el.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
         }
-      }, 100);
-    }
+      }
+    };
+
+    const timer = setTimeout(handleHash, 100);
+    window.addEventListener('hashchange', handleHash);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('hashchange', handleHash);
+    };
   }, []);
 
-  const scrollToHowItWorks = (e: React.MouseEvent) => {
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
+  const [contactSubmitted, setContactSubmitted] = useState(false);
+
+  const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const el = document.getElementById('how-it-works');
+    if (!contactForm.name || !contactForm.email || !contactForm.message) return;
+    setContactSubmitted(true);
+  };
+
+  const scrollToSection = (id: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      el.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
     }
   };
 
@@ -75,118 +105,7 @@ export const Home: React.FC = () => {
       {/* =========================================================================
           1. FULL-VIEWPORT HERO SECTION (min-height: 100svh)
           ========================================================================= */}
-      <section
-        aria-label="Hero Introduction"
-        className="relative w-full min-h-[100svh] flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0B1B3F] to-[#16224A]"
-      >
-        {/* Full-viewport Hero Background Image (with slow subtle zoom & responsive focal point) */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
-          <picture>
-            <source srcSet="/hero-bg.webp" type="image/webp" />
-            <img
-              src="/hero-bg.jpg"
-              alt=""
-              fetchPriority="high"
-              decoding="async"
-              className="w-full h-full object-cover object-[70%_center] sm:object-center animate-hero-zoom"
-            />
-          </picture>
-        </div>
-
-        {/* Readability Overlays: Navy gradient (0.55 top/left, 0.25 middle, 0.60 bottom) */}
-        {/* 1. Vertical Navy Gradient: Keeps text readable while girl and laptop remain clearly visible */}
-        <div
-          className="absolute inset-0 pointer-events-none z-[1]"
-          style={{
-            background:
-              'linear-gradient(to bottom, rgba(7,13,31,0.55) 0%, rgba(7,13,31,0.25) 45%, rgba(7,13,31,0.60) 100%)',
-          }}
-        />
-
-        {/* 2. Horizontal Left Gradient: Enhances text legibility on desktop while leaving the right half open for the girl */}
-        <div
-          className="absolute inset-0 pointer-events-none z-[1]"
-          style={{
-            background:
-              'linear-gradient(to right, rgba(7,13,31,0.60) 0%, rgba(7,13,31,0.40) 35%, rgba(7,13,31,0.10) 65%, transparent 100%)',
-          }}
-        />
-
-        {/* 3. Subtle ambient glow */}
-        <div
-          className="absolute inset-0 pointer-events-none z-[1]"
-          style={{
-            background:
-              'radial-gradient(circle at 35% 20%, rgba(47,75,255,0.18) 0%, transparent 65%)',
-          }}
-        />
-
-        {/* Hero Content: Desktop left-aligned (max-w-[560px]), Mobile centered upper area */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[13vh] sm:pt-[16vh] pb-8 flex-1 flex flex-col justify-start">
-          <div className="max-w-[560px] text-center lg:text-left mx-auto lg:mx-0 flex flex-col items-center lg:items-start">
-            {/* Eyebrow Frosted Pill */}
-            <div className="animate-hero-eyebrow mb-5">
-              <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-[rgba(255,255,255,0.14)] border border-[rgba(255,255,255,0.35)] backdrop-blur-[8px] text-[11px] sm:text-xs font-semibold text-[#FFFFFF] tracking-wide shadow-xs">
-                Ready-to-submit final year projects
-              </span>
-            </div>
-
-            {/* H1: Build. Submit. Succeed. (Word-by-word reveal) */}
-            <h1
-              className="font-inter font-bold text-[clamp(2.1rem,4.8vw,3.25rem)] leading-[1.12] tracking-[-0.025em] text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mb-4"
-              style={{ textWrap: 'balance' }}
-            >
-              <span className="animate-word-1 inline-block text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mr-2.5">Build.</span>
-              <span className="animate-word-2 inline-block text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mr-2.5">Submit.</span>
-              <span className="animate-word-3 inline-block text-[#A5B4FF] animate-shimmer-succeed [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">Succeed.</span>
-            </h1>
-
-            {/* Subtext: rgba(255,255,255,0.88) with text-shadow */}
-            <p className="animate-hero-subtext text-sm sm:text-base text-[rgba(255,255,255,0.88)] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] leading-relaxed mb-8 max-w-[480px]">
-              Verified B.Tech project kits with source code, report and documentation, at student-friendly prices.
-            </p>
-
-            {/* Two Buttons: Primary "Browse Projects" and Secondary "How It Works" */}
-            <div className="animate-hero-buttons flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 w-full sm:w-auto">
-              <Link
-                to="/projects"
-                className="w-full sm:w-auto px-6 py-3 bg-[#0B1B3F] hover:bg-[#152857] active:bg-[#071129] text-white text-xs font-semibold rounded-[9px] border border-[rgba(255,255,255,0.25)] shadow-lg shadow-[#0B1B3F]/40 flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.04] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B7BFF] focus-visible:ring-offset-2 min-h-[44px]"
-              >
-                <span>Browse Projects</span>
-                <ArrowRight className="w-4 h-4 text-white" />
-              </Link>
-
-              <a
-                href="#how-it-works"
-                onClick={scrollToHowItWorks}
-                className="w-full sm:w-auto px-6 py-3 bg-[rgba(255,255,255,0.14)] hover:bg-[rgba(255,255,255,0.22)] border border-[rgba(255,255,255,0.4)] backdrop-blur-md text-[#FFFFFF] text-xs font-semibold rounded-[9px] shadow-xs flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.04] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B7BFF] focus-visible:ring-offset-2 min-h-[44px]"
-              >
-                <span>How It Works</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Strip Pinned to Hero: Popular Categories with subtle dark gradient backdrop */}
-        <div className="relative z-10 w-full bg-gradient-to-t from-black/50 via-black/30 to-transparent border-t border-white/15 animate-hero-bottom">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-xs">
-            <span className="uppercase tracking-wider font-bold text-[10px] text-white/90 shrink-0 drop-shadow-xs">
-              Popular categories:
-            </span>
-            <div className="flex flex-wrap items-center gap-3">
-              {popularCategories.map((cat) => (
-                <Link
-                  key={cat.name}
-                  to={`/projects?category=${encodeURIComponent(cat.query)}`}
-                  className="text-white/90 hover:text-white font-medium text-xs transition-colors drop-shadow-xs hover:underline underline-offset-4 focus:outline-none focus-visible:ring-1 focus-visible:ring-white rounded"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <Hero onHowItWorksClick={scrollToSection('how-it-works')} />
 
       {/* Subtle Divider between Hero and Rest of Site */}
       <div className="pk-divider" />
@@ -253,7 +172,7 @@ export const Home: React.FC = () => {
       {/* =========================================================================
           3. CATEGORIES SECTION (10 Academic Domains)
           ========================================================================= */}
-      <section id="popular-categories" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-20">
+      <section id="popular-categories" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-24">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#25335F]">
           <div>
             <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF] mb-1">
@@ -292,7 +211,7 @@ export const Home: React.FC = () => {
       {/* =========================================================================
           4. HOW IT WORKS SECTION (Clean 3-Step Process)
           ========================================================================= */}
-      <section id="how-it-works" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-20">
+      <section id="how-it-works" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-24">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
             Simple 3-Step Workflow
@@ -390,6 +309,211 @@ export const Home: React.FC = () => {
               <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
                 Comprehensive viva cheat sheets with answers to anticipated faculty questions, design decisions, and architectural trade-off justifications.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Subtle Divider */}
+      <div className="pk-divider" />
+
+      {/* =========================================================================
+          PRICING SECTION (Student-Friendly Project Tiers starting from ₹999)
+          ========================================================================= */}
+      <section id="pricing" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-24">
+        <div className="text-center max-w-2xl mx-auto space-y-3">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+            <Zap className="w-3.5 h-3.5 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+            <span>Transparent Student Pricing</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+            One-Time Payment. Lifetime Project Access.
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+            Every kit starts from ₹999 with instant code downloads, standard IEEE documentation, and verified run scripts. No hidden subscriptions.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+          {/* Tier 1: Starter Kit */}
+          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] rounded-3xl border border-slate-200 dark:border-[#25335F] p-6 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-lg transition-all">
+            <div className="space-y-4">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#9AA6C7]">
+                  Mini-Projects & Labs
+                </span>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-[#E8ECFA] mt-1">Starter Kit</h3>
+                <p className="text-xs text-slate-600 dark:text-[#9AA6C7] mt-1">
+                  Ideal for semester mini-projects and baseline lab assignments.
+                </p>
+              </div>
+
+              <div className="pt-2 pb-1 border-y border-slate-100 dark:border-[#25335F]">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-[#E8ECFA] font-mono">₹999</span>
+                  <span className="text-xs text-slate-500 dark:text-[#9AA6C7]">/ project</span>
+                </div>
+                <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
+                  Instant ZIP download upon payment
+                </div>
+              </div>
+
+              <ul className="space-y-2.5 text-xs text-slate-700 dark:text-[#CBD5E1] pt-2">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Full runnable source code archive (.zip)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>MySQL / PostgreSQL schema & seed script</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Step-by-step local installation guide</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Basic architecture overview diagram</span>
+                </li>
+                <li className="flex items-start gap-2 text-slate-400 dark:text-slate-500 line-through">
+                  <span>IEEE 80+ page standard Word report</span>
+                </li>
+                <li className="flex items-start gap-2 text-slate-400 dark:text-slate-500 line-through">
+                  <span>Viva voce cheat sheet & Q&A bank</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-6">
+              <Link
+                to="/projects"
+                className="w-full py-3 px-4 bg-slate-100 dark:bg-[#16224A] hover:bg-slate-200 dark:hover:bg-[#1C2C5E] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold text-center block transition-all"
+              >
+                Browse Starter Kits
+              </Link>
+            </div>
+          </div>
+
+          {/* Tier 2: Complete Academic Kit (Recommended) */}
+          <div className="pk-card-tilt relative bg-white dark:bg-[#0F1830] rounded-3xl border-2 border-[#2F4BFF] dark:border-[#5B7BFF] p-6 sm:p-8 flex flex-col justify-between shadow-xl shadow-[#2F4BFF]/10 scale-[1.02]">
+            {/* Recommended Badge */}
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#2F4BFF] to-[#6C5CE7] text-white text-[10px] font-extrabold uppercase tracking-widest px-3.5 py-1 rounded-full shadow-md">
+              Most Popular • Final-Year Recommended
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+                  B.Tech Capstone Ready
+                </span>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-[#E8ECFA] mt-1">Complete Academic Kit</h3>
+                <p className="text-xs text-slate-600 dark:text-[#9AA6C7] mt-1">
+                  Everything required to build, test, document, and defend your project.
+                </p>
+              </div>
+
+              <div className="pt-2 pb-1 border-y border-slate-100 dark:border-[#25335F]">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-[#2F4BFF] dark:text-[#5B7BFF] font-mono">₹1,999</span>
+                  <span className="text-xs text-slate-500 dark:text-[#9AA6C7]">/ project</span>
+                </div>
+                <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
+                  Instant full deliverables bundle
+                </div>
+              </div>
+
+              <ul className="space-y-2.5 text-xs text-slate-700 dark:text-[#CBD5E1] pt-2">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <span className="font-semibold text-slate-900 dark:text-[#E8ECFA]">Complete verified runnable source code</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <span className="font-semibold text-slate-900 dark:text-[#E8ECFA]">80+ page standard IEEE documentation (.docx & .pdf)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <span>Editable PPT presentation slides for review rounds</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <span>Viva voce cheat sheet with 50+ faculty questions</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <span>Complete UML, DFD, and ER database schemas</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <span>6-month bugfix & setup guidance support</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-6">
+              <Link
+                to="/projects"
+                className="w-full py-3.5 px-4 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white rounded-xl text-xs font-semibold text-center block shadow-lg shadow-[#2F4BFF]/30 transition-all hover:scale-[1.02]"
+              >
+                Explore Complete Kits
+              </Link>
+            </div>
+          </div>
+
+          {/* Tier 3: Enterprise Capstone */}
+          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] rounded-3xl border border-slate-200 dark:border-[#25335F] p-6 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-lg transition-all">
+            <div className="space-y-4">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#9AA6C7]">
+                  High Complexity / Honors
+                </span>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-[#E8ECFA] mt-1">Enterprise Capstone</h3>
+                <p className="text-xs text-slate-600 dark:text-[#9AA6C7] mt-1">
+                  Advanced AI/ML, Microservices, and Cloud-native projects.
+                </p>
+              </div>
+
+              <div className="pt-2 pb-1 border-y border-slate-100 dark:border-[#25335F]">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-[#E8ECFA] font-mono">₹3,499</span>
+                  <span className="text-xs text-slate-500 dark:text-[#9AA6C7]">/ project</span>
+                </div>
+                <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
+                  Includes Docker & Cloud manifests
+                </div>
+              </div>
+
+              <ul className="space-y-2.5 text-xs text-slate-700 dark:text-[#CBD5E1] pt-2">
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Everything in Complete Academic Kit</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Docker Compose & Kubernetes deployment YAMLs</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Pre-trained AI models & Jupyter validation notebooks</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Comprehensive 100+ question viva defense bank</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>Priority 1-on-1 advisor resolution via email</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="pt-6">
+              <Link
+                to="/projects"
+                className="w-full py-3 px-4 bg-slate-100 dark:bg-[#16224A] hover:bg-slate-200 dark:hover:bg-[#1C2C5E] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold text-center block transition-all"
+              >
+                Browse Capstone Projects
+              </Link>
             </div>
           </div>
         </div>
@@ -520,6 +644,199 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Subtle Divider */}
+      <div className="pk-divider" />
+
+      {/* =========================================================================
+          CONTACT SECTION (Academic Inquiries, Support & Quick Message Form)
+          ========================================================================= */}
+      <section id="contact" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-24">
+        <div className="text-center max-w-2xl mx-auto space-y-3">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+            <Mail className="w-3.5 h-3.5 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+            <span>Academic Support & Inquiries</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+            We Are Here to Help You Succeed
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+            Have questions about project stack compatibility, IEEE formatting guidelines, or custom feature additions? Reach out to our engineering support desk.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Direct Contact Info (5 Cols) */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="bg-white dark:bg-[#0F1830] p-6 sm:p-7 rounded-3xl border border-slate-200 dark:border-[#25335F] shadow-xs space-y-6">
+              <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA]">
+                Direct Contact Channels
+              </h3>
+
+              <div className="space-y-4 text-xs">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shrink-0">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-slate-900 dark:text-[#E8ECFA]">Academic Email Support</div>
+                    <a
+                      href="mailto:support@projectkit.edu"
+                      className="text-[#2F4BFF] dark:text-[#5B7BFF] hover:underline"
+                    >
+                      support@projectkit.edu
+                    </a>
+                    <div className="text-[11px] text-slate-500 dark:text-[#9AA6C7] mt-0.5">Average reply time: under 2 hours</div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shrink-0">
+                    <Phone className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-slate-900 dark:text-[#E8ECFA]">Student Helpline & WhatsApp</div>
+                    <a
+                      href="tel:+919876543210"
+                      className="text-slate-700 dark:text-[#CBD5E1] hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF]"
+                    >
+                      +91 98765 43210
+                    </a>
+                    <div className="text-[11px] text-slate-500 dark:text-[#9AA6C7] mt-0.5">Direct coordinator assistance</div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shrink-0">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-slate-900 dark:text-[#E8ECFA]">Support Desk Hours</div>
+                    <div className="text-slate-600 dark:text-[#9AA6C7]">Monday – Saturday: 9:00 AM – 8:00 PM IST</div>
+                    <div className="text-[11px] text-slate-500 dark:text-[#9AA6C7] mt-0.5">Emergency review day coverage active</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 dark:border-[#25335F]">
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#16224A]/50 border border-slate-200/80 dark:border-[#25335F] text-[11px] text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
+                  <strong className="text-slate-800 dark:text-[#E8ECFA]">Need custom stack consultation?</strong> Mention your university and submission deadline in your message for expedited routing.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Contact Inquiry Form (7 Cols) */}
+          <div className="lg:col-span-7">
+            <div className="bg-white dark:bg-[#0F1830] p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-[#25335F] shadow-xs">
+              {contactSubmitted ? (
+                <div className="py-10 text-center space-y-4 animate-hero-1">
+                  <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-[#E8ECFA]">
+                    Message Sent Successfully!
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-[#9AA6C7] max-w-md mx-auto leading-relaxed">
+                    Thank you, <strong className="text-slate-900 dark:text-white">{contactForm.name}</strong>. Our academic engineering advisor has received your inquiry regarding <span className="text-[#2F4BFF] dark:text-[#5B7BFF] font-medium">{contactForm.subject || 'Project Support'}</span> and will reply to <span className="font-mono text-slate-700 dark:text-slate-300">{contactForm.email}</span> shortly.
+                  </p>
+                  <div className="pt-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setContactForm({ name: '', email: '', subject: '', message: '' });
+                        setContactSubmitted(false);
+                      }}
+                      className="px-5 py-2.5 bg-slate-100 dark:bg-[#16224A] hover:bg-slate-200 dark:hover:bg-[#1C2C5E] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold transition-all"
+                    >
+                      Send Another Inquiry
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label htmlFor="contact-name" className="text-xs font-semibold text-slate-700 dark:text-[#CBD5E1]">
+                        Your Full Name <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        id="contact-name"
+                        type="text"
+                        required
+                        value={contactForm.name}
+                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                        placeholder="e.g. Aditi Rao"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#25335F] bg-white dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#2F4BFF] transition-all"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="contact-email" className="text-xs font-semibold text-slate-700 dark:text-[#CBD5E1]">
+                        Email Address <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        id="contact-email"
+                        type="email"
+                        required
+                        value={contactForm.email}
+                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                        placeholder="aditi@college.edu"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#25335F] bg-white dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#2F4BFF] transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="contact-subject" className="text-xs font-semibold text-slate-700 dark:text-[#CBD5E1]">
+                      Project Domain or Kit Inquired
+                    </label>
+                    <input
+                      id="contact-subject"
+                      type="text"
+                      value={contactForm.subject}
+                      onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
+                      placeholder="e.g. AI Crop Disease Prediction / Spring Boot E-Commerce"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#25335F] bg-white dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#2F4BFF] transition-all"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="contact-message" className="text-xs font-semibold text-slate-700 dark:text-[#CBD5E1]">
+                      Inquiry Details <span className="text-rose-500">*</span>
+                    </label>
+                    <textarea
+                      id="contact-message"
+                      rows={4}
+                      required
+                      value={contactForm.message}
+                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                      placeholder="Describe what tech stack, deliverables, or assistance you require for your submission..."
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#25335F] bg-white dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#2F4BFF] transition-all resize-none"
+                    />
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between">
+                    <span className="text-[11px] text-slate-500 dark:text-[#9AA6C7]">
+                      We respect your privacy. No spam.
+                    </span>
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white rounded-xl text-xs font-semibold shadow-md shadow-[#2F4BFF]/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Send Inquiry</span>
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Subtle Divider */}
+      <div className="pk-divider" />
+
       {/* =========================================================================
           8. CALL TO ACTION SECTION (Dark Navy Deep Card)
           ========================================================================= */}
@@ -547,7 +864,7 @@ export const Home: React.FC = () => {
             </Link>
             <a
               href="#how-it-works"
-              onClick={scrollToHowItWorks}
+              onClick={scrollToSection('how-it-works')}
               className="px-7 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold rounded-[9px] transition-transform hover:scale-[1.04] active:scale-[0.97]"
             >
               Learn More

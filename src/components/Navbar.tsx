@@ -69,27 +69,103 @@ export const Navbar: React.FC = () => {
     };
   }, [mobileMenuOpen]);
 
+  const [activeSection, setActiveSection] = useState<string>('home');
+
+  // Section observation for active link highlight on home page
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      setActiveSection('');
+      return;
+    }
+
+    if (window.scrollY < 120) {
+      setActiveSection('home');
+    }
+
+    const sectionIds = ['hero', 'how-it-works', 'pricing', 'contact'];
+    const elements = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (elements.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (visible.length > 0) {
+          visible.sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          const id = visible[0].target.id;
+          if (id === 'hero') setActiveSection('home');
+          else setActiveSection(id);
+        }
+      },
+      {
+        rootMargin: '-80px 0px -40% 0px',
+        threshold: [0.1, 0.25, 0.5],
+      }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+
+    const checkScrollTop = () => {
+      if (window.scrollY < 120) {
+        setActiveSection('home');
+      }
+    };
+    window.addEventListener('scroll', checkScrollTop, { passive: true });
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+      window.removeEventListener('scroll', checkScrollTop);
+    };
+  }, [location.pathname]);
+
+  const closeMobileDrawer = () => {
+    setMobileMenuOpen(false);
+    document.body.style.overflow = '';
+    hamburgerButtonRef.current?.focus();
+  };
+
   const handleLogout = () => {
     logout();
     setProfileDropdownOpen(false);
     navigate('/');
   };
 
-  const handleHowItWorksClick = (e: React.MouseEvent) => {
+  const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (location.pathname === '/') {
-      e.preventDefault();
-      const el = document.getElementById('how-it-works');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      if (window.location.hash) {
+        window.history.replaceState(null, '', '/');
       }
     } else {
-      navigate('/#how-it-works');
+      navigate('/');
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
   };
 
-  const isActive = (path: string) => {
-    if (path === '/' && location.pathname === '/') return true;
-    if (path !== '/' && location.pathname.startsWith(path)) return true;
+  const handleSectionClick = (sectionId: string) => (e: React.MouseEvent) => {
+    if (location.pathname === '/') {
+      e.preventDefault();
+      const el = document.getElementById(sectionId);
+      if (el) {
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        el.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+        window.history.replaceState(null, '', `/#${sectionId}`);
+      }
+    } else {
+      navigate(`/#${sectionId}`);
+    }
+  };
+
+  const isLinkActive = (key: 'home' | 'projects' | 'how-it-works' | 'pricing' | 'contact') => {
+    if (key === 'projects') {
+      return location.pathname === '/projects' || location.pathname.startsWith('/projects/');
+    }
+    if (location.pathname === '/') {
+      return activeSection === key;
+    }
     return false;
   };
 
@@ -125,30 +201,48 @@ export const Navbar: React.FC = () => {
           }}
         >
           {/* Left: ProjectKit logo/wordmark (always visible, never hidden or clipped) */}
-          <div className="shrink-0 flex items-center md:mr-5 lg:mr-8">
-            <BrandLogo size="sm" variant="full" to="/" lightText={true} />
+          <div className="shrink-0 flex items-center md:mr-3 lg:mr-6 xl:mr-8">
+            <BrandLogo
+              size="sm"
+              variant="full"
+              to="/"
+              onClick={() => {
+                if (location.pathname === '/') {
+                  window.scrollTo({ top: 0, behavior: 'instant' });
+                  if (window.location.hash) {
+                    window.history.replaceState(null, '', '/');
+                  }
+                } else {
+                  window.scrollTo({ top: 0, behavior: 'instant' });
+                }
+              }}
+              lightText={true}
+            />
           </div>
 
-          {/* Desktop & Tablet: Links grouped after the gap (16px on tablet, 24px on desktop) */}
+          {/* Desktop & Tablet: Links grouped after the gap (responsive spacing across breakpoints) */}
           <nav
             aria-label="Main Navigation"
-            className="hidden md:flex items-center gap-4 lg:gap-6 text-xs lg:text-sm font-medium shrink-0"
+            className="hidden md:flex items-center gap-1 sm:gap-1.5 md:gap-2 lg:gap-4 xl:gap-6 text-xs lg:text-sm font-medium shrink-0"
           >
-            <Link
-              to="/"
-              className={`transition-colors whitespace-nowrap py-1 ${
-                isActive('/') && location.pathname === '/'
+            <a
+              href="/"
+              onClick={handleHomeClick}
+              aria-current={isLinkActive('home') ? 'page' : undefined}
+              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
+                isLinkActive('home')
                   ? 'text-white font-semibold underline underline-offset-4 decoration-[#5B7BFF] decoration-2'
                   : 'text-white/80 hover:text-white'
               }`}
             >
               Home
-            </Link>
+            </a>
 
             <Link
               to="/projects"
-              className={`transition-colors whitespace-nowrap py-1 ${
-                isActive('/projects')
+              aria-current={isLinkActive('projects') ? 'page' : undefined}
+              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-mediuml ${
+                isLinkActive('projects')
                   ? 'text-white font-semibold underline underline-offset-4 decoration-[#5B7BFF] decoration-2'
                   : 'text-white/80 hover:text-white'
               }`}
@@ -158,29 +252,42 @@ export const Navbar: React.FC = () => {
 
             <a
               href="#how-it-works"
-              onClick={handleHowItWorksClick}
-              className="text-white/80 hover:text-white transition-colors whitespace-nowrap py-1"
-            >
-              How It Works
-            </a>
-
-            <Link
-              to="/projects#pricing"
-              className="text-white/80 hover:text-white transition-colors whitespace-nowrap py-1"
-            >
-              Pricing
-            </Link>
-
-            <Link
-              to="/about"
-              className={`transition-colors whitespace-nowrap py-1 ${
-                isActive('/about')
+              onClick={handleSectionClick('how-it-works')}
+              aria-current={isLinkActive('how-it-works') ? 'page' : undefined}
+              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
+                isLinkActive('how-it-works')
                   ? 'text-white font-semibold underline underline-offset-4 decoration-[#5B7BFF] decoration-2'
                   : 'text-white/80 hover:text-white'
               }`}
             >
+              How It Works
+            </a>
+
+            <a
+              href="#pricing"
+              onClick={handleSectionClick('pricing')}
+              aria-current={isLinkActive('pricing') ? 'page' : undefined}
+              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
+                isLinkActive('pricing')
+                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#5B7BFF] decoration-2'
+                  : 'text-white/80 hover:text-white'
+              }`}
+            >
+              Pricing
+            </a>
+
+            <a
+              href="#contact"
+              onClick={handleSectionClick('contact')}
+              aria-current={isLinkActive('contact') ? 'page' : undefined}
+              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
+                isLinkActive('contact')
+                  ? 'ring-2 ring-[#5B7BFF] text-white font-semibold bg-white/20'
+                  : 'text-white/90 hover:text-white'
+              }`}
+            >
               Contact
-            </Link>
+            </a>
           </nav>
 
           {/* Right (side, not centre): grouped with margin-left: auto */}
@@ -332,7 +439,22 @@ export const Navbar: React.FC = () => {
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#25335F]">
-                <BrandLogo size="sm" variant="full" onClick={() => setMobileMenuOpen(false)} />
+                <BrandLogo
+                  size="sm"
+                  variant="full"
+                  onClick={() => {
+                    closeMobileDrawer();
+                    if (location.pathname === '/') {
+                      window.scrollTo({ top: 0, behavior: 'instant' });
+                      if (window.location.hash) {
+                        window.history.replaceState(null, '', '/');
+                      }
+                    } else {
+                      navigate('/');
+                      window.scrollTo({ top: 0, behavior: 'instant' });
+                    }
+                  }}
+                />
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
@@ -347,60 +469,82 @@ export const Navbar: React.FC = () => {
 
               {/* Navigation Links List */}
               <nav className="flex flex-col space-y-1.5 text-sm font-medium text-slate-800 dark:text-[#E8ECFA]">
-                <Link
-                  to="/"
-                  onClick={() => setMobileMenuOpen(false)}
+                <a
+                  href="/"
+                  onClick={(e) => {
+                    closeMobileDrawer();
+                    handleHomeClick(e);
+                  }}
+                  aria-current={isLinkActive('home') ? 'page' : undefined}
                   className={`p-3 rounded-xl transition-colors ${
-                    isActive('/') && location.pathname === '/'
+                    isLinkActive('home')
                       ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
                       : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
                   }`}
                 >
                   Home
-                </Link>
+                </a>
 
                 <Link
                   to="/projects"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={closeMobileDrawer}
+                  aria-current={isLinkActive('projects') ? 'page' : undefined}
                   className={`p-3 rounded-xl transition-colors ${
-                    isActive('/projects')
+                    isLinkActive('projects')
                       ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
                       : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
                   }`}
                 >
-                  Explore Projects
+                  Projects
                 </Link>
 
                 <a
                   href="#how-it-works"
                   onClick={(e) => {
-                    setMobileMenuOpen(false);
-                    handleHowItWorksClick(e);
+                    closeMobileDrawer();
+                    handleSectionClick('how-it-works')(e);
                   }}
-                  className="p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-[#16224A]/60 transition-colors"
-                >
-                  How It Works
-                </a>
-
-                <Link
-                  to="/projects#pricing"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-[#16224A]/60 transition-colors"
-                >
-                  Pricing
-                </Link>
-
-                <Link
-                  to="/about"
-                  onClick={() => setMobileMenuOpen(false)}
+                  aria-current={isLinkActive('how-it-works') ? 'page' : undefined}
                   className={`p-3 rounded-xl transition-colors ${
-                    isActive('/about')
+                    isLinkActive('how-it-works')
                       ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
                       : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
                   }`}
                 >
-                  Contact & Support
-                </Link>
+                  How It Works
+                </a>
+
+                <a
+                  href="#pricing"
+                  onClick={(e) => {
+                    closeMobileDrawer();
+                    handleSectionClick('pricing')(e);
+                  }}
+                  aria-current={isLinkActive('pricing') ? 'page' : undefined}
+                  className={`p-3 rounded-xl transition-colors ${
+                    isLinkActive('pricing')
+                      ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
+                  }`}
+                >
+                  Pricing
+                </a>
+
+                <a
+                  href="#contact"
+                  onClick={(e) => {
+                    closeMobileDrawer();
+                    handleSectionClick('contact')(e);
+                  }}
+                  aria-current={isLinkActive('contact') ? 'page' : undefined}
+                  className={`p-3 rounded-xl transition-colors ${
+                    isLinkActive('contact')
+                      ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
+                  }`}
+                >
+                  Contact
+                </a>
 
                 <Link
                   to="/dashboard/wishlist"
