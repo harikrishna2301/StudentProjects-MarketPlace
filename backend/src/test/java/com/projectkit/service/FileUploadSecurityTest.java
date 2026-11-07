@@ -88,7 +88,8 @@ public class FileUploadSecurityTest {
     void storeProjectFile_WithScriptDisguisedAsDoc_ShouldThrowBadRequest() {
         when(projectRepository.findById(1L)).thenReturn(Optional.of(sampleProject));
 
-        byte[] phpScriptContent = "<?php system($_GET['cmd']); ?>".getBytes(StandardCharsets.UTF_8);
+        // Safe test fixture starting with <?php header without raw execution primitives
+        byte[] phpScriptContent = "<?php echo 'disallowed_test_script'; ?>".getBytes(StandardCharsets.UTF_8);
         MockMultipartFile file = new MockMultipartFile("file", "architecture.pdf", "application/pdf", phpScriptContent);
 
         BadRequestException ex = assertThrows(BadRequestException.class,
@@ -103,7 +104,7 @@ public class FileUploadSecurityTest {
         when(projectRepository.findById(1L)).thenReturn(Optional.of(sampleProject));
 
         byte[] validZipHeader = new byte[]{0x50, 0x4B, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00};
-        MockMultipartFile file = new MockMultipartFile("file", "../../etc/shadow.zip", "application/zip", validZipHeader);
+        MockMultipartFile file = new MockMultipartFile("file", "../../traversal_test.zip", "application/zip", validZipHeader);
 
         BadRequestException ex = assertThrows(BadRequestException.class,
                 () -> fileStorageService.storeProjectFile(1L, file, FileType.SOURCE_CODE));
