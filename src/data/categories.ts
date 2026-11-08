@@ -8,7 +8,7 @@ export const CATEGORIES: Category[] = [
     iconName: 'Coffee',
     description: 'Enterprise Spring Boot 3, Java 17, Hibernate ORM, Microservices, and secure REST APIs.',
     projectCount: 48,
-    color: '#2F4BFF',
+    color: '#6A2FC8',
   },
   {
     id: 'cat-python',
@@ -17,7 +17,7 @@ export const CATEGORIES: Category[] = [
     iconName: 'FileCode2',
     description: 'Modern Python applications, Django, FastAPI, automated workflows, and backend services.',
     projectCount: 52,
-    color: '#4F46E5',
+    color: '#9D71E8',
   },
   {
     id: 'cat-ml',
@@ -26,7 +26,7 @@ export const CATEGORIES: Category[] = [
     iconName: 'BrainCircuit',
     description: 'Predictive algorithms, Scikit-Learn, regression models, classification systems, and feature pipelines.',
     projectCount: 39,
-    color: '#6C5CE7',
+    color: '#6A2FC8',
   },
   {
     id: 'cat-ai',
@@ -35,7 +35,7 @@ export const CATEGORIES: Category[] = [
     iconName: 'Sparkles',
     description: 'Deep neural networks, computer vision, OpenCV, NLP transformers, and multimodal AI pipelines.',
     projectCount: 36,
-    color: '#2F4BFF',
+    color: '#9D71E8',
   },
   {
     id: 'cat-web',
@@ -44,7 +44,7 @@ export const CATEGORIES: Category[] = [
     iconName: 'Globe',
     description: 'Modern frontend interfaces, React, Next.js, responsive layouts, and REST-integrated SPAs.',
     projectCount: 64,
-    color: '#4F46E5',
+    color: '#6A2FC8',
   },
   {
     id: 'cat-fullstack',
@@ -53,7 +53,7 @@ export const CATEGORIES: Category[] = [
     iconName: 'Layers',
     description: 'End-to-end applications combining modern React frontends with Spring Boot or Node backend architectures.',
     projectCount: 44,
-    color: '#2F4BFF',
+    color: '#9D71E8',
   },
   {
     id: 'cat-datascience',
@@ -62,7 +62,7 @@ export const CATEGORIES: Category[] = [
     iconName: 'Database',
     description: 'Big data pipelines, Pandas analysis, automated dashboard visualizations, and statistical modeling.',
     projectCount: 31,
-    color: '#6C5CE7',
+    color: '#6A2FC8',
   },
   {
     id: 'cat-cloud',
@@ -71,7 +71,7 @@ export const CATEGORIES: Category[] = [
     iconName: 'Cloud',
     description: 'Containerized architectures, Docker, Kubernetes, AWS/GCP deployments, and distributed systems.',
     projectCount: 27,
-    color: '#4F46E5',
+    color: '#9D71E8',
   },
   {
     id: 'cat-iot',
@@ -80,7 +80,7 @@ export const CATEGORIES: Category[] = [
     iconName: 'Cpu',
     description: 'ESP32, Arduino, Raspberry Pi, sensor telemetry networks, and edge automation systems.',
     projectCount: 29,
-    color: '#6C5CE7',
+    color: '#6A2FC8',
   },
   {
     id: 'cat-android',
@@ -89,6 +89,6 @@ export const CATEGORIES: Category[] = [
     iconName: 'Smartphone',
     description: 'Native Android Kotlin applications, Jetpack Compose, Room database, and mobile REST integrations.',
     projectCount: 25,
-    color: '#2F4BFF',
+    color: '#9D71E8',
   },
 ];

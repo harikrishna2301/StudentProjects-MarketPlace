@@ -41,6 +41,8 @@ const ProfileSettings = lazy(() => import('./pages/ProfileSettings').then((m) =>
 
 // Admin Dashboard Pages (Lazy loaded)
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then((m) => ({ default: m.AdminDashboard })));
+const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })));
+const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })));
 
 // Legal & Compliance Pages (Lazy loaded)
 const TermsAndConditions = lazy(() => import('./pages/legal/TermsAndConditions').then((m) => ({ default: m.TermsAndConditions })));
@@ -51,10 +53,10 @@ const IntellectualPropertyPolicy = lazy(() => import('./pages/legal/Intellectual
 const GrievanceRedressal = lazy(() => import('./pages/legal/GrievanceRedressal').then((m) => ({ default: m.GrievanceRedressal })));
 
 const RouteLoadingFallback = () => (
-  <div className="min-h-[60vh] flex items-center justify-center py-20 bg-slate-50 dark:bg-[#070D1F]">
+  <div className="min-h-[60vh] flex items-center justify-center py-20 bg-slate-50 dark:bg-[#0B0720]">
     <div className="flex flex-col items-center gap-3">
-      <div className="w-8 h-8 rounded-full border-2 border-[#2F4BFF]/20 border-t-[#2F4BFF] dark:border-[#5B7BFF]/20 dark:border-t-[#5B7BFF] animate-spin" />
-      <span className="text-xs font-semibold text-slate-500 dark:text-[#9AA6C7] tracking-wider uppercase">Loading View...</span>
+      <div className="w-8 h-8 rounded-full border-2 border-[#6A2FC8]/20 border-t-[#6A2FC8] dark:border-[#9D71E8]/20 dark:border-t-[#D1B8FF] animate-spin" />
+      <span className="text-xs font-semibold text-slate-500 dark:text-[#C5B4E3] tracking-wider uppercase">Loading View...</span>
     </div>
   </div>
 );
@@ -80,6 +82,7 @@ export default function App() {
                     <Route path="/student/purchases" element={<Navigate to="/dashboard/purchases" replace />} />
                     <Route path="/student/orders" element={<Navigate to="/dashboard/orders" replace />} />
                     <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
 
@@ -98,6 +101,9 @@ export default function App() {
                     <Route path="/legal/refund-policy" element={<Navigate to="/refund-policy" replace />} />
                     <Route path="/legal/copyright" element={<Navigate to="/copyright" replace />} />
                     <Route path="/legal/grievance" element={<Navigate to="/grievance" replace />} />
+
+                    {/* 404 Not Found Page */}
+                    <Route path="*" element={<NotFound />} />
                   </Route>
 
                   {/* Student Dashboard Routes */}
@@ -120,9 +126,6 @@ export default function App() {
                     <Route path="users" element={<AdminDashboard initialTab="users" />} />
                     <Route path="legal" element={<AdminDashboard initialTab="legal" />} />
                   </Route>
-
-                  {/* Catch-all fallback */}
-                  <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Suspense>
 

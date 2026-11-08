@@ -21,7 +21,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       <button
         type="button"
         onClick={toggleTheme}
-        className={`group relative inline-flex items-center h-8 w-16 px-1 rounded-full bg-slate-200/90 dark:bg-[#16224A] border border-[#E3E8F2] dark:border-[#25335F] shadow-inner hover:border-[#2F4BFF]/50 dark:hover:border-[#5B7BFF]/50 transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2F4BFF] ${className}`}
+        className={`group relative inline-flex items-center h-8 w-16 px-1 rounded-full bg-[#F2E9FF] dark:bg-[#25134D] border border-[#D1B8FF]/60 dark:border-[#3A2074] shadow-inner hover:border-[#6A2FC8]/50 dark:hover:border-[#9D71E8]/50 transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] ${className}`}
         role="switch"
         aria-checked={isDark}
         title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
@@ -31,14 +31,14 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         <span
           className={`pointer-events-none absolute left-1 top-1 h-6 w-6 rounded-full flex items-center justify-center transition-transform duration-300 ease-out shadow-sm ${
             isDark
-              ? 'translate-x-8 bg-[#0F1830] text-[#8C7CFF] border border-[#25335F]'
-              : 'translate-x-0 bg-white text-[#F59E0B] border border-[#E3E8F2]'
+              ? 'translate-x-8 bg-[#0B0720] text-[#D1B8FF] border border-[#3A2074]'
+              : 'translate-x-0 bg-white text-[#6A2FC8] border border-[#D1B8FF]'
           }`}
         >
           {isDark ? (
-            <Moon className="w-3.5 h-3.5 fill-[#8C7CFF]/20" />
+            <Moon className="w-3.5 h-3.5 fill-[#D1B8FF]/20" />
           ) : (
-            <Sun className="w-3.5 h-3.5 fill-[#F59E0B]/20" />
+            <Sun className="w-3.5 h-3.5 fill-[#6A2FC8]/20" />
           )}
         </span>
 
@@ -46,12 +46,12 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
         <span className="w-full flex items-center justify-between px-1.5 pointer-events-none select-none">
           <Sun
             className={`w-3.5 h-3.5 transition-opacity duration-200 ${
-              isDark ? 'text-[#9AA6C7] opacity-60' : 'opacity-0'
+              isDark ? 'text-[#9D71E8] opacity-60' : 'opacity-0'
             }`}
           />
           <Moon
             className={`w-3.5 h-3.5 transition-opacity duration-200 ${
-              !isDark ? 'text-[#5B6478] opacity-60' : 'opacity-0'
+              !isDark ? 'text-[#6A2FC8] opacity-60' : 'opacity-0'
             }`}
           />
         </span>
@@ -64,8 +64,8 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       <button
         type="button"
         onClick={toggleTheme}
-        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#2F4BFF] ${
-          isDark ? 'bg-[#5B7BFF]' : 'bg-slate-300'
+        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#6A2FC8] ${
+          isDark ? 'bg-[#6A2FC8]' : 'bg-slate-300'
         } ${className}`}
         role="switch"
         aria-checked={isDark}

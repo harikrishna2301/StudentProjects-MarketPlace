@@ -33,7 +33,7 @@ export const Hero: React.FC<HeroProps> = ({ onHowItWorksClick }) => {
     <section
       id="hero"
       aria-label="Hero Introduction"
-      className="relative w-full min-h-[100svh] flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0B1B3F] to-[#16224A] scroll-mt-24"
+      className="relative w-full min-h-[100svh] flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#0B0720] to-[#25134D] scroll-mt-24"
     >
       {/* Full-viewport Hero Background Image (high-priority, 70% center on mobile, slow subtle zoom) */}
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
@@ -49,13 +49,13 @@ export const Hero: React.FC<HeroProps> = ({ onHowItWorksClick }) => {
         />
       </div>
 
-      {/* Navy gradient overlays for text readability while keeping subject clearly visible */}
-      {/* 1. Vertical Navy Gradient: Keeps text readable while engineer and laptop remain clearly visible */}
+      {/* Purple palette gradient overlays for text readability while keeping subject clearly visible */}
+      {/* 1. Vertical Gradient: Keeps text readable while engineer and laptop remain clearly visible */}
       <div
         className="absolute inset-0 pointer-events-none z-[1]"
         style={{
           background:
-            'linear-gradient(to bottom, rgba(7,13,31,0.55) 0%, rgba(7,13,31,0.20) 45%, rgba(7,13,31,0.60) 100%)',
+            'linear-gradient(to bottom, rgba(11,7,32,0.60) 0%, rgba(11,7,32,0.22) 45%, rgba(11,7,32,0.65) 100%)',
         }}
       />
 
@@ -64,16 +64,16 @@ export const Hero: React.FC<HeroProps> = ({ onHowItWorksClick }) => {
         className="absolute inset-0 pointer-events-none z-[1]"
         style={{
           background:
-            'linear-gradient(to right, rgba(7,13,31,0.55) 0%, rgba(7,13,31,0.35) 40%, rgba(7,13,31,0.20) 65%, transparent 100%)',
+            'linear-gradient(to right, rgba(11,7,32,0.60) 0%, rgba(11,7,32,0.38) 40%, rgba(11,7,32,0.20) 65%, transparent 100%)',
         }}
       />
 
-      {/* 3. Subtle ambient indigo glow */}
+      {/* 3. Subtle ambient purple glow */}
       <div
         className="absolute inset-0 pointer-events-none z-[1]"
         style={{
           background:
-            'radial-gradient(circle at 35% 20%, rgba(47,75,255,0.18) 0%, transparent 65%)',
+            'radial-gradient(circle at 35% 20%, rgba(106,47,200,0.22) 0%, transparent 65%)',
         }}
       />
 
@@ -82,7 +82,7 @@ export const Hero: React.FC<HeroProps> = ({ onHowItWorksClick }) => {
         <div className="max-w-[560px] text-center lg:text-left mx-auto lg:mx-0 flex flex-col items-center lg:items-start">
           {/* Eyebrow Frosted Pill */}
           <div className="animate-hero-eyebrow mb-5">
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-[rgba(255,255,255,0.14)] border border-[rgba(255,255,255,0.35)] backdrop-blur-[8px] text-[11px] sm:text-xs font-semibold text-[#FFFFFF] tracking-wide shadow-xs">
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-[rgba(255,255,255,0.12)] border border-[rgba(209,184,255,0.4)] backdrop-blur-[8px] text-[11px] sm:text-xs font-semibold text-[#FFFFFF] tracking-wide shadow-xs">
               Ready-to-submit final year projects
             </span>
           </div>
@@ -94,7 +94,7 @@ export const Hero: React.FC<HeroProps> = ({ onHowItWorksClick }) => {
           >
             <span className="animate-word-1 inline-block text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mr-2.5">Build.</span>
             <span className="animate-word-2 inline-block text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mr-2.5">Submit.</span>
-            <span className="animate-word-3 inline-block text-[#A5B4FF] animate-shimmer-succeed [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">Succeed.</span>
+            <span className="animate-word-3 inline-block text-[#D1B8FF] animate-shimmer-succeed [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]">Succeed.</span>
           </h1>
 
           {/* Subtext: rgba(255,255,255,0.88) with text-shadow */}
@@ -106,7 +106,7 @@ export const Hero: React.FC<HeroProps> = ({ onHowItWorksClick }) => {
           <div className="animate-hero-buttons flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 w-full sm:w-auto">
             <Link
               to="/projects"
-              className="w-full sm:w-auto px-6 py-3 bg-[#0B1B3F] hover:bg-[#152857] active:bg-[#071129] text-white text-xs font-semibold rounded-[9px] border border-[rgba(255,255,255,0.25)] shadow-lg shadow-[#0B1B3F]/40 flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.04] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B7BFF] focus-visible:ring-offset-2 min-h-[44px]"
+              className="w-full sm:w-auto px-6 py-3 bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#451B87] text-white text-xs font-semibold rounded-[9px] border border-[rgba(255,255,255,0.25)] shadow-lg shadow-[#6A2FC8]/35 flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.01] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9D71E8] focus-visible:ring-offset-2 min-h-[44px]"
             >
               <span>Browse Projects</span>
               <ArrowRight className="w-4 h-4 text-white" />
@@ -115,7 +115,7 @@ export const Hero: React.FC<HeroProps> = ({ onHowItWorksClick }) => {
             <a
               href="#how-it-works"
               onClick={scrollToHowItWorks}
-              className="w-full sm:w-auto px-6 py-3 bg-[rgba(255,255,255,0.14)] hover:bg-[rgba(255,255,255,0.22)] border border-[rgba(255,255,255,0.4)] backdrop-blur-md text-[#FFFFFF] text-xs font-semibold rounded-[9px] shadow-xs flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.04] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B7BFF] focus-visible:ring-offset-2 min-h-[44px]"
+              className="w-full sm:w-auto px-6 py-3 bg-[rgba(255,255,255,0.14)] hover:bg-[rgba(255,255,255,0.22)] border border-[rgba(255,255,255,0.4)] backdrop-blur-md text-[#FFFFFF] text-xs font-semibold rounded-[9px] shadow-xs flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.01] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9D71E8] focus-visible:ring-offset-2 min-h-[44px]"
             >
               <span>How It Works</span>
             </a>

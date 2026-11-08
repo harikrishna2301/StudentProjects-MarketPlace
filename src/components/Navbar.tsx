@@ -163,6 +163,9 @@ export const Navbar: React.FC = () => {
     if (key === 'projects') {
       return location.pathname === '/projects' || location.pathname.startsWith('/projects/');
     }
+    if (key === 'contact') {
+      return location.pathname === '/contact' || (location.pathname === '/' && activeSection === 'contact');
+    }
     if (location.pathname === '/') {
       return activeSection === key;
     }
@@ -187,8 +190,8 @@ export const Navbar: React.FC = () => {
         <div
           className={`pointer-events-auto rounded-full transition-all duration-300 px-3.5 sm:px-5 py-2 sm:py-2.5 ${
             scrolled
-              ? 'bg-[#0B1B3F]/92 dark:bg-[#070D1F]/95 border border-white/25 shadow-[0_10px_30px_rgba(0,0,0,0.25)] backdrop-blur-[20px]'
-              : 'bg-[rgba(11,27,63,0.55)] border border-[rgba(255,255,255,0.2)] shadow-[0_6px_24px_rgba(0,0,0,0.18)] backdrop-blur-[16px]'
+              ? 'bg-[#0B0720]/95 border border-[#9D71E8]/35 shadow-[0_10px_30px_rgba(11,7,32,0.5)] backdrop-blur-[20px]'
+              : 'bg-[#0B0720]/75 border border-[#9D71E8]/25 shadow-[0_6px_24px_rgba(11,7,32,0.35)] backdrop-blur-[16px]'
           }`}
           style={{
             width: '100%',
@@ -200,8 +203,8 @@ export const Navbar: React.FC = () => {
             boxSizing: 'border-box',
           }}
         >
-          {/* Left: ProjectKit logo/wordmark (always visible, never hidden or clipped) */}
-          <div className="shrink-0 flex items-center md:mr-3 lg:mr-6 xl:mr-8">
+          {/* Left: ProjectKit logo/wordmark (always visible, high contrast) */}
+          <div className="shrink-0 flex items-center md:mr-3 lg:mr-6 xl:mr-8 p-1 rounded-xl bg-white/5 border border-white/10 shadow-xs">
             <BrandLogo
               size="sm"
               variant="full"
@@ -231,7 +234,7 @@ export const Navbar: React.FC = () => {
               aria-current={isLinkActive('home') ? 'page' : undefined}
               className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
                 isLinkActive('home')
-                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#5B7BFF] decoration-2'
+                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#D1B8FF] decoration-2'
                   : 'text-white/80 hover:text-white'
               }`}
             >
@@ -241,9 +244,9 @@ export const Navbar: React.FC = () => {
             <Link
               to="/projects"
               aria-current={isLinkActive('projects') ? 'page' : undefined}
-              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-mediuml ${
+              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
                 isLinkActive('projects')
-                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#5B7BFF] decoration-2'
+                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#D1B8FF] decoration-2'
                   : 'text-white/80 hover:text-white'
               }`}
             >
@@ -256,7 +259,7 @@ export const Navbar: React.FC = () => {
               aria-current={isLinkActive('how-it-works') ? 'page' : undefined}
               className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
                 isLinkActive('how-it-works')
-                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#5B7BFF] decoration-2'
+                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#D1B8FF] decoration-2'
                   : 'text-white/80 hover:text-white'
               }`}
             >
@@ -269,7 +272,7 @@ export const Navbar: React.FC = () => {
               aria-current={isLinkActive('pricing') ? 'page' : undefined}
               className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
                 isLinkActive('pricing')
-                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#5B7BFF] decoration-2'
+                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#D1B8FF] decoration-2'
                   : 'text-white/80 hover:text-white'
               }`}
             >
@@ -282,7 +285,7 @@ export const Navbar: React.FC = () => {
               aria-current={isLinkActive('contact') ? 'page' : undefined}
               className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
                 isLinkActive('contact')
-                  ? 'ring-2 ring-[#5B7BFF] text-white font-semibold bg-white/20'
+                  ? 'ring-2 ring-[#D1B8FF] text-white font-semibold bg-white/20'
                   : 'text-white/90 hover:text-white'
               }`}
             >
@@ -298,13 +301,13 @@ export const Navbar: React.FC = () => {
             {/* Cart Icon with count badge */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] p-2 text-white hover:text-white rounded-full hover:bg-white/15 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B7BFF] flex items-center justify-center"
+              className="relative min-w-[40px] min-h-[40px] sm:min-w-[44px] sm:min-h-[44px] p-2 text-white hover:text-white rounded-full hover:bg-white/15 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9D71E8] flex items-center justify-center"
               aria-label={`View shopping cart with ${cartCount} items`}
               title="Shopping Cart"
             >
               <ShoppingBag className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-white" />
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] bg-[#2F4BFF] text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 font-mono shadow-xs animate-bounce">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] bg-[#6A2FC8] text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 font-mono shadow-xs">
                   {cartCount}
                 </span>
               )}
@@ -478,8 +481,8 @@ export const Navbar: React.FC = () => {
                   aria-current={isLinkActive('home') ? 'page' : undefined}
                   className={`p-3 rounded-xl transition-colors ${
                     isLinkActive('home')
-                      ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
-                      : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
+                      ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
                   }`}
                 >
                   Home
@@ -491,8 +494,8 @@ export const Navbar: React.FC = () => {
                   aria-current={isLinkActive('projects') ? 'page' : undefined}
                   className={`p-3 rounded-xl transition-colors ${
                     isLinkActive('projects')
-                      ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
-                      : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
+                      ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
                   }`}
                 >
                   Projects
@@ -507,8 +510,8 @@ export const Navbar: React.FC = () => {
                   aria-current={isLinkActive('how-it-works') ? 'page' : undefined}
                   className={`p-3 rounded-xl transition-colors ${
                     isLinkActive('how-it-works')
-                      ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
-                      : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
+                      ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
                   }`}
                 >
                   How It Works
@@ -523,8 +526,8 @@ export const Navbar: React.FC = () => {
                   aria-current={isLinkActive('pricing') ? 'page' : undefined}
                   className={`p-3 rounded-xl transition-colors ${
                     isLinkActive('pricing')
-                      ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
-                      : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
+                      ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
                   }`}
                 >
                   Pricing
@@ -539,8 +542,8 @@ export const Navbar: React.FC = () => {
                   aria-current={isLinkActive('contact') ? 'page' : undefined}
                   className={`p-3 rounded-xl transition-colors ${
                     isLinkActive('contact')
-                      ? 'bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold'
-                      : 'hover:bg-slate-50 dark:hover:bg-[#16224A]/60'
+                      ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
                   }`}
                 >
                   Contact

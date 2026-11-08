@@ -40,33 +40,33 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full drop-shadow-[0_2px_8px_rgba(59,130,246,0.35)]"
+        className={`w-full h-full ${lightText ? 'drop-shadow-[0_2px_14px_rgba(209,184,255,0.7)]' : 'drop-shadow-[0_2px_10px_rgba(106,47,200,0.5)]'}`}
       >
         <defs>
-          {/* Royal Blue to Soft Violet Gradient */}
+          {/* Luminous Purple Palette Primary Gradient */}
           <linearGradient id="pk-primary-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#2F4BFF" />
-            <stop offset="60%" stopColor="#4F46E5" />
-            <stop offset="100%" stopColor="#6C5CE7" />
+            <stop offset="0%" stopColor="#6A2FC8" />
+            <stop offset="50%" stopColor="#9D71E8" />
+            <stop offset="100%" stopColor="#D1B8FF" />
           </linearGradient>
 
-          {/* Deep Navy Surface Gradient */}
+          {/* Deep Royal Purple to Midnight Surface Gradient */}
           <linearGradient id="pk-surface-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#16224A" />
-            <stop offset="100%" stopColor="#0B1B3F" />
+            <stop offset="0%" stopColor="#25134D" />
+            <stop offset="100%" stopColor="#0B0720" />
           </linearGradient>
 
           {/* Glow Filter */}
           <filter id="pk-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#2F4BFF" floodOpacity="0.4" />
+            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#9D71E8" floodOpacity="0.55" />
           </filter>
         </defs>
 
         {/* Foundation Book/Wings Base */}
         <path
           d="M18 78C30 73 42 76 50 82C58 76 70 73 82 78C82 82 70 77 50 86C30 77 18 82 18 78Z"
-          fill="#4F46E5"
-          opacity="0.85"
+          fill="#25134D"
+          opacity="0.9"
         />
         <path
           d="M14 74C28 68 40 71 50 78C60 71 72 68 86 74C86 77 72 72 50 81C28 72 14 77 14 74Z"
@@ -76,9 +76,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         {/* Laptop Base & Keyboard Shelf */}
         <path
           d="M26 68L74 68C76 68 78 70 77 72L73 76C72 77 70 78 68 78L32 78C30 78 28 77 27 76L23 72C22 70 24 68 26 68Z"
-          fill="#0B1B3F"
-          stroke="#2F4BFF"
-          strokeWidth="1.5"
+          fill="#0B0720"
+          stroke="#9D71E8"
+          strokeWidth="1.6"
         />
 
         {/* Laptop Screen Body */}
@@ -89,7 +89,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           height="28"
           rx="3.5"
           fill="url(#pk-surface-grad)"
-          stroke="#4F46E5"
+          stroke="#9D71E8"
           strokeWidth="1.8"
         />
 
@@ -100,28 +100,28 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
           width="38"
           height="22"
           rx="2"
-          fill="#070D1F"
+          fill="#0B0720"
         />
 
         {/* </> Code Symbol on Screen */}
         <path
           d="M44 48L39 52L44 56"
-          stroke="#8C7CFF"
-          strokeWidth="2.2"
+          stroke="#D1B8FF"
+          strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M56 48L61 52L56 56"
-          stroke="#8C7CFF"
-          strokeWidth="2.2"
+          stroke="#D1B8FF"
+          strokeWidth="2.4"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M52 47L48 57"
-          stroke="#5B7BFF"
-          strokeWidth="2"
+          stroke="#F2E9FF"
+          strokeWidth="2.2"
           strokeLinecap="round"
         />
 
@@ -135,7 +135,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
         <path
           d="M28 31V40C28 45.5 37.8 50 50 50C62.2 50 72 45.5 72 40V31"
           fill="none"
-          stroke="#2F4BFF"
+          stroke="#D1B8FF"
           strokeWidth="2.5"
           strokeLinecap="round"
         />
@@ -160,14 +160,14 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   // Text Lockup
   const TextContent = (
     <div className={`flex flex-col ${variant === 'stacked' ? 'items-center text-center mt-2' : 'justify-center'}`}>
-      <div className={`font-extrabold tracking-tight ${dimensions.text} leading-none flex items-center`}>
-        <span className={`${lightText ? 'text-white' : 'text-[#0B1B3F] dark:text-[#E8ECFA]'} transition-colors`}>Project</span>
-        <span className="bg-gradient-to-r from-[#2F4BFF] via-[#4F46E5] to-[#6C5CE7] dark:from-[#5B7BFF] dark:to-[#8C7CFF] bg-clip-text text-transparent ml-0.5">
+      <div className={`font-black tracking-tight ${dimensions.text} leading-none flex items-center`}>
+        <span className={`${lightText ? 'text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]' : 'text-[#0B0720] dark:text-[#F2E9FF]'} transition-colors`}>Project</span>
+        <span className={`${lightText ? 'bg-gradient-to-r from-[#D1B8FF] via-white to-[#F2E9FF] drop-shadow-[0_1px_8px_rgba(209,184,255,0.7)]' : 'bg-gradient-to-r from-[#6A2FC8] via-[#9D71E8] to-[#25134D] dark:from-[#D1B8FF] dark:via-[#9D71E8] dark:to-[#F2E9FF]'} bg-clip-text text-transparent ml-0.5`}>
           Kit
         </span>
       </div>
       {tagline && (
-        <span className={`${dimensions.sub} font-semibold uppercase tracking-wider ${lightText ? 'text-white/80' : 'text-[#5B6478] dark:text-[#9AA6C7]'} mt-1`}>
+        <span className={`${dimensions.sub} font-bold uppercase tracking-wider ${lightText ? 'text-[#D1B8FF] drop-shadow-xs' : 'text-[#6A2FC8] dark:text-[#D1B8FF]'} mt-1`}>
           {defaultTaglineText}
         </span>
       )}

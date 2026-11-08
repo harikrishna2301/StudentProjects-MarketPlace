@@ -14,11 +14,11 @@ export const MainLayout: React.FC = () => {
   const isHomePage = location.pathname === '/';
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F7FB] dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] font-sans transition-colors duration-200 relative">
+    <div className="min-h-screen flex flex-col bg-[#FAF7FD] dark:bg-[#0B0720] text-slate-900 dark:text-[#F2E9FF] font-sans transition-colors duration-200 relative">
       {/* Accessibility Skip-To-Content Link */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] px-4 py-2.5 bg-[#2F4BFF] text-white font-semibold rounded-xl shadow-xl outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] px-4 py-2.5 bg-[#6A2FC8] text-white font-semibold rounded-xl shadow-xl outline-none"
       >
         Skip to main content
       </a>

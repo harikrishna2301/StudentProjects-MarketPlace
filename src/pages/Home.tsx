@@ -24,6 +24,7 @@ import {
   Clock,
   Send,
   Check,
+  Copy,
   Zap,
 } from 'lucide-react';
 
@@ -61,6 +62,13 @@ export const Home: React.FC = () => {
     message: '',
   });
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText('support@projectkit.in');
+    setEmailCopied(true);
+    setTimeout(() => setEmailCopied(false), 2500);
+  };
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,8 +124,8 @@ export const Home: React.FC = () => {
       <section id="featured-projects" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-24">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#25335F]">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF] mb-1">
-              <Sparkles className="w-3.5 h-3.5 text-[#6C5CE7] dark:text-[#8C7CFF]" />
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8] mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#9D71E8] dark:text-[#D1B8FF]" />
               <span>Recommended Kits</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
@@ -129,14 +137,14 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Domain Filter Switcher */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white dark:bg-[#0F1830] rounded-xl border border-slate-200 dark:border-[#25335F] shadow-xs">
+          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white dark:bg-[#1A0D3D] rounded-xl border border-slate-200 dark:border-[#3A2074] shadow-xs">
             {['All', 'Java', 'Python', 'Web', 'IoT'].map((domain) => (
               <button
                 key={domain}
                 onClick={() => setFeaturedDomain(domain)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   featuredDomain === domain
-                    ? 'bg-[#2F4BFF] text-white shadow-xs'
+                    ? 'bg-[#6A2FC8] text-white shadow-xs'
                     : 'text-slate-600 dark:text-[#CBD5E1] hover:text-slate-900 dark:hover:text-[#E8ECFA]'
                 }`}
               >
@@ -146,7 +154,7 @@ export const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* 6 Featured Project Cards with 3D Depth */}
+        {/* 6 Featured Project Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFeatured.map((project) => (
             <div key={project.id} className="pk-card-tilt h-full">
@@ -158,10 +166,10 @@ export const Home: React.FC = () => {
         <div className="text-center pt-2">
           <Link
             to="/projects"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-[#0F1830] hover:bg-slate-50 dark:hover:bg-[#16224A] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold border border-slate-200 dark:border-[#25335F] hover:border-[#2F4BFF] transition-all shadow-xs hover:scale-[1.02]"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-[#1A0D3D] hover:bg-slate-50 dark:hover:bg-[#25134D] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold border border-slate-200 dark:border-[#3A2074] hover:border-[#6A2FC8] transition-all shadow-xs"
           >
             <span>Browse Full Project Directory ({projects.length}+ Kits)</span>
-            <ArrowRight className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+            <ArrowRight className="w-4 h-4 text-[#6A2FC8] dark:text-[#9D71E8]" />
           </Link>
         </div>
       </section>
@@ -173,9 +181,9 @@ export const Home: React.FC = () => {
           3. CATEGORIES SECTION (10 Academic Domains)
           ========================================================================= */}
       <section id="popular-categories" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-24">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#25335F]">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#3A2074]">
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF] mb-1">
+            <div className="text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8] mb-1">
               Curriculum Specializations
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
@@ -188,7 +196,7 @@ export const Home: React.FC = () => {
 
           <Link
             to="/projects"
-            className="text-xs font-semibold text-[#2F4BFF] hover:text-[#1E36D6] dark:text-[#5B7BFF] dark:hover:text-[#8C7CFF] flex items-center gap-1 transition-colors self-start sm:self-auto"
+            className="text-xs font-semibold text-[#6A2FC8] hover:text-[#5824A8] dark:text-[#9D71E8] dark:hover:text-[#D1B8FF] flex items-center gap-1 transition-colors self-start sm:self-auto"
           >
             <span>View All Categories</span>
             <ChevronRight className="w-4 h-4" />
@@ -198,7 +206,7 @@ export const Home: React.FC = () => {
         {/* 10 Categories Responsive Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
           {categories.map((category) => (
-            <div key={category.id} className="pk-card-tilt h-full">
+            <div key={category.id} className="h-full">
               <CategoryCard category={category} />
             </div>
           ))}
@@ -213,7 +221,7 @@ export const Home: React.FC = () => {
           ========================================================================= */}
       <section id="how-it-works" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-24">
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8]">
             Simple 3-Step Workflow
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
@@ -226,8 +234,8 @@ export const Home: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
           {/* Step 1 */}
-          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#25335F] hover:border-[#2F4BFF] shadow-xs hover:shadow-md transition-all space-y-4">
-            <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#16224A] border border-slate-200 dark:border-[#25335F] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center font-bold text-sm font-mono">
+          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] hover:border-[#6A2FC8] shadow-xs hover:shadow-md transition-all space-y-4">
+            <div className="w-11 h-11 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center font-bold text-sm font-mono">
               01
             </div>
             <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA]">1. Pick Your Capstone Kit</h3>
@@ -237,8 +245,8 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Step 2 */}
-          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#25335F] hover:border-[#6C5CE7] shadow-xs hover:shadow-md transition-all space-y-4">
-            <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#16224A] border border-slate-200 dark:border-[#25335F] text-[#6C5CE7] dark:text-[#8C7CFF] flex items-center justify-center font-bold text-sm font-mono">
+          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] hover:border-[#9D71E8] shadow-xs hover:shadow-md transition-all space-y-4">
+            <div className="w-11 h-11 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#9D71E8] dark:text-[#D1B8FF] flex items-center justify-center font-bold text-sm font-mono">
               02
             </div>
             <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA]">2. Complete Verified Checkout</h3>
@@ -248,8 +256,8 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Step 3 */}
-          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#25335F] hover:border-[#2F4BFF] shadow-xs hover:shadow-md transition-all space-y-4">
-            <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#16224A] border border-slate-200 dark:border-[#25335F] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center font-bold text-sm font-mono">
+          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] hover:border-[#6A2FC8] shadow-xs hover:shadow-md transition-all space-y-4">
+            <div className="w-11 h-11 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center font-bold text-sm font-mono">
               03
             </div>
             <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA]">3. Instant Deliverables Access</h3>
@@ -267,9 +275,9 @@ export const Home: React.FC = () => {
           5. WHY PROJECTKIT SECTION (Platform Integrity)
           ========================================================================= */}
       <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-[#0F1830] border border-slate-200 dark:border-[#25335F] rounded-3xl p-8 sm:p-12 space-y-8 shadow-xs">
+        <div className="bg-white dark:bg-[#1A0D3D] border border-slate-200 dark:border-[#3A2074] rounded-3xl p-8 sm:p-12 space-y-8 shadow-xs">
           <div className="max-w-3xl space-y-3">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+            <div className="text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8]">
               Platform Integrity
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
@@ -281,8 +289,8 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-            <div className="bg-slate-50 dark:bg-[#16224A]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F1830] border border-slate-200 dark:border-[#25335F] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shadow-xs">
+            <div className="bg-slate-50 dark:bg-[#25134D]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shadow-xs">
                 <Code2 className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">Verified Runnable Code</h3>
@@ -291,8 +299,8 @@ export const Home: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-slate-50 dark:bg-[#16224A]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F1830] border border-slate-200 dark:border-[#25335F] text-[#6C5CE7] dark:text-[#8C7CFF] flex items-center justify-center shadow-xs">
+            <div className="bg-slate-50 dark:bg-[#25134D]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#9D71E8] dark:text-[#D1B8FF] flex items-center justify-center shadow-xs">
                 <FileText className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">IEEE Standard Reports</h3>
@@ -301,8 +309,8 @@ export const Home: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-slate-50 dark:bg-[#16224A]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0F1830] border border-slate-200 dark:border-[#25335F] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shadow-xs">
+            <div className="bg-slate-50 dark:bg-[#25134D]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shadow-xs">
                 <BookOpen className="w-5 h-5" />
               </div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">Viva Voce Preparation</h3>
@@ -322,8 +330,8 @@ export const Home: React.FC = () => {
           ========================================================================= */}
       <section id="pricing" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-24">
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
-            <Zap className="w-3.5 h-3.5 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8]">
+            <Zap className="w-3.5 h-3.5 text-[#6A2FC8] dark:text-[#9D71E8]" />
             <span>Transparent Student Pricing</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
@@ -336,10 +344,10 @@ export const Home: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
           {/* Tier 1: Starter Kit */}
-          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] rounded-3xl border border-slate-200 dark:border-[#25335F] p-6 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-lg transition-all">
+          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] rounded-3xl border border-slate-200 dark:border-[#3A2074] p-6 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-lg transition-all">
             <div className="space-y-4">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#9AA6C7]">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#A798C4]">
                   Mini-Projects & Labs
                 </span>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-[#E8ECFA] mt-1">Starter Kit</h3>
@@ -348,7 +356,7 @@ export const Home: React.FC = () => {
                 </p>
               </div>
 
-              <div className="pt-2 pb-1 border-y border-slate-100 dark:border-[#25335F]">
+              <div className="pt-2 pb-1 border-y border-slate-100 dark:border-[#3A2074]">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-[#E8ECFA] font-mono">₹999</span>
                   <span className="text-xs text-slate-500 dark:text-[#9AA6C7]">/ project</span>
@@ -387,23 +395,23 @@ export const Home: React.FC = () => {
             <div className="pt-6">
               <Link
                 to="/projects"
-                className="w-full py-3 px-4 bg-slate-100 dark:bg-[#16224A] hover:bg-slate-200 dark:hover:bg-[#1C2C5E] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold text-center block transition-all"
+                className="w-full py-3 px-4 bg-slate-100 dark:bg-[#25134D] hover:bg-slate-200 dark:hover:bg-[#3A2074] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold text-center block transition-all"
               >
                 Browse Starter Kits
               </Link>
             </div>
           </div>
 
-          {/* Tier 2: Complete Academic Kit (Recommended) */}
-          <div className="pk-card-tilt relative bg-white dark:bg-[#0F1830] rounded-3xl border-2 border-[#2F4BFF] dark:border-[#5B7BFF] p-6 sm:p-8 flex flex-col justify-between shadow-xl shadow-[#2F4BFF]/10 scale-[1.02]">
+          {/* Tier 2: Complete Academic Kit (Recommended - Subtle, no excessive scale or bending) */}
+          <div className="pk-card-tilt relative bg-white dark:bg-[#1A0D3D] rounded-3xl border-2 border-[#6A2FC8] dark:border-[#9D71E8] p-6 sm:p-8 flex flex-col justify-between shadow-xl shadow-[#6A2FC8]/15">
             {/* Recommended Badge */}
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#2F4BFF] to-[#6C5CE7] text-white text-[10px] font-extrabold uppercase tracking-widest px-3.5 py-1 rounded-full shadow-md">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#6A2FC8] to-[#9D71E8] text-white text-[10px] font-extrabold uppercase tracking-widest px-3.5 py-1 rounded-full shadow-md">
               Most Popular • Final-Year Recommended
             </div>
 
             <div className="space-y-4">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8]">
                   B.Tech Capstone Ready
                 </span>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-[#E8ECFA] mt-1">Complete Academic Kit</h3>
@@ -412,9 +420,9 @@ export const Home: React.FC = () => {
                 </p>
               </div>
 
-              <div className="pt-2 pb-1 border-y border-slate-100 dark:border-[#25335F]">
+              <div className="pt-2 pb-1 border-y border-slate-100 dark:border-[#3A2074]">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#2F4BFF] dark:text-[#5B7BFF] font-mono">₹1,999</span>
+                  <span className="text-3xl sm:text-4xl font-extrabold text-[#6A2FC8] dark:text-[#D1B8FF] font-mono">₹1,999</span>
                   <span className="text-xs text-slate-500 dark:text-[#9AA6C7]">/ project</span>
                 </div>
                 <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
@@ -424,27 +432,27 @@ export const Home: React.FC = () => {
 
               <ul className="space-y-2.5 text-xs text-slate-700 dark:text-[#CBD5E1] pt-2">
                 <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-[#6A2FC8] dark:text-[#9D71E8] shrink-0 mt-0.5" />
                   <span className="font-semibold text-slate-900 dark:text-[#E8ECFA]">Complete verified runnable source code</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-[#6A2FC8] dark:text-[#9D71E8] shrink-0 mt-0.5" />
                   <span className="font-semibold text-slate-900 dark:text-[#E8ECFA]">80+ page standard IEEE documentation (.docx & .pdf)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-[#6A2FC8] dark:text-[#9D71E8] shrink-0 mt-0.5" />
                   <span>Editable PPT presentation slides for review rounds</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-[#6A2FC8] dark:text-[#9D71E8] shrink-0 mt-0.5" />
                   <span>Viva voce cheat sheet with 50+ faculty questions</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-[#6A2FC8] dark:text-[#9D71E8] shrink-0 mt-0.5" />
                   <span>Complete UML, DFD, and ER database schemas</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-[#2F4BFF] dark:text-[#5B7BFF] shrink-0 mt-0.5" />
+                  <Check className="w-4 h-4 text-[#6A2FC8] dark:text-[#9D71E8] shrink-0 mt-0.5" />
                   <span>6-month bugfix & setup guidance support</span>
                 </li>
               </ul>
@@ -453,7 +461,7 @@ export const Home: React.FC = () => {
             <div className="pt-6">
               <Link
                 to="/projects"
-                className="w-full py-3.5 px-4 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white rounded-xl text-xs font-semibold text-center block shadow-lg shadow-[#2F4BFF]/30 transition-all hover:scale-[1.02]"
+                className="w-full py-3.5 px-4 bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#451B87] text-white rounded-xl text-xs font-semibold text-center block shadow-lg shadow-[#6A2FC8]/30 transition-all"
               >
                 Explore Complete Kits
               </Link>
@@ -527,7 +535,7 @@ export const Home: React.FC = () => {
           ========================================================================= */}
       <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8]">
             Student Success Stories
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
@@ -539,12 +547,12 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200/90 dark:border-[#25335F] space-y-4 shadow-xs">
+          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] space-y-4 shadow-xs">
             <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
               "The Spring Boot & React kit saved our team during the final internal review. The IEEE report was accepted on the first submission without major formatting revisions."
             </p>
-            <div className="pt-2 border-t border-slate-100 dark:border-[#25335F] flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#2F4BFF] text-white flex items-center justify-center font-bold text-xs">
+            <div className="pt-2 border-t border-slate-100 dark:border-[#3A2074] flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#6A2FC8] text-white flex items-center justify-center font-bold text-xs">
                 RS
               </div>
               <div>
@@ -554,12 +562,12 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
-          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200/90 dark:border-[#25335F] space-y-4 shadow-xs">
+          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] space-y-4 shadow-xs">
             <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
               "The viva voce cheat sheet was a game changer. The external examiner asked specifically about JWT replay prevention and database indexes, exactly as explained in the guide."
             </p>
-            <div className="pt-2 border-t border-slate-100 dark:border-[#25335F] flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#6C5CE7] text-white flex items-center justify-center font-bold text-xs">
+            <div className="pt-2 border-t border-slate-100 dark:border-[#3A2074] flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#9D71E8] text-white flex items-center justify-center font-bold text-xs">
                 SP
               </div>
               <div>
@@ -569,12 +577,12 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
-          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200/90 dark:border-[#25335F] space-y-4 shadow-xs">
+          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] space-y-4 shadow-xs">
             <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
               "Clean source code with zero deprecated libraries. Running Docker Compose set up the backend and MySQL container in under 3 minutes on our lab machine."
             </p>
-            <div className="pt-2 border-t border-slate-100 dark:border-[#25335F] flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#2F4BFF] text-white flex items-center justify-center font-bold text-xs">
+            <div className="pt-2 border-t border-slate-100 dark:border-[#3A2074] flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#6A2FC8] text-white flex items-center justify-center font-bold text-xs">
                 KR
               </div>
               <div>
@@ -594,7 +602,7 @@ export const Home: React.FC = () => {
           ========================================================================= */}
       <section className="py-16 sm:py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="text-center space-y-3">
-          <div className="text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8]">
             Frequently Asked Questions
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
@@ -606,7 +614,7 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-2">
+          <div className="bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-2">
             <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
               Are these project kits fully runnable and tested?
             </h3>
@@ -615,7 +623,7 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-2">
+          <div className="bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-2">
             <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
               What files do I receive immediately after payment?
             </h3>
@@ -624,7 +632,7 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-2">
+          <div className="bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-2">
             <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
               Can I customize the code and add my own features?
             </h3>
@@ -633,7 +641,7 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200 dark:border-[#25335F] space-y-2">
+          <div className="bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-2">
             <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
               What payment methods are supported?
             </h3>
@@ -652,8 +660,8 @@ export const Home: React.FC = () => {
           ========================================================================= */}
       <section id="contact" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-24">
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#2F4BFF] dark:text-[#5B7BFF]">
-            <Mail className="w-3.5 h-3.5 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8]">
+            <Mail className="w-3.5 h-3.5 text-[#6A2FC8] dark:text-[#9D71E8]" />
             <span>Academic Support & Inquiries</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
@@ -667,59 +675,97 @@ export const Home: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Direct Contact Info (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white dark:bg-[#0F1830] p-6 sm:p-7 rounded-3xl border border-slate-200 dark:border-[#25335F] shadow-xs space-y-6">
+            <div className="bg-white dark:bg-[#1A0D3D] p-6 sm:p-7 rounded-3xl border border-slate-200 dark:border-[#3A2074] shadow-xs space-y-6">
               <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA]">
                 Direct Contact Channels
               </h3>
 
               <div className="space-y-4 text-xs">
-                <div className="flex items-start gap-3.5">
-                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shrink-0">
-                    <Mail className="w-4 h-4" />
+                {/* Official Email Item with Action & Copy */}
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#0B0720] border border-slate-200 dark:border-[#3A2074] space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shrink-0">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-semibold text-slate-900 dark:text-[#F2E9FF]">Official Academic Email Support</div>
+                      <a
+                        href="mailto:support@projectkit.in?subject=ProjectKit%20Academic%20Support%20Request&body=Hello%20ProjectKit%20Team%2C%0A%0AMy%20Name%3A%20%0ACollege%3A%20%0AProject%20Kit%20Inquiry%3A%20%0A"
+                        className="text-[#6A2FC8] dark:text-[#D1B8FF] hover:underline font-mono text-xs font-semibold block truncate"
+                        title="Click to compose email"
+                      >
+                        support@projectkit.in
+                      </a>
+                      <div className="text-[10px] text-slate-500 dark:text-[#C5B4E3] mt-0.5">Average reply time: under 2 hours</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-semibold text-slate-900 dark:text-[#E8ECFA]">Academic Email Support</div>
+
+                  <div className="flex items-center gap-2 pt-1">
                     <a
-                      href="mailto:support@projectkit.edu"
-                      className="text-[#2F4BFF] dark:text-[#5B7BFF] hover:underline"
+                      href="mailto:support@projectkit.in?subject=ProjectKit%20Academic%20Support%20Request&body=Hello%20ProjectKit%20Support%20Team%2C%0A%0AStudent%20Name%3A%20%0AUniversity%20%2F%20College%3A%20%0AProject%20Kit%20Title%3A%20%0A%0AMy%20Question%20or%20Request%3A%20%0A"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#6A2FC8] hover:bg-[#5824A8] text-white text-[11px] font-semibold transition-all shadow-xs"
                     >
-                      support@projectkit.edu
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Send Email</span>
                     </a>
-                    <div className="text-[11px] text-slate-500 dark:text-[#9AA6C7] mt-0.5">Average reply time: under 2 hours</div>
+                    <button
+                      type="button"
+                      onClick={handleCopyEmail}
+                      className="inline-flex items-center gap-1.5 py-2 px-3 rounded-xl bg-white dark:bg-[#25134D] border border-slate-200 dark:border-[#3A2074] text-[11px] font-semibold text-slate-700 dark:text-[#F2E9FF] hover:bg-slate-100 dark:hover:bg-[#3A2074] transition-all cursor-pointer"
+                    >
+                      {emailCopied ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                          <span className="text-emerald-600 dark:text-emerald-400 font-bold">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5 text-slate-500 dark:text-[#C5B4E3]" />
+                          <span>Copy Address</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3.5">
-                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shrink-0">
+                {/* WhatsApp & Phone Item */}
+                <div className="flex items-start gap-3.5 p-3 rounded-2xl bg-slate-50 dark:bg-[#0B0720] border border-slate-200 dark:border-[#3A2074]">
+                  <div className="w-9 h-9 rounded-xl bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shrink-0">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="font-semibold text-slate-900 dark:text-[#E8ECFA]">Student Helpline & WhatsApp</div>
+                    <div className="font-semibold text-slate-900 dark:text-[#F2E9FF]">Student Helpline & WhatsApp</div>
                     <a
                       href="tel:+919876543210"
-                      className="text-slate-700 dark:text-[#CBD5E1] hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF]"
+                      className="text-slate-700 dark:text-[#CBD5E1] hover:text-[#6A2FC8] dark:hover:text-[#D1B8FF] font-mono text-xs"
                     >
                       +91 98765 43210
                     </a>
-                    <div className="text-[11px] text-slate-500 dark:text-[#9AA6C7] mt-0.5">Direct coordinator assistance</div>
+                    <div className="text-[11px] text-slate-500 dark:text-[#C5B4E3] mt-0.5">Direct coordinator assistance</div>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3.5">
-                  <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#16224A] text-[#2F4BFF] dark:text-[#5B7BFF] flex items-center justify-center shrink-0">
+                {/* Operating Hours Item */}
+                <div className="flex items-start gap-3.5 p-3 rounded-2xl bg-slate-50 dark:bg-[#0B0720] border border-slate-200 dark:border-[#3A2074]">
+                  <div className="w-9 h-9 rounded-xl bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shrink-0">
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="font-semibold text-slate-900 dark:text-[#E8ECFA]">Support Desk Hours</div>
-                    <div className="text-slate-600 dark:text-[#9AA6C7]">Monday – Saturday: 9:00 AM – 8:00 PM IST</div>
-                    <div className="text-[11px] text-slate-500 dark:text-[#9AA6C7] mt-0.5">Emergency review day coverage active</div>
+                    <div className="font-semibold text-slate-900 dark:text-[#F2E9FF]">Support Desk Hours</div>
+                    <div className="text-slate-600 dark:text-[#C5B4E3]">Monday – Saturday: 9:00 AM – 8:00 PM IST</div>
+                    <div className="text-[11px] text-slate-500 dark:text-[#C5B4E3] mt-0.5">Emergency review day coverage active</div>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 dark:border-[#25335F]">
-                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#16224A]/50 border border-slate-200/80 dark:border-[#25335F] text-[11px] text-slate-600 dark:text-[#9AA6C7] leading-relaxed">
-                  <strong className="text-slate-800 dark:text-[#E8ECFA]">Need custom stack consultation?</strong> Mention your university and submission deadline in your message for expedited routing.
+              {/* Webmail fallback info */}
+              <div className="pt-3 border-t border-slate-100 dark:border-[#3A2074] space-y-2">
+                <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/40 text-[11px] text-amber-800 dark:text-amber-200 leading-relaxed">
+                  <strong>Using webmail (Gmail/Outlook)?</strong> Click "Copy Address" above, or visit our{' '}
+                  <Link to="/contact" className="text-[#6A2FC8] dark:text-[#D1B8FF] font-bold underline">
+                    Dedicated Support Desk
+                  </Link>{' '}
+                  for custom project requests.
                 </div>
               </div>
             </div>
@@ -737,7 +783,7 @@ export const Home: React.FC = () => {
                     Message Sent Successfully!
                   </h3>
                   <p className="text-xs text-slate-600 dark:text-[#9AA6C7] max-w-md mx-auto leading-relaxed">
-                    Thank you, <strong className="text-slate-900 dark:text-white">{contactForm.name}</strong>. Our academic engineering advisor has received your inquiry regarding <span className="text-[#2F4BFF] dark:text-[#5B7BFF] font-medium">{contactForm.subject || 'Project Support'}</span> and will reply to <span className="font-mono text-slate-700 dark:text-slate-300">{contactForm.email}</span> shortly.
+                    Thank you, <strong className="text-slate-900 dark:text-white">{contactForm.name}</strong>. Our academic engineering advisor has received your inquiry regarding <span className="text-[#6A2FC8] dark:text-[#D1B8FF] font-medium">{contactForm.subject || 'Project Support'}</span> and will reply to <span className="font-mono text-slate-700 dark:text-slate-300">{contactForm.email}</span> shortly.
                   </p>
                   <div className="pt-3">
                     <button
@@ -746,7 +792,7 @@ export const Home: React.FC = () => {
                         setContactForm({ name: '', email: '', subject: '', message: '' });
                         setContactSubmitted(false);
                       }}
-                      className="px-5 py-2.5 bg-slate-100 dark:bg-[#16224A] hover:bg-slate-200 dark:hover:bg-[#1C2C5E] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold transition-all"
+                      className="px-5 py-2.5 bg-slate-100 dark:bg-[#25134D] hover:bg-slate-200 dark:hover:bg-[#3A2074] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold transition-all"
                     >
                       Send Another Inquiry
                     </button>
@@ -766,7 +812,7 @@ export const Home: React.FC = () => {
                         value={contactForm.name}
                         onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                         placeholder="e.g. Aditi Rao"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#25335F] bg-white dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#2F4BFF] transition-all"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#3A2074] bg-white dark:bg-[#0B0720] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#6A2FC8] transition-all"
                       />
                     </div>
 
@@ -781,7 +827,7 @@ export const Home: React.FC = () => {
                         value={contactForm.email}
                         onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                         placeholder="aditi@college.edu"
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#25335F] bg-white dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#2F4BFF] transition-all"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#3A2074] bg-white dark:bg-[#0B0720] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#6A2FC8] transition-all"
                       />
                     </div>
                   </div>
@@ -796,7 +842,7 @@ export const Home: React.FC = () => {
                       value={contactForm.subject}
                       onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
                       placeholder="e.g. AI Crop Disease Prediction / Spring Boot E-Commerce"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#25335F] bg-white dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#2F4BFF] transition-all"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#3A2074] bg-white dark:bg-[#0B0720] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#6A2FC8] transition-all"
                     />
                   </div>
 
@@ -811,7 +857,7 @@ export const Home: React.FC = () => {
                       value={contactForm.message}
                       onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                       placeholder="Describe what tech stack, deliverables, or assistance you require for your submission..."
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#25335F] bg-white dark:bg-[#070D1F] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#2F4BFF] transition-all resize-none"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#3A2074] bg-white dark:bg-[#0B0720] text-slate-900 dark:text-[#E8ECFA] text-xs focus:outline-none focus:ring-2 focus:ring-[#6A2FC8] transition-all resize-none"
                     />
                   </div>
 
@@ -821,7 +867,7 @@ export const Home: React.FC = () => {
                     </span>
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white rounded-xl text-xs font-semibold shadow-md shadow-[#2F4BFF]/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#451B87] text-white rounded-xl text-xs font-semibold shadow-md shadow-[#6A2FC8]/20 transition-all hover:scale-[1.01] active:scale-[0.98]"
                     >
                       <Send className="w-3.5 h-3.5" />
                       <span>Send Inquiry</span>
@@ -838,19 +884,19 @@ export const Home: React.FC = () => {
       <div className="pk-divider" />
 
       {/* =========================================================================
-          8. CALL TO ACTION SECTION (Dark Navy Deep Card)
+          8. CALL TO ACTION SECTION (Deep Purple Palette Card)
           ========================================================================= */}
       <section className="pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-br from-[#0B1B3F] to-[#070D1F] border border-[#25335F] rounded-3xl p-8 sm:p-14 text-center relative overflow-hidden shadow-2xl space-y-6">
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#2F4BFF]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-gradient-to-br from-[#25134D] to-[#0B0720] border border-[#3A2074] rounded-3xl p-8 sm:p-14 text-center relative overflow-hidden shadow-2xl space-y-6">
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#6A2FC8]/25 rounded-full blur-3xl pointer-events-none" />
           <div className="relative z-10 max-w-2xl mx-auto space-y-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#5B7BFF]">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#D1B8FF]">
               Get Started Today
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
               Ready to Complete Your Final Year Project?
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#D1B8FF]/90 leading-relaxed">
               Explore 24+ engineering capstone kits with verified source code and standard IEEE documentation.
             </p>
           </div>
@@ -858,14 +904,14 @@ export const Home: React.FC = () => {
           <div className="relative z-10 flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link
               to="/projects"
-              className="px-7 py-3.5 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white text-xs font-semibold rounded-[9px] shadow-lg shadow-[#2F4BFF]/30 transition-transform hover:scale-[1.04] active:scale-[0.97]"
+              className="px-7 py-3.5 bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#451B87] text-white text-xs font-semibold rounded-[9px] shadow-lg shadow-[#6A2FC8]/35 transition-transform hover:scale-[1.01] active:scale-[0.98]"
             >
               Browse Complete Catalog
             </Link>
             <a
               href="#how-it-works"
               onClick={scrollToSection('how-it-works')}
-              className="px-7 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold rounded-[9px] transition-transform hover:scale-[1.04] active:scale-[0.97]"
+              className="px-7 py-3.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold rounded-[9px] transition-transform hover:scale-[1.01] active:scale-[0.98]"
             >
               Learn More
             </a>

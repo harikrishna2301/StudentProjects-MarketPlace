@@ -81,46 +81,49 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   return (
     <Link
       to={`/projects?category=${encodeURIComponent(category.name)}`}
-      className="group relative pk-card-3d bg-white dark:bg-[#0F1830] hover:bg-slate-50 dark:hover:bg-[#16224A] p-6 rounded-2xl border border-slate-200/90 dark:border-[#25335F] hover:border-[#2F4BFF]/80 dark:hover:border-[#5B7BFF] transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xs hover:shadow-[0_12px_30px_-5px_rgba(47,75,255,0.2)] dark:hover:shadow-[0_12px_30px_-5px_rgba(47,75,255,0.3)]"
+      className="group relative category-card-beam-container flex flex-col justify-between"
     >
-      {/* Top accent highlight - Royal Blue to Soft Violet */}
-      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#2F4BFF] to-[#6C5CE7] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Animated Purple Palette Perimeter Beam */}
+      <div className="category-card-beam-spinner" aria-hidden="true" />
 
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-[#070D1F] border border-slate-200 dark:border-[#25335F] group-hover:border-[#2F4BFF]/60 dark:group-hover:border-[#5B7BFF]/60 flex items-center justify-center text-[#2F4BFF] dark:text-[#5B7BFF] group-hover:scale-105 transition-all shadow-inner">
-            <IconComponent className="w-6 h-6 transition-colors" />
+      {/* Main Card Surface (Masks center of beam to reveal only the perimeter border) */}
+      <div className="relative z-10 w-full h-full bg-white dark:bg-[#1A0D3D] hover:bg-[#FAF7FD] dark:hover:bg-[#25134D] p-6 rounded-[15px] flex flex-col justify-between transition-colors duration-200">
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] group-hover:border-[#9D71E8] flex items-center justify-center text-[#6A2FC8] dark:text-[#D1B8FF] transition-colors duration-200 shadow-inner">
+              <IconComponent className="w-6 h-6 transition-colors duration-200" />
+            </div>
+
+            <span className="text-xs font-mono font-medium text-[#25134D] dark:text-[#F2E9FF] bg-[#F2E9FF] dark:bg-[#0B0720] px-2.5 py-1 rounded-lg border border-[#D1B8FF]/60 dark:border-[#3A2074] tabular-nums">
+              {category.projectCount} kits
+            </span>
           </div>
 
-          <span className="text-xs font-mono font-medium text-slate-700 dark:text-[#E8ECFA] bg-slate-100 dark:bg-[#070D1F] px-2.5 py-1 rounded-lg border border-slate-200 dark:border-[#25335F] tabular-nums">
-            {category.projectCount} kits
-          </span>
+          <h3 className="text-base font-bold text-[#0B0720] dark:text-[#F2E9FF] group-hover:text-[#6A2FC8] dark:group-hover:text-[#D1B8FF] transition-colors duration-200 mb-2">
+            {category.name}
+          </h3>
+
+          <p className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/80 leading-relaxed line-clamp-2 mb-4">
+            {category.description}
+          </p>
+
+          {/* Academic focus tags */}
+          <div className="flex flex-wrap items-center gap-1.5 mb-2">
+            {branches.map((b) => (
+              <span
+                key={b}
+                className="text-[10px] font-medium text-[#25134D] dark:text-[#D1B8FF] bg-[#F2E9FF] dark:bg-[#0B0720] px-2 py-0.5 rounded border border-[#D1B8FF]/50 dark:border-[#3A2074]"
+              >
+                {b}
+              </span>
+            ))}
+          </div>
         </div>
 
-        <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA] group-hover:text-[#2F4BFF] dark:group-hover:text-[#5B7BFF] transition-colors mb-2">
-          {category.name}
-        </h3>
-
-        <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed line-clamp-2 mb-4">
-          {category.description}
-        </p>
-
-        {/* Academic focus tags */}
-        <div className="flex flex-wrap items-center gap-1.5 mb-2">
-          {branches.map((b) => (
-            <span
-              key={b}
-              className="text-[10px] font-medium text-slate-700 dark:text-[#CBD5E1] bg-slate-100 dark:bg-[#070D1F] px-2 py-0.5 rounded border border-slate-200/80 dark:border-[#25335F]"
-            >
-              {b}
-            </span>
-          ))}
+        <div className="pt-4 border-t border-[#E8DEFF] dark:border-[#3A2074] flex items-center justify-between text-xs font-semibold text-[#6A2FC8] dark:text-[#9D71E8] transition-colors duration-200">
+          <span>Explore Category</span>
+          <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-0.5 transition-transform duration-200" />
         </div>
-      </div>
-
-      <div className="pt-4 border-t border-slate-200/80 dark:border-[#25335F] flex items-center justify-between text-xs font-semibold text-[#2F4BFF] dark:text-[#5B7BFF] group-hover:text-[#1E36D6] dark:group-hover:text-[#7C95FF] transition-colors">
-        <span>Explore Category</span>
-        <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" />
       </div>
     </Link>
   );

@@ -42,21 +42,21 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
     if (project.featured) {
       return {
         label: 'Featured',
-        className: 'bg-[#6C5CE7] text-white shadow-xs font-bold',
+        className: 'bg-[#6A2FC8] text-white shadow-xs font-bold',
         icon: Sparkles,
       };
     }
     if (project.academicYear?.includes('2026')) {
       return {
         label: '2026 Ready',
-        className: 'bg-[#2F4BFF] text-white font-bold shadow-xs',
+        className: 'bg-[#9D71E8] text-white font-bold shadow-xs',
         icon: null,
       };
     }
     if (project.rating >= 4.9) {
       return {
         label: 'Top Rated',
-        className: 'bg-[#2F4BFF] text-white font-bold shadow-xs',
+        className: 'bg-[#9D71E8] text-white font-bold shadow-xs',
         icon: null,
       };
     }
@@ -104,12 +104,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
   const BadgeIcon = badgeConfig?.icon;
 
   return (
-    <div className="pk-card-3d group bg-white dark:bg-[#0F1830] hover:bg-slate-50/90 dark:hover:bg-[#16224A] rounded-2xl border border-[#E3E8F2] dark:border-[#25335F] hover:border-[#2F4BFF]/80 dark:hover:border-[#5B7BFF] shadow-xs hover:shadow-[0_16px_36px_-6px_rgba(47,75,255,0.22)] dark:hover:shadow-[0_16px_36px_-6px_rgba(91,123,255,0.3)] transition-all duration-300 flex flex-col overflow-hidden h-full">
+    <div className="pk-card-3d group bg-white dark:bg-[#1A0D3D] hover:bg-[#FAF7FD] dark:hover:bg-[#25134D] rounded-2xl border border-[#E8DEFF] dark:border-[#3A2074] hover:border-[#6A2FC8] dark:hover:border-[#9D71E8] shadow-xs hover:shadow-[0_12px_28px_-4px_rgba(106,47,200,0.18)] dark:hover:shadow-[0_12px_28px_-4px_rgba(0,0,0,0.7)] transition-all duration-200 flex flex-col overflow-hidden h-full">
       {/* 1. Top Thumbnail Area (16:9, clean visual, no fake code/terminal) */}
-      <div className="relative overflow-hidden bg-[#0B1B3F] aspect-[16/9] w-full border-b border-[#E3E8F2] dark:border-[#25335F] shrink-0">
+      <div className="relative overflow-hidden bg-[#0B0720] aspect-[16/9] w-full border-b border-[#E8DEFF] dark:border-[#3A2074] shrink-0">
         <Link
           to={`/projects/${project.id}`}
-          className="block w-full h-full transform group-hover:scale-105 transition-transform duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F4BFF] focus-visible:ring-inset"
+          className="block w-full h-full transform group-hover:scale-105 transition-transform duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] focus-visible:ring-inset"
           aria-label={`View full details of ${project.title}`}
         >
           <ProjectIllustration
@@ -143,10 +143,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
             e.stopPropagation();
             toggleWishlist(project.id, project.title);
           }}
-          className={`absolute top-3 right-3 w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl backdrop-blur-md transition-all z-20 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F4BFF] ${
+          className={`absolute top-3 right-3 w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl backdrop-blur-md transition-all z-20 shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] ${
             isWishlisted
               ? 'bg-rose-600 text-white hover:bg-rose-700 shadow-rose-900/40'
-              : 'bg-white/90 dark:bg-[#070D1F]/85 text-slate-500 dark:text-slate-300 hover:text-rose-600 dark:hover:text-white hover:bg-white dark:hover:bg-[#070D1F] border border-[#E3E8F2] dark:border-[#25335F]'
+              : 'bg-white/90 dark:bg-[#0B0720]/85 text-slate-500 dark:text-[#D1B8FF] hover:text-rose-600 dark:hover:text-white hover:bg-white dark:hover:bg-[#0B0720] border border-[#E8DEFF] dark:border-[#3A2074]'
           }`}
           title={isWishlisted ? `Remove ${project.title} from wishlist` : `Add ${project.title} to wishlist`}
           aria-label={isWishlisted ? `Remove ${project.title} from wishlist` : `Add ${project.title} to wishlist`}
@@ -163,26 +163,26 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
       <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-2 min-w-0">
           {/* Metadata Row: Category & Academic Year */}
-          <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-[#9AA6C7] min-w-0">
-            <span className="uppercase tracking-wider font-semibold text-[#2F4BFF] dark:text-[#8FA4FF] truncate">
+          <div className="flex items-center gap-2 text-xs font-medium text-[#63567D] dark:text-[#D1B8FF]/80 min-w-0">
+            <span className="uppercase tracking-wider font-semibold text-[#6A2FC8] dark:text-[#D1B8FF] truncate">
               {project.category}
             </span>
-            <span aria-hidden="true" className="text-slate-300 dark:text-[#25335F]">·</span>
+            <span aria-hidden="true" className="text-slate-300 dark:text-[#3A2074]">·</span>
             <span className="shrink-0">{project.academicYear || '2025–26'}</span>
           </div>
 
           {/* Project Title - High contrast bold typography */}
           <Link
             to={`/projects/${project.id}`}
-            className="block group-hover:text-[#2F4BFF] dark:group-hover:text-[#5B7BFF] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F4BFF] rounded-sm min-w-0"
+            className="block group-hover:text-[#6A2FC8] dark:group-hover:text-[#D1B8FF] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] rounded-sm min-w-0"
           >
-            <h3 className="font-bold text-base text-[#0F172A] dark:text-[#E8ECFA] leading-snug line-clamp-2">
+            <h3 className="font-bold text-base text-[#0B0720] dark:text-[#F2E9FF] leading-snug line-clamp-2">
               <HighlightText text={project.title} query={searchQuery} />
             </h3>
           </Link>
 
           {/* Short Description - At least 14px (text-sm) */}
-          <p className="text-sm text-[#475569] dark:text-[#9AA6C7] line-clamp-2 leading-relaxed">
+          <p className="text-sm text-[#4E4166] dark:text-[#D1B8FF]/80 line-clamp-2 leading-relaxed">
             <HighlightText text={project.shortDescription} query={searchQuery} />
           </p>
 
@@ -195,33 +195,33 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
               <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
               <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
             </div>
-            <span className="text-xs font-bold text-[#1E293B] dark:text-[#E8ECFA] tabular-nums ml-0.5">
+            <span className="text-xs font-bold text-[#0B0720] dark:text-[#F2E9FF] tabular-nums ml-0.5">
               {project.rating ? project.rating.toFixed(1) : '4.9'}
             </span>
-            <span className="text-xs text-[#64748B] dark:text-[#9AA6C7]">
+            <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/70">
               ({project.reviewsCount || 67} reviews)
             </span>
           </div>
 
-          {/* Tech Stack & Report Badges in Body (Standard font, #EEF2FF bg, #1E293B text) */}
+          {/* Tech Stack & Report Badges in Body (Purple Palette: #F2E9FF bg, #25134D text) */}
           <div className="flex flex-wrap items-center gap-1.5 pt-2">
             {displayedTechStack.map((tech) => (
               <span
                 key={tech}
-                className="text-xs font-medium text-[#1E293B] dark:text-[#E8ECFA] bg-[#EEF2FF] dark:bg-[#16224A] px-2.5 py-0.5 rounded-md border border-[#C7D2FE] dark:border-[#25335F]"
+                className="text-xs font-medium text-[#25134D] dark:text-[#F2E9FF] bg-[#F2E9FF] dark:bg-[#25134D] px-2.5 py-0.5 rounded-md border border-[#D1B8FF]/60 dark:border-[#3A2074]"
               >
                 <HighlightText text={tech} query={searchQuery} />
               </span>
             ))}
             {project.techStack.length > 3 && (
-              <span className="text-xs text-[#64748B] dark:text-[#9AA6C7] px-1 font-medium">
+              <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/70 px-1 font-medium">
                 +{project.techStack.length - 3}
               </span>
             )}
 
             {/* 88+ Pages Report Badge in Body */}
-            <span className="text-xs font-medium text-[#1E293B] dark:text-[#E8ECFA] bg-[#EEF2FF] dark:bg-[#16224A] px-2.5 py-0.5 rounded-md border border-[#C7D2FE] dark:border-[#25335F] inline-flex items-center gap-1">
-              <FileText className="w-3 h-3 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+            <span className="text-xs font-medium text-[#25134D] dark:text-[#F2E9FF] bg-[#F2E9FF] dark:bg-[#25134D] px-2.5 py-0.5 rounded-md border border-[#D1B8FF]/60 dark:border-[#3A2074] inline-flex items-center gap-1">
+              <FileText className="w-3 h-3 text-[#6A2FC8] dark:text-[#D1B8FF]" />
               <span>88+ pages report</span>
             </span>
 
@@ -234,13 +234,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
         </div>
 
         {/* 3. Pricing & Call-to-Action Footer (Pinned to bottom, stacks cleanly on narrow cards) */}
-        <div className="pt-4 border-t border-[#E3E8F2] dark:border-[#25335F] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-auto">
+        <div className="pt-4 border-t border-[#E8DEFF] dark:border-[#3A2074] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-auto">
           <div className="flex items-baseline gap-2">
-            <span className="text-lg font-extrabold text-[#0F172A] dark:text-[#E8ECFA] font-mono tabular-nums tracking-tight">
+            <span className="text-lg font-extrabold text-[#0B0720] dark:text-[#F2E9FF] font-mono tabular-nums tracking-tight">
               ₹{project.price.toLocaleString('en-IN')}
             </span>
             {project.originalPrice > project.price && (
-              <span className="text-xs text-slate-400 dark:text-[#9AA6C7] line-through font-mono tabular-nums">
+              <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/60 line-through font-mono tabular-nums">
                 ₹{project.originalPrice.toLocaleString('en-IN')}
               </span>
             )}
@@ -249,10 +249,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
           <button
             type="button"
             onClick={handleActionClick}
-            className={`w-full sm:w-auto min-h-[40px] px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 shadow-xs flex items-center justify-center gap-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F4BFF] focus-visible:ring-offset-2 ${
+            className={`w-full sm:w-auto min-h-[40px] px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 shadow-xs flex items-center justify-center gap-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] focus-visible:ring-offset-2 ${
               isPurchased
                 ? 'bg-[#16A34A] hover:bg-[#15803D] active:bg-[#14532D] text-white'
-                : 'bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white hover:shadow-[0_4px_14px_rgba(47,75,255,0.35)]'
+                : 'bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#451B87] text-white hover:shadow-[0_4px_14px_rgba(106,47,200,0.35)]'
             }`}
             aria-label={isPurchased ? `Download ${project.title} kit` : `Add ${project.title} to cart`}
           >

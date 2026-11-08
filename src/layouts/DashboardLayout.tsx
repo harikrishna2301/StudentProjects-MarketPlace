@@ -151,19 +151,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                     active
-                      ? 'bg-[#2F4BFF] text-white shadow-xs'
-                      : 'text-slate-600 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#16224A] hover:text-slate-900 dark:hover:text-[#E8ECFA]'
+                      ? 'bg-[#6A2FC8] text-white shadow-xs'
+                      : 'text-slate-600 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#25134D] hover:text-slate-900 dark:hover:text-[#F2E9FF]'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-white' : 'text-[#2F4BFF] dark:text-[#5B7BFF]'}`} />
+                    <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-white' : 'text-[#6A2FC8] dark:text-[#D1B8FF]'}`} />
                     <span className="truncate">{item.name}</span>
                   </div>
                   {hasBadge && (
                     <span
                       className={`px-1.5 py-0.5 text-[10px] font-mono tabular-nums font-bold rounded-full ${
                         active
-                          ? 'bg-white text-[#2F4BFF]'
+                          ? 'bg-white text-[#6A2FC8]'
                           : 'bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/20 dark:border-rose-500/30'
                       }`}
                     >
@@ -176,9 +176,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
           </div>
 
           {/* Role Simulator inside Sidebar */}
-          <div className="px-4 py-3 mx-3 rounded-xl bg-slate-50 dark:bg-[#0F1830] border border-slate-200 dark:border-[#25335F] text-xs">
-            <div className="text-[10px] text-slate-500 dark:text-[#9AA6C7] font-semibold mb-1.5 flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+          <div className="px-4 py-3 mx-3 rounded-xl bg-slate-50 dark:bg-[#1A0D3D] border border-slate-200 dark:border-[#3A2074] text-xs">
+            <div className="text-[10px] text-slate-500 dark:text-[#C5B4E3] font-semibold mb-1.5 flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 text-[#6A2FC8] dark:text-[#D1B8FF]" />
               <span>Role Simulator</span>
             </div>
             <div className="flex gap-2">
@@ -189,8 +189,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
                 }}
                 className={`flex-1 py-1 px-2 rounded-lg text-[10px] font-semibold transition-colors ${
                   role === 'student'
-                    ? 'bg-[#2F4BFF] text-white shadow-xs'
-                    : 'bg-white dark:bg-[#16224A] text-slate-600 dark:text-[#9AA6C7] border border-slate-200 dark:border-[#25335F] hover:text-slate-900 dark:hover:text-[#E8ECFA]'
+                    ? 'bg-[#6A2FC8] text-white shadow-xs'
+                    : 'bg-white dark:bg-[#25134D] text-slate-600 dark:text-[#C5B4E3] border border-slate-200 dark:border-[#3A2074] hover:text-slate-900 dark:hover:text-[#F2E9FF]'
                 }`}
               >
                 Student
@@ -202,8 +202,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
                 }}
                 className={`flex-1 py-1 px-2 rounded-lg text-[10px] font-semibold transition-colors ${
                   role === 'admin'
-                    ? 'bg-[#2F4BFF] text-white shadow-xs'
-                    : 'bg-white dark:bg-[#16224A] text-slate-600 dark:text-[#9AA6C7] border border-slate-200 dark:border-[#25335F] hover:text-slate-900 dark:hover:text-[#E8ECFA]'
+                    ? 'bg-[#6A2FC8] text-white shadow-xs'
+                    : 'bg-white dark:bg-[#25134D] text-slate-600 dark:text-[#C5B4E3] border border-slate-200 dark:border-[#3A2074] hover:text-slate-900 dark:hover:text-[#F2E9FF]'
                 }`}
               >
                 Admin
@@ -213,23 +213,23 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
         </div>
 
         {/* User Card & Logout */}
-        <div className="p-4 border-t border-slate-200 dark:border-[#25335F] space-y-3">
+        <div className="p-4 border-t border-slate-200 dark:border-[#3A2074] space-y-3">
           <div className="flex items-center gap-3 px-1">
-            <div className="w-8 h-8 rounded-xl bg-[#2F4BFF] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-[#6A2FC8] text-white flex items-center justify-center font-bold text-xs shrink-0">
               {user?.fullName?.charAt(0) || 'U'}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-semibold text-slate-900 dark:text-[#E8ECFA] truncate">
+              <div className="text-xs font-semibold text-slate-900 dark:text-[#F2E9FF] truncate">
                 {user?.fullName || 'Academic User'}
               </div>
-              <div className="text-[11px] text-slate-500 dark:text-[#9AA6C7] truncate">{user?.email}</div>
+              <div className="text-[11px] text-slate-500 dark:text-[#C5B4E3] truncate">{user?.email}</div>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-slate-200 dark:border-[#25335F] flex items-center justify-between">
+          <div className="pt-2 border-t border-slate-200 dark:border-[#3A2074] flex items-center justify-between">
             <Link
               to="/projects"
-              className="text-xs text-[#2F4BFF] dark:text-[#5B7BFF] hover:text-[#1E36D6] dark:hover:text-[#8C7CFF] font-semibold flex items-center gap-1"
+              className="text-xs text-[#6A2FC8] dark:text-[#D1B8FF] hover:text-[#5824A8] dark:hover:text-white font-semibold flex items-center gap-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Catalog</span>
@@ -237,7 +237,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
 
             <button
               onClick={handleLogout}
-              className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 font-semibold flex items-center gap-1"
+              className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 font-semibold flex items-center gap-1 cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Sign Out</span>
@@ -249,30 +249,30 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header Bar */}
-        <header className="h-16 bg-white/90 dark:bg-[#070D1F]/90 backdrop-blur-md border-b border-slate-200 dark:border-[#25335F] flex items-center justify-between px-4 sm:px-6 lg:px-8">
+        <header className="h-16 bg-white/90 dark:bg-[#0B0720]/90 backdrop-blur-md border-b border-slate-200 dark:border-[#3A2074] flex items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 text-slate-600 dark:text-[#9AA6C7] hover:text-slate-900 dark:hover:text-[#E8ECFA] rounded-lg hover:bg-slate-100 dark:hover:bg-[#16224A]"
+              className="lg:hidden p-2 text-slate-600 dark:text-[#C5B4E3] hover:text-slate-900 dark:hover:text-[#F2E9FF] rounded-lg hover:bg-slate-100 dark:hover:bg-[#25134D]"
               aria-label="Open sidebar"
             >
               <Menu className="w-5 h-5" />
             </button>
 
             {/* Breadcrumbs */}
-            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-[#9AA6C7]">
-              <Link to="/" className="hover:text-[#2F4BFF] dark:hover:text-[#5B7BFF]">Home</Link>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-[#1A2846]" />
-              <span className="text-slate-800 dark:text-[#CBD5E1] font-semibold">{currentTitle}</span>
+            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-[#C5B4E3]">
+              <Link to="/" className="hover:text-[#6A2FC8] dark:hover:text-[#D1B8FF]">Home</Link>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-[#3A2074]" />
+              <span className="text-slate-800 dark:text-[#F2E9FF] font-semibold">{currentTitle}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <Link
               to="/projects"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-[#0B1329] hover:bg-slate-200 dark:hover:bg-[#101C38] text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] hover:text-slate-900 dark:hover:text-white rounded-xl border border-slate-200 dark:border-[#1A2846] transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-[#1A0D3D] hover:bg-slate-200 dark:hover:bg-[#25134D] text-xs font-semibold text-slate-700 dark:text-[#F2E9FF] hover:text-slate-900 dark:hover:text-white rounded-xl border border-slate-200 dark:border-[#3A2074] transition-colors"
             >
-              <FolderKanban className="w-3.5 h-3.5 text-[#2563EB] dark:text-[#3B82F6]" />
+              <FolderKanban className="w-3.5 h-3.5 text-[#6A2FC8] dark:text-[#D1B8FF]" />
               <span>Browse Catalog</span>
             </Link>
 
