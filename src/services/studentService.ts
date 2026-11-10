@@ -113,6 +113,68 @@ export const studentService = {
       return null;
     }
   },
+
+  /**
+   * Claim a verified free project kit
+   */
+  async claimFreeProject(projectId: number | string): Promise<any> {
+    const numericId = typeof projectId === 'number' ? projectId : parseInt(projectId.replace(/[^0-9]/g, ''), 10) || projectId;
+    const response = await apiClient.post<BackendApiResponse<any>>(`/api/projects/${numericId}/claim-free`);
+    return response.data.data;
+  },
+
+  /**
+   * Get all claimed and purchased project kits
+   */
+  async getMyKits(): Promise<any[]> {
+    try {
+      const response = await apiClient.get<BackendApiResponse<any[]>>('/api/students/my-kits');
+      return response.data.data || [];
+    } catch {
+      return [];
+    }
+  },
+
+  /**
+   * Check entitlement for a specific project kit
+   */
+  async checkProjectAccess(projectId: number | string): Promise<{ hasAccess: boolean; accessType: string; isFree: boolean }> {
+    try {
+      const numericId = typeof projectId === 'number' ? projectId : parseInt(projectId.replace(/[^0-9]/g, ''), 10) || projectId;
+      const response = await apiClient.get<BackendApiResponse<any>>(`/api/students/projects/${numericId}/access`);
+      return response.data.data || { hasAccess: false, accessType: 'NONE', isFree: false };
+    } catch {
+      return { hasAccess: false, accessType: 'NONE', isFree: false };
+    }
+  },
+
+  /**
+   * Get active free kits available to claim
+   */
+  async getAvailableFreeKits(): Promise<any[]> {
+    try {
+      const response = await apiClient.get<BackendApiResponse<any[]>>('/api/students/available-free');
+      return response.data.data || [];
+    } catch {
+      return [];
+    }
+  },
+
+  /**
+   * Submit student contact inquiry to backend desk
+   */
+  async submitContactInquiry(data: {
+    fullName: string;
+    email: string;
+    phone?: string;
+    college?: string;
+    category: string;
+    subject: string;
+    message: string;
+  }): Promise<any> {
+    const response = await apiClient.post<BackendApiResponse<any>>('/api/contact', data);
+    return response.data.data;
+  },
 };
 
 export default studentService;

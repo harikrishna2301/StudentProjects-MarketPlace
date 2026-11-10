@@ -43,7 +43,14 @@ export const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getProjectById, projects } = useProjects();
-  const { purchasedProjectIds, downloadProjectKit } = useAuth();
+  const {
+    purchasedProjectIds,
+    claimedProjectIds,
+    claimFreeKit,
+    hasAccessToProject,
+    downloadProjectKit,
+    isAuthenticated,
+  } = useAuth();
   const { isInWishlist, toggleWishlist } = useWishlist();
 
   const [copiedStep, setCopiedStep] = useState<number | null>(null);
@@ -52,6 +59,7 @@ export const ProjectDetails: React.FC = () => {
   const [activePreviewIndex, setActivePreviewIndex] = useState<number>(0);
   const [fullscreenModal, setFullscreenModal] = useState<boolean>(false);
   const [demoModalOpen, setDemoModalOpen] = useState<boolean>(false);
+  const [claiming, setClaiming] = useState<boolean>(false);
 
   // Dynamically load project using the URL project ID
   const project = id ? getProjectById(id) : undefined;
@@ -83,8 +91,26 @@ export const ProjectDetails: React.FC = () => {
     );
   }
 
+  const isFree = project.isFree || project.accessType === 'FREE' || project.price === 0;
+  const isClaimed = claimedProjectIds?.includes(project.id);
   const isPurchased = purchasedProjectIds.includes(project.id);
+  const hasAccess = hasAccessToProject(project.id);
   const isWishlisted = isInWishlist(project.id);
+
+  const handleClaimFree = async () => {
+    if (!isAuthenticated) {
+      navigate(`/login?redirect=${encodeURIComponent(`/projects/${project.id}`)}`);
+      return;
+    }
+    try {
+      setClaiming(true);
+      await claimFreeKit(project);
+    } catch (err: any) {
+      console.error('Error claiming free kit:', err);
+    } finally {
+      setClaiming(false);
+    }
+  };
 
   // Related projects in the same category or sharing primary language
   const relatedProjects = projects
@@ -461,32 +487,53 @@ export const ProjectDetails: React.FC = () => {
             <div>
               <div className="text-[11px] text-slate-500 dark:text-[#94A3B8] font-medium">Complete Academic Kit Price</div>
               <div className="flex items-baseline gap-2.5 mt-0.5">
-                <span className="text-2xl font-extrabold text-slate-900 dark:text-[#F8FAFC] font-mono tabular-nums">
-                  ₹{project.price.toLocaleString('en-IN')}
-                </span>
-                <span className="text-sm text-slate-400 dark:text-[#64748B] line-through font-mono tabular-nums">
-                  ₹{project.originalPrice.toLocaleString('en-IN')}
-                </span>
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                  {Math.round(((project.originalPrice - project.price) / project.originalPrice) * 100)}% OFF
-                </span>
+                {isFree ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight uppercase">
+                      FREE
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-[#94A3B8] font-semibold">
+                      (₹0)
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    <span className="text-2xl font-extrabold text-slate-900 dark:text-[#F8FAFC] font-mono tabular-nums">
+                      ₹{project.price.toLocaleString('en-IN')}
+                    </span>
+                    {project.originalPrice > project.price && (
+                      <span className="text-sm text-slate-400 dark:text-[#64748B] line-through font-mono tabular-nums">
+                        ₹{project.originalPrice.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                    {project.originalPrice > project.price && (
+                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                        {Math.round(((project.originalPrice - project.price) / project.originalPrice) * 100)}% OFF
+                      </span>
+                    )}
+                  </>
+                )}
               </div>
             </div>
 
             <div className="text-right">
               <div className="text-[10px] text-emerald-700 dark:text-emerald-300 font-semibold bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-1 rounded-md">
-                Instant Access
+                {isFree ? '100% Free' : 'Instant Access'}
               </div>
             </div>
           </div>
 
           {/* Primary Action Button */}
           <div className="space-y-2 pt-1">
-            {isPurchased ? (
+            {hasAccess ? (
               <div className="space-y-2">
                 <div className="p-3 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs text-emerald-800 dark:text-emerald-200 flex items-center gap-2 font-medium">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span>You own this project kit. Downloads unlocked!</span>
+                  <span>
+                    {isClaimed
+                      ? 'You claimed this free project kit. Downloads unlocked!'
+                      : 'You own this project kit. Downloads unlocked!'}
+                  </span>
                 </div>
                 <button
                   onClick={() => downloadProjectKit(project, 'Complete Kit')}
@@ -496,6 +543,15 @@ export const ProjectDetails: React.FC = () => {
                   <span>Download Complete Project Package (ZIP)</span>
                 </button>
               </div>
+            ) : isFree ? (
+              <button
+                onClick={handleClaimFree}
+                disabled={claiming}
+                className="w-full py-3.5 px-6 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg shadow-emerald-900/20"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>{claiming ? 'Claiming Free Kit...' : 'Get Free Project Kit'}</span>
+              </button>
             ) : (
               <button
                 onClick={() => navigate(`/checkout/${project.id}`)}
@@ -817,7 +873,7 @@ export const ProjectDetails: React.FC = () => {
                       <span className="text-xs font-mono font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700">
                         {doc.format}
                       </span>
-                      {isPurchased && (
+                      {hasAccess && (
                         <button
                           onClick={() => downloadProjectKit(project, doc.item)}
                           className="p-1.5 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-800 rounded"
@@ -1007,12 +1063,20 @@ export const ProjectDetails: React.FC = () => {
         <div>
           <div className="text-[10px] text-slate-500 dark:text-[#94A3B8] font-medium">Complete Kit</div>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-base font-extrabold text-slate-900 dark:text-[#F8FAFC] font-mono tabular-nums">
-              ₹{project.price.toLocaleString('en-IN')}
-            </span>
-            <span className="text-[11px] text-slate-400 line-through font-mono tabular-nums">
-              ₹{project.originalPrice.toLocaleString('en-IN')}
-            </span>
+            {isFree ? (
+              <span className="text-base font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight uppercase">
+                FREE
+              </span>
+            ) : (
+              <>
+                <span className="text-base font-extrabold text-slate-900 dark:text-[#F8FAFC] font-mono tabular-nums">
+                  ₹{project.price.toLocaleString('en-IN')}
+                </span>
+                <span className="text-[11px] text-slate-400 line-through font-mono tabular-nums">
+                  ₹{project.originalPrice.toLocaleString('en-IN')}
+                </span>
+              </>
+            )}
           </div>
         </div>
 
@@ -1025,13 +1089,22 @@ export const ProjectDetails: React.FC = () => {
             <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-rose-500 text-rose-500' : ''}`} />
           </button>
 
-          {isPurchased ? (
+          {hasAccess ? (
             <button
               onClick={() => downloadProjectKit(project, 'Complete Kit')}
               className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-sm"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download</span>
+            </button>
+          ) : isFree ? (
+            <button
+              onClick={handleClaimFree}
+              disabled={claiming}
+              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{claiming ? 'Claiming...' : 'Get Free'}</span>
             </button>
           ) : (
             <button

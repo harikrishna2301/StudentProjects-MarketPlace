@@ -39,8 +39,14 @@ public class Project {
     @Column(name = "difficulty_level", nullable = false, length = 20)
     private DifficultyLevel difficultyLevel = DifficultyLevel.INTERMEDIATE;
 
+    @Column(name = "is_free", nullable = false)
+    private boolean isFree = false;
+
+    @Column(name = "access_type", nullable = false, length = 20)
+    private String accessType = "PAID"; // "FREE" or "PAID"
+
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    private BigDecimal price = BigDecimal.ZERO;
 
     @Column(name = "discount_price", precision = 10, scale = 2)
     private BigDecimal discountPrice;
@@ -51,6 +57,9 @@ public class Project {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
+    @Column(name = "publication_status", nullable = false, length = 20)
+    private String publicationStatus = "PUBLISHED"; // "DRAFT", "PUBLISHED", "ARCHIVED"
+
     @Column(name = "thumbnail_url", length = 500)
     private String thumbnailUrl;
 
@@ -59,6 +68,9 @@ public class Project {
 
     @Column(name = "purchase_count", nullable = false)
     private int purchaseCount = 0;
+
+    @Column(name = "claim_count", nullable = false)
+    private int claimCount = 0;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -73,11 +85,27 @@ public class Project {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        validateFreeConsistency();
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+        validateFreeConsistency();
+    }
+
+    private void validateFreeConsistency() {
+        if (this.isFree || "FREE".equalsIgnoreCase(this.accessType)) {
+            this.isFree = true;
+            this.accessType = "FREE";
+            this.price = BigDecimal.ZERO;
+            this.discountPrice = null;
+        } else {
+            this.accessType = "PAID";
+        }
+        if (this.publicationStatus == null) {
+            this.publicationStatus = "PUBLISHED";
+        }
     }
 
     // Getters and Setters
@@ -223,5 +251,51 @@ public class Project {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public boolean isFree() {
+        return isFree;
+    }
+
+    public void setFree(boolean free) {
+        this.isFree = free;
+        if (free) {
+            this.accessType = "FREE";
+            this.price = BigDecimal.ZERO;
+            this.discountPrice = null;
+        } else {
+            this.accessType = "PAID";
+        }
+    }
+
+    public String getAccessType() {
+        return accessType;
+    }
+
+    public void setAccessType(String accessType) {
+        this.accessType = accessType;
+        if ("FREE".equalsIgnoreCase(accessType)) {
+            this.isFree = true;
+            this.price = BigDecimal.ZERO;
+            this.discountPrice = null;
+        } else {
+            this.isFree = false;
+        }
+    }
+
+    public String getPublicationStatus() {
+        return publicationStatus;
+    }
+
+    public void setPublicationStatus(String publicationStatus) {
+        this.publicationStatus = publicationStatus;
+    }
+
+    public int getClaimCount() {
+        return claimCount;
+    }
+
+    public void setClaimCount(int claimCount) {
+        this.claimCount = claimCount;
     }
 }

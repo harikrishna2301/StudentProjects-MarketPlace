@@ -3,6 +3,7 @@ import { User, Order, Project } from '../types';
 import { INITIAL_PROJECTS } from '../data/projects';
 import authService from '../services/authService';
 import orderService from '../services/orderService';
+import studentService from '../services/studentService';
 
 interface AuthContextType {
   user: User | null;
@@ -18,8 +19,11 @@ interface AuthContextType {
   }) => Promise<boolean>;
   myOrders: Order[];
   purchasedProjectIds: string[];
+  claimedProjectIds: string[];
+  claimFreeKit: (project: Project) => Promise<boolean>;
+  hasAccessToProject: (projectId: string) => boolean;
   completePurchase: (project: Project, paymentMethod: string) => Order;
-  downloadProjectKit: (project: Project, fileType?: string) => void;
+  downloadProjectKit: (project: Project, fileType?: string) => Promise<void>;
   quickSwitchUser: (role: 'student' | 'admin' | 'guest') => void;
 }
 
@@ -89,7 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return DEFAULT_STUDENT;
   });
 
-  const [myOrders, setMyOrders] = useState<Order[]>(() => {
+  const [allOrders, setAllOrders] = useState<Order[]>(() => {
     const saved = localStorage.getItem('projectkit_orders');
     if (saved) {
       try {
@@ -110,10 +114,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('projectkit_orders', JSON.stringify(myOrders));
-  }, [myOrders]);
+    localStorage.setItem('projectkit_orders', JSON.stringify(allOrders));
+  }, [allOrders]);
 
+  const [claimedProjectIds, setClaimedProjectIds] = useState<string[]>(() => {
+    if (!user) return [];
+    try {
+      const saved = localStorage.getItem(`projectkit_claims_${user.id}`);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Keep claimedProjectIds in sync when user switches or loads
+  useEffect(() => {
+    if (user) {
+      try {
+        const saved = localStorage.getItem(`projectkit_claims_${user.id}`);
+        setClaimedProjectIds(saved ? JSON.parse(saved) : []);
+      } catch {
+        setClaimedProjectIds([]);
+      }
+    } else {
+      setClaimedProjectIds([]);
+    }
+  }, [user?.id]);
+
+  // myOrders strictly scoped to active logged-in user so newly registered users do not see default demo orders
+  const myOrders = user ? allOrders.filter((o) => o.userId === user.id) : [];
   const purchasedProjectIds = myOrders.map((o) => o.projectId);
+
+  const hasAccessToProject = (projectId: string): boolean => {
+    if (!user) return false;
+    if (user.role === 'admin') return true;
+    return claimedProjectIds.includes(projectId) || purchasedProjectIds.includes(projectId);
+  };
+
+  const claimFreeKit = async (project: Project): Promise<boolean> => {
+    if (!user) {
+      throw new Error('Please log in as a student to claim this free kit.');
+    }
+    if (!project.isFree && project.accessType !== 'FREE') {
+      throw new Error('This project is not a free kit and requires purchase verification.');
+    }
+
+    try {
+      await studentService.claimFreeProject(project.id);
+    } catch (err) {
+      // Backend may be offline in dev/preview or already claimed; fallback gracefully
+    }
+
+    const updated = Array.from(new Set([...claimedProjectIds, project.id]));
+    setClaimedProjectIds(updated);
+    localStorage.setItem(`projectkit_claims_${user.id}`, JSON.stringify(updated));
+    return true;
+  };
 
   const login = async (email: string, password?: string) => {
     try {
@@ -122,8 +178,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return true;
     } catch {
       const isAdminUser = email.toLowerCase().includes('admin');
-      const targetUser = isAdminUser ? DEFAULT_ADMIN : { ...DEFAULT_STUDENT, email };
-      setUser(targetUser);
+      if (isAdminUser) {
+        setUser(DEFAULT_ADMIN);
+        return true;
+      }
+
+      // Check if user was registered in local storage
+      const registeredUsers: User[] = JSON.parse(
+        localStorage.getItem('projectkit_registered_users') || '[]'
+      );
+      const found = registeredUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
+      if (found) {
+        setUser(found);
+      } else if (email.toLowerCase() === DEFAULT_STUDENT.email.toLowerCase()) {
+        setUser(DEFAULT_STUDENT);
+      } else {
+        const targetUser: User = {
+          id: `usr-${Date.now()}`,
+          fullName: email.split('@')[0],
+          email,
+          role: 'student',
+          collegeName: 'Engineering College',
+          joinedDate: new Date().toISOString().split('T')[0],
+        };
+        setUser(targetUser);
+      }
       return true;
     }
   };
@@ -142,6 +221,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     phoneNumber?: string;
     collegeName?: string;
   }) => {
+    // Clear any existing active session so newly registered account is detached
+    setUser(null);
+    localStorage.removeItem('projectkit_user');
+    localStorage.removeItem('projectkit_auth_token');
+    localStorage.removeItem('projectkit_refresh_token');
+
     try {
       const { user: registeredUser } = await authService.register({
         fullName: data.fullName,
@@ -149,7 +234,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         phone: data.phoneNumber,
         collegeName: data.collegeName,
       });
-      setUser(registeredUser);
+
+      // Persist in registered users pool for subsequent login
+      const registeredUsers: User[] = JSON.parse(
+        localStorage.getItem('projectkit_registered_users') || '[]'
+      );
+      const updated = registeredUsers.filter((u) => u.email.toLowerCase() !== data.email.toLowerCase());
+      updated.push(registeredUser);
+      localStorage.setItem('projectkit_registered_users', JSON.stringify(updated));
+
+      // Note: We deliberately DO NOT call setUser here.
+      // After successful account creation, the user is redirected to /login to log in explicitly.
       return true;
     } catch {
       const newUser: User = {
@@ -161,7 +256,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: 'student',
         joinedDate: new Date().toISOString().split('T')[0],
       };
-      setUser(newUser);
+
+      const registeredUsers: User[] = JSON.parse(
+        localStorage.getItem('projectkit_registered_users') || '[]'
+      );
+      const updated = registeredUsers.filter((u) => u.email.toLowerCase() !== data.email.toLowerCase());
+      updated.push(newUser);
+      localStorage.setItem('projectkit_registered_users', JSON.stringify(updated));
+
+      // Note: We deliberately DO NOT call setUser here.
+      // After successful account creation, the user is redirected to /login to log in explicitly.
       return true;
     }
   };
@@ -196,11 +300,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       downloadToken: `pk_dl_${Math.random().toString(36).substring(2, 9)}`,
     };
 
-    setMyOrders((prev) => [newOrder, ...prev]);
+    setAllOrders((prev) => [newOrder, ...prev]);
     return newOrder;
   };
 
   const downloadProjectKit = async (project: Project, fileType: string = 'Full Project ZIP') => {
+    if (!hasAccessToProject(project.id)) {
+      const isFree = project.isFree || project.accessType === 'FREE';
+      const errMsg = isFree
+        ? 'Access Denied: You must claim this free kit before downloading.'
+        : 'Access Denied: You have not purchased this project. Please complete checkout to download.';
+      throw new Error(errMsg);
+    }
+
     try {
       const numericId = parseInt(project.id.replace(/[^0-9]/g, ''), 10) || 1;
       if (fileType.toLowerCase().includes('source') || fileType.toLowerCase().includes('zip')) {
@@ -263,6 +375,9 @@ Thank you for using ProjectKit!`;
         register,
         myOrders,
         purchasedProjectIds,
+        claimedProjectIds,
+        claimFreeKit,
+        hasAccessToProject,
         completePurchase,
         downloadProjectKit,
         quickSwitchUser,

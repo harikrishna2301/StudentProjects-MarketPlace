@@ -114,11 +114,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/cookie-preferences").permitAll()
                         .requestMatchers("/api/coupons/validate").permitAll()
 
-                        // 3. Payment Webhook (Invoked by Razorpay servers with HMAC signature verification)
+                        // 3. Payment Webhook and Public Contact Desk
                         .requestMatchers("/api/payments/webhook").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/contact/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/contact/**").permitAll()
 
-                        // 4. CRITICAL FIX: Specific Protected Download Endpoints MUST precede public project browsing
+                        // 4. CRITICAL: Protected Download and Free Claim Endpoints MUST precede public project browsing
                         .requestMatchers("/api/projects/*/download/**").hasAnyRole("STUDENT", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/projects/*/claim-free").hasAnyRole("STUDENT", "ADMIN")
 
                         // 5. Public Project Catalog & Category Browsing (GET only)
                         .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()

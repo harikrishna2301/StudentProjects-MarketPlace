@@ -36,6 +36,12 @@ public class UpdateProjectRequest {
 
     private Boolean isActive;
 
+    private Boolean isFree;
+
+    private String accessType;
+
+    private String publicationStatus;
+
     private String thumbnailUrl;
 
     public UpdateProjectRequest() {
@@ -143,5 +149,29 @@ public class UpdateProjectRequest {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public Boolean getIsFree() {
+        return isFree;
+    }
+
+    public void setIsFree(Boolean free) {
+        isFree = free;
+    }
+
+    public String getAccessType() {
+        return accessType;
+    }
+
+    public void setAccessType(String accessType) {
+        this.accessType = accessType;
+    }
+
+    public String getPublicationStatus() {
+        return publicationStatus;
+    }
+
+    public void setPublicationStatus(String publicationStatus) {
+        this.publicationStatus = publicationStatus;
     }
 }

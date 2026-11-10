@@ -117,8 +117,8 @@ export const NetworkHeroVisual: React.FC<NetworkHeroVisualProps> = ({ onExploreC
         </svg>
 
         {/* Center Codebase Blueprint Window */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 sm:w-80 bg-[#1A0D3D]/95 backdrop-blur-md rounded-xl border border-[#3A2074] p-4 shadow-[0_15px_40px_rgba(11,7,32,0.85)] space-y-3">
-          <div className="flex items-center justify-between border-b border-[#3A2074] pb-2.5">
+        <div className="card absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 sm:w-80 p-4 shadow-[0_15px_40px_rgba(11,7,32,0.85)] space-y-3">
+          <div className="flex items-center justify-between border-b border-white/20 dark:border-[#3A2074] pb-2.5">
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full bg-rose-500/90" />
               <div className="w-2.5 h-2.5 rounded-full bg-amber-500/90" />
@@ -145,7 +145,7 @@ export const NetworkHeroVisual: React.FC<NetworkHeroVisualProps> = ({ onExploreC
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[#3A2074] flex items-center justify-between text-[11px]">
+          <div className="pt-2 border-t border-white/20 dark:border-[#3A2074] flex items-center justify-between text-[11px]">
             <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Full Source & Reports</span>
@@ -156,7 +156,7 @@ export const NetworkHeroVisual: React.FC<NetworkHeroVisualProps> = ({ onExploreC
       </div>
 
       {/* Floating Card 1: 500+ Project Ideas (Top Left) */}
-      <div className="absolute -top-4 -left-3 sm:-left-6 bg-white/95 dark:bg-[#1A0D3D]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-xl border border-slate-200/90 dark:border-[#3A2074] shadow-lg shadow-purple-950/10 dark:shadow-[0_10px_25px_rgba(11,7,32,0.7)] flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5">
+      <div className="card absolute -top-4 -left-3 sm:-left-6 p-3 sm:p-3.5 flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5">
         <div className="w-9 h-9 rounded-lg bg-[#F2E9FF] dark:bg-[#25134D] border border-[#D1B8FF]/60 dark:border-[#6A2FC8]/50 flex items-center justify-center text-[#6A2FC8] dark:text-[#D1B8FF]">
           <FolderCode className="w-4 h-4" />
         </div>
@@ -167,7 +167,7 @@ export const NetworkHeroVisual: React.FC<NetworkHeroVisualProps> = ({ onExploreC
       </div>
 
       {/* Floating Card 2: Multiple Technology Categories (Top Right) */}
-      <div className="absolute -top-3 -right-3 sm:-right-6 bg-white/95 dark:bg-[#1A0D3D]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-xl border border-slate-200/90 dark:border-[#3A2074] shadow-lg shadow-purple-950/10 dark:shadow-[0_10px_25px_rgba(11,7,32,0.7)] flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5">
+      <div className="card absolute -top-3 -right-3 sm:-right-6 p-3 sm:p-3.5 flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5">
         <div className="w-9 h-9 rounded-lg bg-[#F2E9FF] dark:bg-[#25134D] border border-[#D1B8FF]/60 dark:border-[#6A2FC8]/50 flex items-center justify-center text-[#6A2FC8] dark:text-[#D1B8FF]">
           <Layers className="w-4 h-4" />
         </div>
@@ -178,7 +178,7 @@ export const NetworkHeroVisual: React.FC<NetworkHeroVisualProps> = ({ onExploreC
       </div>
 
       {/* Floating Card 3: Source Code and Documentation (Bottom Left) */}
-      <div className="absolute -bottom-5 -left-3 sm:-left-5 bg-white/95 dark:bg-[#1A0D3D]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-xl border border-slate-200/90 dark:border-[#3A2074] shadow-lg shadow-purple-950/10 dark:shadow-[0_10px_25px_rgba(11,7,32,0.7)] flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5">
+      <div className="card absolute -bottom-5 -left-3 sm:-left-5 p-3 sm:p-3.5 flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5">
         <div className="w-9 h-9 rounded-lg bg-[#F2E9FF] dark:bg-[#25134D] border border-[#D1B8FF]/60 dark:border-[#6A2FC8]/50 flex items-center justify-center text-[#6A2FC8] dark:text-[#D1B8FF]">
           <FileCheck2 className="w-4 h-4" />
         </div>
@@ -189,7 +189,7 @@ export const NetworkHeroVisual: React.FC<NetworkHeroVisualProps> = ({ onExploreC
       </div>
 
       {/* Floating Card 4: Student-Friendly Learning Resources (Bottom Right) */}
-      <div className="absolute -bottom-4 -right-3 sm:-right-5 bg-white/95 dark:bg-[#1A0D3D]/95 backdrop-blur-md p-3 sm:p-3.5 rounded-xl border border-slate-200/90 dark:border-[#3A2074] shadow-lg shadow-purple-950/10 dark:shadow-[0_10px_25px_rgba(11,7,32,0.7)] flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5">
+      <div className="card absolute -bottom-4 -right-3 sm:-right-5 p-3 sm:p-3.5 flex items-center gap-3 transition-transform duration-200 hover:-translate-y-0.5">
         <div className="w-9 h-9 rounded-lg bg-[#F2E9FF] dark:bg-[#25134D] border border-[#D1B8FF]/60 dark:border-[#6A2FC8]/50 flex items-center justify-center text-[#6A2FC8] dark:text-[#D1B8FF]">
           <BookOpen className="w-4 h-4" />
         </div>

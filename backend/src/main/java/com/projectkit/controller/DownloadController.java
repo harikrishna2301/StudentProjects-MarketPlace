@@ -29,15 +29,18 @@ public class DownloadController {
     private final ProjectRepository projectRepository;
     private final ProjectFileRepository projectFileRepository;
     private final OrderRepository orderRepository;
+    private final com.projectkit.repository.StudentProjectAccessRepository accessRepository;
     private final FileStorageService fileStorageService;
 
     public DownloadController(ProjectRepository projectRepository,
                               ProjectFileRepository projectFileRepository,
                               OrderRepository orderRepository,
+                              com.projectkit.repository.StudentProjectAccessRepository accessRepository,
                               FileStorageService fileStorageService) {
         this.projectRepository = projectRepository;
         this.projectFileRepository = projectFileRepository;
         this.orderRepository = orderRepository;
+        this.accessRepository = accessRepository;
         this.fileStorageService = fileStorageService;
     }
 
@@ -137,11 +140,28 @@ public class DownloadController {
             return;
         }
 
-        // 4. Return 403 Forbidden if student has not completed a verified PAID purchase
-        boolean hasPurchased = orderRepository.hasUserPurchasedProject(currentUser.getId(), projectId);
-        if (!hasPurchased) {
-            throw new AccessDeniedException("Access Denied: You have not purchased this project kit or payment has not been confirmed.");
+        // 4. Verify explicit project entitlement in student_project_access
+        java.util.Optional<com.projectkit.entity.StudentProjectAccess> entitlement = 
+                accessRepository.findByStudentIdAndProjectIdAndAccessStatus(currentUser.getId(), projectId, "ACTIVE");
+
+        if (entitlement.isPresent()) {
+            com.projectkit.entity.StudentProjectAccess access = entitlement.get();
+            if ("PAID_PURCHASE".equalsIgnoreCase(access.getAccessType())) {
+                if (access.getOrder() != null && access.getOrder().getStatus() != com.projectkit.enums.OrderStatus.PAID) {
+                    throw new AccessDeniedException("Access Denied: Payment verification for this kit is incomplete or pending.");
+                }
+            }
+            return; // Entitlement verified!
         }
+
+        // 5. Fallback for historical paid orders (if not yet migrated to student_project_access)
+        boolean hasPurchased = orderRepository.hasUserPurchasedProject(currentUser.getId(), projectId);
+        if (hasPurchased) {
+            return;
+        }
+
+        // 6. Deny access if neither claimed nor purchased
+        throw new AccessDeniedException("Access Denied: You have not claimed this free project or completed a verified purchase.");
     }
 
     private String sanitizeFilename(String filename) {

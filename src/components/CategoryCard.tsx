@@ -87,7 +87,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
       <div className="category-card-beam-spinner" aria-hidden="true" />
 
       {/* Main Card Surface (Masks center of beam to reveal only the perimeter border) */}
-      <div className="relative z-10 w-full h-full bg-white dark:bg-[#1A0D3D] hover:bg-[#FAF7FD] dark:hover:bg-[#25134D] p-6 rounded-[15px] flex flex-col justify-between transition-colors duration-200">
+      <div className="card relative z-10 w-full h-full p-6 !rounded-[19px] flex flex-col justify-between transition-colors duration-200">
         <div>
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] group-hover:border-[#9D71E8] flex items-center justify-center text-[#6A2FC8] dark:text-[#D1B8FF] transition-colors duration-200 shadow-inner">

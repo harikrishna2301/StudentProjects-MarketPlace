@@ -223,20 +223,16 @@ export const Navbar: React.FC = () => {
             />
           </div>
 
-          {/* Desktop & Tablet: Links grouped after the gap (responsive spacing across breakpoints) */}
+          {/* Desktop & Tablet: Links with Premium Left-to-Right Underline & 2px Lift Animations */}
           <nav
             aria-label="Main Navigation"
-            className="hidden md:flex items-center gap-1 sm:gap-1.5 md:gap-2 lg:gap-4 xl:gap-6 text-xs lg:text-sm font-medium shrink-0"
+            className="hidden md:flex items-center gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 xl:gap-4 text-xs lg:text-sm font-medium shrink-0"
           >
             <a
               href="/"
               onClick={handleHomeClick}
               aria-current={isLinkActive('home') ? 'page' : undefined}
-              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
-                isLinkActive('home')
-                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#D1B8FF] decoration-2'
-                  : 'text-white/80 hover:text-white'
-              }`}
+              className={`nav-link-animated ${isLinkActive('home') ? 'is-active' : ''}`}
             >
               Home
             </a>
@@ -244,24 +240,23 @@ export const Navbar: React.FC = () => {
             <Link
               to="/projects"
               aria-current={isLinkActive('projects') ? 'page' : undefined}
-              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
-                isLinkActive('projects')
-                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#D1B8FF] decoration-2'
-                  : 'text-white/80 hover:text-white'
-              }`}
+              className={`nav-link-animated ${isLinkActive('projects') ? 'is-active' : ''}`}
             >
               Projects
+            </Link>
+
+            <Link
+              to="/categories"
+              className={`nav-link-animated ${location.pathname === '/categories' ? 'is-active' : ''}`}
+            >
+              Categories
             </Link>
 
             <a
               href="#how-it-works"
               onClick={handleSectionClick('how-it-works')}
               aria-current={isLinkActive('how-it-works') ? 'page' : undefined}
-              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
-                isLinkActive('how-it-works')
-                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#D1B8FF] decoration-2'
-                  : 'text-white/80 hover:text-white'
-              }`}
+              className={`nav-link-animated ${isLinkActive('how-it-works') ? 'is-active' : ''}`}
             >
               How It Works
             </a>
@@ -270,27 +265,18 @@ export const Navbar: React.FC = () => {
               href="#pricing"
               onClick={handleSectionClick('pricing')}
               aria-current={isLinkActive('pricing') ? 'page' : undefined}
-              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
-                isLinkActive('pricing')
-                  ? 'text-white font-semibold underline underline-offset-4 decoration-[#D1B8FF] decoration-2'
-                  : 'text-white/80 hover:text-white'
-              }`}
+              className={`nav-link-animated ${isLinkActive('pricing') ? 'is-active' : ''}`}
             >
               Pricing
             </a>
 
-            <a
-              href="#contact"
-              onClick={handleSectionClick('contact')}
+            <Link
+              to="/contact"
               aria-current={isLinkActive('contact') ? 'page' : undefined}
-              className={`transition-all whitespace-nowrap px-2.5 sm:px-3 py-1 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 font-medium ${
-                isLinkActive('contact')
-                  ? 'ring-2 ring-[#D1B8FF] text-white font-semibold bg-white/20'
-                  : 'text-white/90 hover:text-white'
-              }`}
+              className={`nav-link-animated ${isLinkActive('contact') ? 'is-active' : ''}`}
             >
               Contact
-            </a>
+            </Link>
           </nav>
 
           {/* Right (side, not centre): grouped with margin-left: auto */}
@@ -400,13 +386,22 @@ export const Navbar: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <Link
-                  to="/login"
-                  className="px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 text-white text-xs font-semibold shadow-xs transition-transform hover:scale-[1.03] active:scale-[0.97]"
-                  aria-label="Log in to student portal"
-                >
-                  Log In
-                </Link>
+                <div className="flex items-center gap-1.5">
+                  <Link
+                    to="/login"
+                    className="nav-link-animated text-xs font-semibold"
+                    aria-label="Log in to student portal"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="nav-cta-glow text-xs font-semibold"
+                    aria-label="Sign up for free account"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
               )}
             </div>
 

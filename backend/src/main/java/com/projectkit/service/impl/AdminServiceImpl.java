@@ -32,6 +32,7 @@ public class AdminServiceImpl implements AdminService {
     private final ProjectRepository projectRepository;
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
+    private final com.projectkit.repository.StudentProjectAccessRepository accessRepository;
 
     @Value("${projectkit.razorpay.key-id}")
     private String razorpayKeyId;
@@ -39,11 +40,13 @@ public class AdminServiceImpl implements AdminService {
     public AdminServiceImpl(UserRepository userRepository,
                             ProjectRepository projectRepository,
                             OrderRepository orderRepository,
-                            PaymentRepository paymentRepository) {
+                            PaymentRepository paymentRepository,
+                            com.projectkit.repository.StudentProjectAccessRepository accessRepository) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.orderRepository = orderRepository;
         this.paymentRepository = paymentRepository;
+        this.accessRepository = accessRepository;
     }
 
     @Override
@@ -54,6 +57,8 @@ public class AdminServiceImpl implements AdminService {
         dto.setTotalProjects(projectRepository.count());
         dto.setTotalOrders(orderRepository.count());
         dto.setTotalPaidOrders(orderRepository.countByStatus(OrderStatus.PAID));
+        dto.setTotalFreeClaims(accessRepository.countByAccessTypeAndAccessStatus("FREE_CLAIM", "ACTIVE"));
+        dto.setTotalPaidPurchases(accessRepository.countByAccessTypeAndAccessStatus("PAID_PURCHASE", "ACTIVE"));
 
         BigDecimal revenue = orderRepository.sumTotalPaidRevenue();
         dto.setTotalRevenue(revenue != null ? revenue : BigDecimal.ZERO);

@@ -41,6 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final ProjectRepository projectRepository;
     private final InvoiceRepository invoiceRepository;
+    private final com.projectkit.repository.StudentProjectAccessRepository accessRepository;
     private final EmailService emailService;
     private final Environment environment;
 
@@ -54,12 +55,14 @@ public class PaymentServiceImpl implements PaymentService {
                               PaymentRepository paymentRepository,
                               ProjectRepository projectRepository,
                               InvoiceRepository invoiceRepository,
+                              com.projectkit.repository.StudentProjectAccessRepository accessRepository,
                               EmailService emailService,
                               Environment environment) {
         this.orderRepository = orderRepository;
         this.paymentRepository = paymentRepository;
         this.projectRepository = projectRepository;
         this.invoiceRepository = invoiceRepository;
+        this.accessRepository = accessRepository;
         this.emailService = emailService;
         this.environment = environment;
     }
@@ -144,11 +147,22 @@ public class PaymentServiceImpl implements PaymentService {
         order.setRazorpayPaymentId(request.getRazorpayPaymentId());
         orderRepository.save(order);
 
-        // Increment purchase count on each project kit
+        // Increment purchase count and grant active project entitlements
         for (OrderItem item : order.getItems()) {
             Project project = item.getProject();
             project.setPurchaseCount(project.getPurchaseCount() + 1);
             projectRepository.save(project);
+
+            if (!accessRepository.hasActiveAccess(order.getUser().getId(), project.getId())) {
+                com.projectkit.entity.StudentProjectAccess spa = new com.projectkit.entity.StudentProjectAccess(
+                        order.getUser(),
+                        project,
+                        "PAID_PURCHASE",
+                        order,
+                        request.getRazorpayPaymentId()
+                );
+                accessRepository.save(spa);
+            }
         }
 
         // Generate official Tax Invoice
@@ -237,6 +251,17 @@ public class PaymentServiceImpl implements PaymentService {
                         Project project = item.getProject();
                         project.setPurchaseCount(project.getPurchaseCount() + 1);
                         projectRepository.save(project);
+
+                        if (!accessRepository.hasActiveAccess(order.getUser().getId(), project.getId())) {
+                            com.projectkit.entity.StudentProjectAccess spa = new com.projectkit.entity.StudentProjectAccess(
+                                    order.getUser(),
+                                    project,
+                                    "PAID_PURCHASE",
+                                    order,
+                                    razorpayPaymentId
+                            );
+                            accessRepository.save(spa);
+                        }
                     }
 
                     Invoice invoice = createInvoiceForOrder(order);

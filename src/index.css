@@ -165,6 +165,36 @@ article[id],
 }
 
 /* =========================================================================
+   FROSTED GLASS CARD SYSTEM (.card)
+   Requested: border-radius: 20px; background: rgba(255, 255, 255, 0.15);
+              backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3);
+   ========================================================================= */
+.card {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(11, 7, 32, 0.08);
+}
+
+html.dark .card {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+html.dark .card:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(209, 184, 255, 0.45);
+}
+
+/* =========================================================================
    3D CARD HOVER, LIGHTING & DEPTH SYSTEM
    ========================================================================= */
 
@@ -180,10 +210,12 @@ article[id],
 /* Project Card with Clean Subtle Lift on Hover (No 3D Bending/Tilting) */
 .pk-card-3d {
   position: relative;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 16px;
-  box-shadow: 0 1px 3px 0 rgba(11, 7, 32, 0.05);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px 0 rgba(11, 7, 32, 0.08);
   transition: transform 0.25s ease,
               box-shadow 0.25s ease,
               border-color 0.25s ease,
@@ -192,29 +224,39 @@ article[id],
 }
 
 html.dark .pk-card-3d {
-  border-color: #3A2074;
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.5);
 }
 
 .pk-card-3d:hover {
-  background-color: var(--bg-card-hover);
-  border-color: #6A2FC8;
-  box-shadow: 0 8px 24px -4px rgba(106, 47, 200, 0.16), 0 2px 6px -1px rgba(106, 47, 200, 0.08);
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 12px 32px -4px rgba(106, 47, 200, 0.2), 0 2px 6px -1px rgba(106, 47, 200, 0.1);
   transform: translateY(-2px);
 }
 
 html.dark .pk-card-3d:hover {
-  border-color: #9D71E8;
-  box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.65), 0 0 12px rgba(157, 113, 232, 0.3);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(209, 184, 255, 0.45);
+  box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.7), 0 0 16px rgba(157, 113, 232, 0.3);
   transform: translateY(-2px);
 }
 
 /* Elevated Surface */
 .pk-surface-elevated {
-  background-color: var(--bg-surface-elevated);
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  box-shadow: var(--shadow-card);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(11, 7, 32, 0.08);
+}
+
+html.dark .pk-surface-elevated {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
 /* Background Grids & Radial Glows */
@@ -573,12 +615,34 @@ html.dark .pk-skeleton {
 
 /* Cards: Clean Subtle Lift on Hover (No 3D Bending/Tilting) */
 .pk-card-tilt {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  position: relative;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px 0 rgba(11, 7, 32, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
   transform: translateY(0);
+}
+
+html.dark .pk-card-tilt {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.5);
 }
 
 .pk-card-tilt:hover {
   transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 12px 28px -4px rgba(106, 47, 200, 0.18);
+}
+
+html.dark .pk-card-tilt:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(209, 184, 255, 0.45);
+  box-shadow: 0 14px 32px -4px rgba(0, 0, 0, 0.65);
 }
 
 /* Accessibility: Reduced Motion Support */
@@ -647,17 +711,17 @@ html.dark .pk-skeleton {
 
 .category-card-beam-container {
   position: relative;
-  border-radius: 1rem; /* 16px */
+  border-radius: 20px;
   padding: 1.5px;
   overflow: hidden;
-  background-color: #E8DEFF;
-  box-shadow: 0 1px 3px 0 rgba(11, 7, 32, 0.06);
+  background-color: rgba(232, 222, 255, 0.6);
+  box-shadow: 0 4px 20px 0 rgba(11, 7, 32, 0.06);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 html.dark .category-card-beam-container {
-  background-color: #3A2074;
-  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+  background-color: rgba(58, 32, 116, 0.6);
+  box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.4);
 }
 
 .category-card-beam-spinner {
@@ -706,4 +770,172 @@ html.dark .category-card-beam-spinner {
 html.dark .category-card-beam-container:hover {
   box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.6), 0 0 18px rgba(157, 113, 232, 0.45);
 }
+
+/* =========================================================================
+   ANIMATED SPLIT AUTH CARD (DIAGONAL CUT & PURPLE NEON GLOW)
+   Design Reference: Slanted Split-Panel Animation with Electric Purple Glow
+   Palette: #0B0720, #25134D, #6A2FC8, #9D71E8, #D1B8FF, #F2E9FF
+   ========================================================================= */
+
+@keyframes neonBorderPulse {
+  0%, 100% {
+    box-shadow: 0 0 28px rgba(106, 47, 200, 0.45), 0 0 12px rgba(157, 113, 232, 0.35), inset 0 0 15px rgba(106, 47, 200, 0.15);
+    border-color: rgba(157, 113, 232, 0.65);
+  }
+  50% {
+    box-shadow: 0 0 42px rgba(106, 47, 200, 0.7), 0 0 20px rgba(157, 113, 232, 0.55), inset 0 0 25px rgba(157, 113, 232, 0.25);
+    border-color: rgba(209, 184, 255, 0.95);
+  }
+}
+
+.auth-split-card {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  min-height: 520px;
+  border-radius: 20px;
+  background-color: #0B0720;
+  border: 1.5px solid rgba(157, 113, 232, 0.7);
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: neonBorderPulse 5s ease-in-out infinite;
+}
+
+/* Slanted Diagonal Overlay Shapes for Desktop */
+@media (min-width: 768px) {
+  .diagonal-panel-right {
+    clip-path: polygon(25% 0, 100% 0, 100% 100%, 0% 100%);
+  }
+
+  .diagonal-panel-left {
+    clip-path: polygon(0 0, 100% 0, 75% 100%, 0% 100%);
+  }
+}
+
+/* Minimalist Underline Input Fields */
+.auth-underline-field {
+  position: relative;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.auth-underline-field:focus-within {
+  border-color: #D1B8FF;
+  box-shadow: 0 2px 10px -1px rgba(157, 113, 232, 0.5);
+}
+
+/* Neon Pill Action Button */
+.auth-pill-btn {
+  background: linear-gradient(90deg, #6A2FC8 0%, #9D71E8 100%);
+  box-shadow: 0 0 18px rgba(106, 47, 200, 0.55);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-pill-btn:hover {
+  background: linear-gradient(90deg, #5824A8 0%, #8558D4 100%);
+  box-shadow: 0 0 26px rgba(157, 113, 232, 0.75);
+  transform: translateY(-1px);
+}
+
+.auth-pill-btn:active {
+  transform: translateY(0);
+}
+
+/* =========================================================================
+   PREMIUM NAVBAR LINK ANIMATIONS (Slide-in Underline from Left to Right)
+   Palette: #0B0720, #25134D, #6A2FC8, #9D71E8, #D1B8FF, #F2E9FF
+   ========================================================================= */
+.nav-link-animated {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.5rem 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.25s ease,
+              background-color 0.25s ease;
+  outline: none;
+  border-radius: 9999px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-link-animated:hover {
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+.nav-link-animated::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: linear-gradient(90deg, #6A2FC8 0%, #9D71E8 50%, #D1B8FF 100%);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 8px rgba(157, 113, 232, 0.6);
+}
+
+.nav-link-animated:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-link-animated.is-active {
+  color: #FFFFFF;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nav-link-animated.is-active::after {
+  transform: scaleX(1);
+  background: #D1B8FF;
+  box-shadow: 0 0 10px rgba(209, 184, 255, 0.8);
+}
+
+.nav-link-animated:focus-visible {
+  outline: 2px solid #9D71E8;
+  outline-offset: 2px;
+}
+
+/* Subtle CTA Glow for primary navbar buttons */
+.nav-cta-glow {
+  min-height: 44px;
+  padding: 0.5rem 1.125rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #6A2FC8 0%, #9D71E8 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+  border: 1px solid rgba(209, 184, 255, 0.3);
+  box-shadow: 0 0 14px rgba(106, 47, 200, 0.4);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s ease,
+              background 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.nav-cta-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 22px rgba(157, 113, 232, 0.65), 0 4px 12px rgba(11, 7, 32, 0.4);
+}
+
+.nav-cta-glow:active {
+  transform: translateY(0);
+}
+
+.nav-cta-glow:focus-visible {
+  outline: 2px solid #D1B8FF;
+  outline-offset: 2px;
+}
+
 

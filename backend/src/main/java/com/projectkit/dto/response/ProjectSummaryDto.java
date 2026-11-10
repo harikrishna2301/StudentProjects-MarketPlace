@@ -19,8 +19,12 @@ public class ProjectSummaryDto {
     private BigDecimal price;
     private BigDecimal discountPrice;
     private boolean isFeatured;
+    private boolean isFree;
+    private String accessType;
+    private String publicationStatus;
     private String thumbnailUrl;
     private int purchaseCount;
+    private int claimCount;
 
     public ProjectSummaryDto() {
     }
@@ -41,8 +45,12 @@ public class ProjectSummaryDto {
         dto.setPrice(project.getPrice());
         dto.setDiscountPrice(project.getDiscountPrice());
         dto.setFeatured(project.isFeatured());
+        dto.setFree(project.isFree());
+        dto.setAccessType(project.getAccessType());
+        dto.setPublicationStatus(project.getPublicationStatus());
         dto.setThumbnailUrl(project.getThumbnailUrl());
         dto.setPurchaseCount(project.getPurchaseCount());
+        dto.setClaimCount(project.getClaimCount());
         return dto;
     }
 
@@ -156,5 +164,37 @@ public class ProjectSummaryDto {
 
     public void setPurchaseCount(int purchaseCount) {
         this.purchaseCount = purchaseCount;
+    }
+
+    public boolean isFree() {
+        return isFree;
+    }
+
+    public void setFree(boolean free) {
+        isFree = free;
+    }
+
+    public String getAccessType() {
+        return accessType;
+    }
+
+    public void setAccessType(String accessType) {
+        this.accessType = accessType;
+    }
+
+    public String getPublicationStatus() {
+        return publicationStatus;
+    }
+
+    public void setPublicationStatus(String publicationStatus) {
+        this.publicationStatus = publicationStatus;
+    }
+
+    public int getClaimCount() {
+        return claimCount;
+    }
+
+    public void setClaimCount(int claimCount) {
+        this.claimCount = claimCount;
     }
 }

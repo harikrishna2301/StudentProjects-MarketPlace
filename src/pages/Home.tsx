@@ -234,7 +234,7 @@ export const Home: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
           {/* Step 1 */}
-          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] hover:border-[#6A2FC8] shadow-xs hover:shadow-md transition-all space-y-4">
+          <div className="card pk-card-tilt p-6 sm:p-7 space-y-4">
             <div className="w-11 h-11 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center font-bold text-sm font-mono">
               01
             </div>
@@ -245,7 +245,7 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Step 2 */}
-          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] hover:border-[#9D71E8] shadow-xs hover:shadow-md transition-all space-y-4">
+          <div className="card pk-card-tilt p-6 sm:p-7 space-y-4">
             <div className="w-11 h-11 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#9D71E8] dark:text-[#D1B8FF] flex items-center justify-center font-bold text-sm font-mono">
               02
             </div>
@@ -256,7 +256,7 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Step 3 */}
-          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 sm:p-7 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] hover:border-[#6A2FC8] shadow-xs hover:shadow-md transition-all space-y-4">
+          <div className="card pk-card-tilt p-6 sm:p-7 space-y-4">
             <div className="w-11 h-11 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center font-bold text-sm font-mono">
               03
             </div>
@@ -275,7 +275,7 @@ export const Home: React.FC = () => {
           5. WHY PROJECTKIT SECTION (Platform Integrity)
           ========================================================================= */}
       <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-[#1A0D3D] border border-slate-200 dark:border-[#3A2074] rounded-3xl p-8 sm:p-12 space-y-8 shadow-xs">
+        <div className="card p-8 sm:p-12 space-y-8">
           <div className="max-w-3xl space-y-3">
             <div className="text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8]">
               Platform Integrity
@@ -289,7 +289,7 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-            <div className="bg-slate-50 dark:bg-[#25134D]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-3">
+            <div className="card p-6 space-y-3">
               <div className="w-10 h-10 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shadow-xs">
                 <Code2 className="w-5 h-5" />
               </div>
@@ -299,7 +299,7 @@ export const Home: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-slate-50 dark:bg-[#25134D]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-3">
+            <div className="card p-6 space-y-3">
               <div className="w-10 h-10 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#9D71E8] dark:text-[#D1B8FF] flex items-center justify-center shadow-xs">
                 <FileText className="w-5 h-5" />
               </div>
@@ -309,7 +309,7 @@ export const Home: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-slate-50 dark:bg-[#25134D]/60 p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-3">
+            <div className="card p-6 space-y-3">
               <div className="w-10 h-10 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shadow-xs">
                 <BookOpen className="w-5 h-5" />
               </div>
@@ -344,7 +344,7 @@ export const Home: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
           {/* Tier 1: Starter Kit */}
-          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] rounded-3xl border border-slate-200 dark:border-[#3A2074] p-6 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-lg transition-all">
+          <div className="card pk-card-tilt p-6 sm:p-8 flex flex-col justify-between">
             <div className="space-y-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#A798C4]">
@@ -403,7 +403,7 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Tier 2: Complete Academic Kit (Recommended - Subtle, no excessive scale or bending) */}
-          <div className="pk-card-tilt relative bg-white dark:bg-[#1A0D3D] rounded-3xl border-2 border-[#6A2FC8] dark:border-[#9D71E8] p-6 sm:p-8 flex flex-col justify-between shadow-xl shadow-[#6A2FC8]/15">
+          <div className="card pk-card-tilt relative p-6 sm:p-8 flex flex-col justify-between !border-2 !border-[#6A2FC8] dark:!border-[#9D71E8] shadow-xl shadow-[#6A2FC8]/15">
             {/* Recommended Badge */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#6A2FC8] to-[#9D71E8] text-white text-[10px] font-extrabold uppercase tracking-widest px-3.5 py-1 rounded-full shadow-md">
               Most Popular • Final-Year Recommended
@@ -469,7 +469,7 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Tier 3: Enterprise Capstone */}
-          <div className="pk-card-tilt bg-white dark:bg-[#0F1830] rounded-3xl border border-slate-200 dark:border-[#25335F] p-6 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-lg transition-all">
+          <div className="card pk-card-tilt p-6 sm:p-8 flex flex-col justify-between">
             <div className="space-y-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#9AA6C7]">
@@ -547,7 +547,7 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] space-y-4 shadow-xs">
+          <div className="card pk-card-tilt p-6 space-y-4">
             <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
               "The Spring Boot & React kit saved our team during the final internal review. The IEEE report was accepted on the first submission without major formatting revisions."
             </p>
@@ -562,7 +562,7 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
-          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] space-y-4 shadow-xs">
+          <div className="card pk-card-tilt p-6 space-y-4">
             <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
               "The viva voce cheat sheet was a game changer. The external examiner asked specifically about JWT replay prevention and database indexes, exactly as explained in the guide."
             </p>
@@ -577,7 +577,7 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
-          <div className="pk-card-tilt bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200/90 dark:border-[#3A2074] space-y-4 shadow-xs">
+          <div className="card pk-card-tilt p-6 space-y-4">
             <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
               "Clean source code with zero deprecated libraries. Running Docker Compose set up the backend and MySQL container in under 3 minutes on our lab machine."
             </p>
@@ -614,7 +614,7 @@ export const Home: React.FC = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-2">
+          <div className="card p-6 space-y-2">
             <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
               Are these project kits fully runnable and tested?
             </h3>
@@ -623,7 +623,7 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-2">
+          <div className="card p-6 space-y-2">
             <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
               What files do I receive immediately after payment?
             </h3>
@@ -632,7 +632,7 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-2">
+          <div className="card p-6 space-y-2">
             <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
               Can I customize the code and add my own features?
             </h3>
@@ -641,7 +641,7 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#1A0D3D] p-6 rounded-2xl border border-slate-200 dark:border-[#3A2074] space-y-2">
+          <div className="card p-6 space-y-2">
             <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">
               What payment methods are supported?
             </h3>
@@ -675,14 +675,14 @@ export const Home: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Direct Contact Info (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white dark:bg-[#1A0D3D] p-6 sm:p-7 rounded-3xl border border-slate-200 dark:border-[#3A2074] shadow-xs space-y-6">
+            <div className="card p-6 sm:p-7 space-y-6">
               <h3 className="text-base font-bold text-slate-900 dark:text-[#E8ECFA]">
                 Direct Contact Channels
               </h3>
 
               <div className="space-y-4 text-xs">
                 {/* Official Email Item with Action & Copy */}
-                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#0B0720] border border-slate-200 dark:border-[#3A2074] space-y-3">
+                <div className="card p-3.5 space-y-3">
                   <div className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-xl bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shrink-0">
                       <Mail className="w-4 h-4" />
@@ -711,7 +711,7 @@ export const Home: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleCopyEmail}
-                      className="inline-flex items-center gap-1.5 py-2 px-3 rounded-xl bg-white dark:bg-[#25134D] border border-slate-200 dark:border-[#3A2074] text-[11px] font-semibold text-slate-700 dark:text-[#F2E9FF] hover:bg-slate-100 dark:hover:bg-[#3A2074] transition-all cursor-pointer"
+                      className="inline-flex items-center gap-1.5 py-2 px-3 rounded-xl bg-white/40 dark:bg-[#25134D]/80 border border-white/30 dark:border-[#3A2074] text-[11px] font-semibold text-slate-700 dark:text-[#F2E9FF] hover:bg-white/60 dark:hover:bg-[#3A2074] transition-all cursor-pointer"
                     >
                       {emailCopied ? (
                         <>
@@ -729,7 +729,7 @@ export const Home: React.FC = () => {
                 </div>
 
                 {/* WhatsApp & Phone Item */}
-                <div className="flex items-start gap-3.5 p-3 rounded-2xl bg-slate-50 dark:bg-[#0B0720] border border-slate-200 dark:border-[#3A2074]">
+                <div className="card flex items-start gap-3.5 p-3">
                   <div className="w-9 h-9 rounded-xl bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shrink-0">
                     <Phone className="w-4 h-4" />
                   </div>
@@ -746,7 +746,7 @@ export const Home: React.FC = () => {
                 </div>
 
                 {/* Operating Hours Item */}
-                <div className="flex items-start gap-3.5 p-3 rounded-2xl bg-slate-50 dark:bg-[#0B0720] border border-slate-200 dark:border-[#3A2074]">
+                <div className="card flex items-start gap-3.5 p-3">
                   <div className="w-9 h-9 rounded-xl bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center shrink-0">
                     <Clock className="w-4 h-4" />
                   </div>
@@ -773,7 +773,7 @@ export const Home: React.FC = () => {
 
           {/* Right Column: Contact Inquiry Form (7 Cols) */}
           <div className="lg:col-span-7">
-            <div className="bg-white dark:bg-[#0F1830] p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-[#25335F] shadow-xs">
+            <div className="card p-6 sm:p-8">
               {contactSubmitted ? (
                 <div className="py-10 text-center space-y-4 animate-hero-1">
                   <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">

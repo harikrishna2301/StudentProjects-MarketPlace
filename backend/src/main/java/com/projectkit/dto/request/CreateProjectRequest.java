@@ -41,6 +41,12 @@ public class CreateProjectRequest {
 
     private BigDecimal discountPrice;
 
+    private Boolean isFree = false;
+
+    private String accessType = "PAID";
+
+    private String publicationStatus = "PUBLISHED";
+
     private Boolean isFeatured = false;
 
     private Boolean isActive = true;
@@ -152,5 +158,29 @@ public class CreateProjectRequest {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public Boolean getIsFree() {
+        return isFree;
+    }
+
+    public void setIsFree(Boolean free) {
+        isFree = free;
+    }
+
+    public String getAccessType() {
+        return accessType;
+    }
+
+    public void setAccessType(String accessType) {
+        this.accessType = accessType;
+    }
+
+    public String getPublicationStatus() {
+        return publicationStatus;
+    }
+
+    public void setPublicationStatus(String publicationStatus) {
+        this.publicationStatus = publicationStatus;
     }
 }

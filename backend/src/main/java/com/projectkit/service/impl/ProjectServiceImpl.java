@@ -42,15 +42,18 @@ public class ProjectServiceImpl implements ProjectService {
     private final CategoryRepository categoryRepository;
     private final ProjectFileRepository projectFileRepository;
     private final OrderRepository orderRepository;
+    private final com.projectkit.repository.StudentProjectAccessRepository accessRepository;
 
     public ProjectServiceImpl(ProjectRepository projectRepository,
                               CategoryRepository categoryRepository,
                               ProjectFileRepository projectFileRepository,
-                              OrderRepository orderRepository) {
+                              OrderRepository orderRepository,
+                              com.projectkit.repository.StudentProjectAccessRepository accessRepository) {
         this.projectRepository = projectRepository;
         this.categoryRepository = categoryRepository;
         this.projectFileRepository = projectFileRepository;
         this.orderRepository = orderRepository;
+        this.accessRepository = accessRepository;
     }
 
     @Override
@@ -153,8 +156,28 @@ public class ProjectServiceImpl implements ProjectService {
         project.setTechnologies(request.getTechnologies().trim());
         project.setFeatures(request.getFeatures());
         project.setDifficultyLevel(request.getDifficultyLevel() != null ? request.getDifficultyLevel() : DifficultyLevel.INTERMEDIATE);
-        project.setPrice(request.getPrice());
-        project.setDiscountPrice(request.getDiscountPrice());
+
+        // Access type validation & configuration
+        boolean isFree = Boolean.TRUE.equals(request.getIsFree()) || "FREE".equalsIgnoreCase(request.getAccessType());
+        if (isFree) {
+            project.setFree(true);
+            project.setAccessType("FREE");
+            project.setPrice(BigDecimal.ZERO);
+            project.setDiscountPrice(null);
+        } else {
+            project.setFree(false);
+            project.setAccessType("PAID");
+            if (request.getPrice() == null || request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BadRequestException("Paid projects require a valid price greater than zero.");
+            }
+            if (request.getDiscountPrice() != null && request.getDiscountPrice().compareTo(request.getPrice()) > 0) {
+                throw new BadRequestException("Discount price cannot exceed the original price.");
+            }
+            project.setPrice(request.getPrice());
+            project.setDiscountPrice(request.getDiscountPrice());
+        }
+
+        project.setPublicationStatus(request.getPublicationStatus() != null ? request.getPublicationStatus() : "PUBLISHED");
         project.setFeatured(request.getIsFeatured() != null && request.getIsFeatured());
         project.setActive(request.getIsActive() == null || request.getIsActive());
         project.setThumbnailUrl(request.getThumbnailUrl());
@@ -200,11 +223,38 @@ public class ProjectServiceImpl implements ProjectService {
         if (request.getDifficultyLevel() != null) {
             project.setDifficultyLevel(request.getDifficultyLevel());
         }
-        if (request.getPrice() != null) {
-            project.setPrice(request.getPrice());
+
+        // Access type change handling
+        if (request.getIsFree() != null || request.getAccessType() != null) {
+            boolean updateToFree = Boolean.TRUE.equals(request.getIsFree()) || "FREE".equalsIgnoreCase(request.getAccessType());
+            if (updateToFree) {
+                project.setFree(true);
+                project.setAccessType("FREE");
+                project.setPrice(BigDecimal.ZERO);
+                project.setDiscountPrice(null);
+            } else {
+                project.setFree(false);
+                project.setAccessType("PAID");
+            }
         }
-        if (request.getDiscountPrice() != null) {
-            project.setDiscountPrice(request.getDiscountPrice());
+
+        if (!project.isFree()) {
+            if (request.getPrice() != null) {
+                if (request.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+                    throw new BadRequestException("Paid projects require a valid price greater than zero.");
+                }
+                project.setPrice(request.getPrice());
+            }
+            if (request.getDiscountPrice() != null) {
+                if (request.getDiscountPrice().compareTo(project.getPrice()) > 0) {
+                    throw new BadRequestException("Discount price cannot exceed the original price.");
+                }
+                project.setDiscountPrice(request.getDiscountPrice());
+            }
+        }
+
+        if (request.getPublicationStatus() != null) {
+            project.setPublicationStatus(request.getPublicationStatus());
         }
         if (request.getIsFeatured() != null) {
             project.setFeatured(request.getIsFeatured());
@@ -233,10 +283,12 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectDto buildProjectDto(Project project, UserPrincipal currentUser) {
         ProjectDto dto = ProjectDto.fromEntity(project);
 
-        // Check user purchase status
+        // Check user purchase and claim entitlement status
         if (currentUser != null) {
-            boolean purchased = orderRepository.hasUserPurchasedProject(currentUser.getId(), project.getId());
+            boolean hasActiveEntitlement = accessRepository.hasActiveAccess(currentUser.getId(), project.getId());
+            boolean purchased = hasActiveEntitlement || orderRepository.hasUserPurchasedProject(currentUser.getId(), project.getId());
             dto.setPurchasedByCurrentUser(purchased);
+            dto.setClaimedByCurrentUser(hasActiveEntitlement);
         }
 
         // Check attached files

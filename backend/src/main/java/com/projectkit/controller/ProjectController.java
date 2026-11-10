@@ -25,9 +25,11 @@ import java.util.concurrent.TimeUnit;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final com.projectkit.service.StudentService studentService;
 
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService, com.projectkit.service.StudentService studentService) {
         this.projectService = projectService;
+        this.studentService = studentService;
     }
 
     @GetMapping
@@ -102,5 +104,19 @@ public class ProjectController {
         return ResponseEntity.ok()
                 .cacheControl(cacheControl)
                 .body(ApiResponse.success(project));
+    }
+
+    @PostMapping("/{projectId}/claim-free")
+    @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "BearerAuth")
+    @Operation(summary = "Claim a free academic project kit", description = "Authorizes and grants immediate access to a verified free project kit for authenticated students")
+    public ResponseEntity<ApiResponse<com.projectkit.dto.response.ClaimFreeProjectResponseDto>> claimFreeProject(
+            @PathVariable Long projectId,
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        if (currentUser == null) {
+            throw new com.projectkit.exception.UnauthorizedException("Authentication required to claim free academic project kits.");
+        }
+        com.projectkit.dto.response.ClaimFreeProjectResponseDto response = studentService.claimFreeProject(currentUser.getId(), projectId);
+        return ResponseEntity.ok(ApiResponse.success("Project kit successfully claimed", response));
     }
 }

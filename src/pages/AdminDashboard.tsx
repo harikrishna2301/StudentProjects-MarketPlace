@@ -90,6 +90,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
     category: 'Java & Spring Boot',
     primaryLanguage: 'Java',
     techStack: 'Spring Boot 3, MySQL 8, Hibernate, REST API',
+    accessType: 'PAID' as 'PAID' | 'FREE',
+    publicationStatus: 'PUBLISHED' as 'PUBLISHED' | 'DRAFT' | 'ARCHIVED',
     price: 1999,
     originalPrice: 3499,
     rating: 4.9,
@@ -194,6 +196,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
       return;
     }
 
+    const isFree = newProject.accessType === 'FREE';
+    const finalPrice = isFree ? 0 : Number(newProject.price);
+    const finalOriginalPrice = isFree ? 0 : Number(newProject.originalPrice);
+
+    if (!isFree && finalPrice <= 0) {
+      setFormError('Paid projects must have a selling price greater than ₹0.');
+      return;
+    }
+
     const techArray = newProject.techStack.split(',').map((s) => s.trim()).filter(Boolean);
     const objArray = newProject.objectives.split('\n').filter(Boolean);
     const modArray = newProject.modules.split(',').map((s) => s.trim()).filter(Boolean);
@@ -204,8 +215,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
       category: newProject.category,
       primaryLanguage: newProject.primaryLanguage,
       techStack: techArray.length ? techArray : ['Java', 'MySQL'],
-      price: Number(newProject.price),
-      originalPrice: Number(newProject.originalPrice),
+      isFree,
+      accessType: isFree ? 'FREE' : 'PAID',
+      publicationStatus: newProject.publicationStatus,
+      claimCount: 0,
+      price: finalPrice,
+      originalPrice: finalOriginalPrice,
       rating: 5.0,
       reviewsCount: 1,
       academicYear: newProject.academicYear,
@@ -251,11 +266,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
     e.preventDefault();
     if (!editingProject) return;
 
+    const isFree = editingProject.accessType === 'FREE' || editingProject.isFree || Number(editingProject.price) === 0;
+    const finalPrice = isFree ? 0 : Number(editingProject.price);
+
     updateProject(editingProject.id, {
       title: editingProject.title,
       category: editingProject.category,
-      price: Number(editingProject.price),
-      originalPrice: Number(editingProject.originalPrice),
+      isFree,
+      accessType: isFree ? 'FREE' : 'PAID',
+      publicationStatus: editingProject.publicationStatus || 'PUBLISHED',
+      price: finalPrice,
+      originalPrice: isFree ? 0 : Number(editingProject.originalPrice),
       shortDescription: editingProject.shortDescription,
       primaryLanguage: editingProject.primaryLanguage,
     });
@@ -617,20 +638,39 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     filteredProjects.map((project) => (
                       <tr key={project.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
                         <td className="py-3.5 px-4">
-                          <div className="font-semibold text-slate-900 dark:text-white max-w-sm truncate">
-                            {project.title}
+                          <div className="flex items-center gap-2 max-w-sm">
+                            <span className="font-semibold text-slate-900 dark:text-white truncate">
+                              {project.title}
+                            </span>
+                            {project.isFree || project.accessType === 'FREE' || project.price === 0 ? (
+                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30 shrink-0">
+                                FREE
+                              </span>
+                            ) : (
+                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#6A2FC8]/20 text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold border border-[#6A2FC8]/30 shrink-0">
+                                PAID
+                              </span>
+                            )}
                           </div>
-                          <div className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">ID: {project.id}</div>
+                          <div className="text-[11px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">
+                            ID: {project.id} · Status: <span className="uppercase text-[10px] font-semibold">{project.publicationStatus || 'PUBLISHED'}</span>
+                          </div>
                         </td>
                         <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">{project.category}</td>
                         <td className="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400">
                           {project.primaryLanguage}
                         </td>
-                        <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 dark:text-white tabular-nums">
-                          ₹{project.price.toLocaleString('en-IN')}
+                        <td className="py-3.5 px-4 text-right font-mono font-bold tabular-nums">
+                          {project.isFree || project.accessType === 'FREE' || project.price === 0 ? (
+                            <span className="text-emerald-600 dark:text-emerald-400 font-black">FREE (₹0)</span>
+                          ) : (
+                            <span className="text-slate-900 dark:text-white">₹{project.price.toLocaleString('en-IN')}</span>
+                          )}
                         </td>
-                        <td className="py-3.5 px-4 text-center font-mono tabular-nums text-slate-600 dark:text-slate-300">
-                          {project.downloadsCount}
+                        <td className="py-3.5 px-4 text-center font-mono tabular-nums text-slate-600 dark:text-slate-300 text-xs">
+                          {project.isFree || project.accessType === 'FREE'
+                            ? `${project.claimCount || 0} claims`
+                            : `${project.downloadsCount} purchases`}
                         </td>
                         <td className="py-3.5 px-4 text-center font-mono text-amber-600 dark:text-amber-400 font-semibold">
                           ★ {project.rating}
@@ -750,6 +790,50 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                 />
               </div>
 
+              {/* Access Type Selector (Free vs Paid) */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Access Entitlement Model *
+                </label>
+                <select
+                  value={newProject.accessType}
+                  onChange={(e) => {
+                    const access = e.target.value as 'PAID' | 'FREE';
+                    setNewProject({
+                      ...newProject,
+                      accessType: access,
+                      price: access === 'FREE' ? 0 : 1999,
+                      originalPrice: access === 'FREE' ? 0 : 3499,
+                    });
+                  }}
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none font-medium"
+                >
+                  <option value="PAID">Paid Commercial Kit (Razorpay Checkout)</option>
+                  <option value="FREE">100% Free Academic Kit (Student Claim)</option>
+                </select>
+              </div>
+
+              {/* Publication Status Selector */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                  Publication Status *
+                </label>
+                <select
+                  value={newProject.publicationStatus}
+                  onChange={(e) =>
+                    setNewProject({
+                      ...newProject,
+                      publicationStatus: e.target.value as 'PUBLISHED' | 'DRAFT' | 'ARCHIVED',
+                    })
+                  }
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none font-medium"
+                >
+                  <option value="PUBLISHED">Published (Visible in Store)</option>
+                  <option value="DRAFT">Draft (Admin Staging Only)</option>
+                  <option value="ARCHIVED">Archived (Retired Kit)</option>
+                </select>
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Selling Price (₹) *
@@ -757,10 +841,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                 <input
                   type="number"
                   required
+                  disabled={newProject.accessType === 'FREE'}
                   value={newProject.price}
                   onChange={(e) => setNewProject({ ...newProject, price: Number(e.target.value) })}
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 />
+                {newProject.accessType === 'FREE' && (
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5 block">
+                    Locked to ₹0 for Free Kit claim
+                  </span>
+                )}
               </div>
 
               <div>
@@ -770,11 +860,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                 <input
                   type="number"
                   required
+                  disabled={newProject.accessType === 'FREE'}
                   value={newProject.originalPrice}
                   onChange={(e) =>
                     setNewProject({ ...newProject, originalPrice: Number(e.target.value) })
                   }
-                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -1127,15 +1218,61 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
+                  <label className="block font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                    Access Entitlement
+                  </label>
+                  <select
+                    value={editingProject.accessType || (editingProject.isFree ? 'FREE' : 'PAID')}
+                    onChange={(e) => {
+                      const access = e.target.value as 'PAID' | 'FREE';
+                      setEditingProject({
+                        ...editingProject,
+                        accessType: access,
+                        isFree: access === 'FREE',
+                        price: access === 'FREE' ? 0 : (editingProject.price || 1999),
+                        originalPrice: access === 'FREE' ? 0 : (editingProject.originalPrice || 3499),
+                      });
+                    }}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl outline-none text-slate-900 dark:text-[#F8FAFC] focus:bg-white dark:focus:bg-[#0B1329] focus:border-[#2563EB]"
+                  >
+                    <option value="PAID">Paid Commercial Kit</option>
+                    <option value="FREE">100% Free Kit (Student Claim)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                    Publication Status
+                  </label>
+                  <select
+                    value={editingProject.publicationStatus || 'PUBLISHED'}
+                    onChange={(e) =>
+                      setEditingProject({
+                        ...editingProject,
+                        publicationStatus: e.target.value as 'PUBLISHED' | 'DRAFT' | 'ARCHIVED',
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl outline-none text-slate-900 dark:text-[#F8FAFC] focus:bg-white dark:focus:bg-[#0B1329] focus:border-[#2563EB]"
+                  >
+                    <option value="PUBLISHED">Published</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="ARCHIVED">Archived</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
                   <label className="block font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">Price (₹)</label>
                   <input
                     type="number"
                     required
+                    disabled={editingProject.accessType === 'FREE' || editingProject.isFree}
                     value={editingProject.price}
                     onChange={(e) =>
                       setEditingProject({ ...editingProject, price: Number(e.target.value) })
                     }
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl outline-none text-slate-900 dark:text-[#F8FAFC] focus:bg-white dark:focus:bg-[#0B1329] focus:border-[#2563EB]"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl outline-none text-slate-900 dark:text-[#F8FAFC] focus:bg-white dark:focus:bg-[#0B1329] focus:border-[#2563EB] disabled:opacity-50"
                   />
                 </div>
 
@@ -1146,6 +1283,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                   <input
                     type="number"
                     required
+                    disabled={editingProject.accessType === 'FREE' || editingProject.isFree}
                     value={editingProject.originalPrice}
                     onChange={(e) =>
                       setEditingProject({

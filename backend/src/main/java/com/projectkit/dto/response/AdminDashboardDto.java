@@ -9,6 +9,8 @@ public class AdminDashboardDto {
     private long totalProjects;
     private long totalOrders;
     private long totalPaidOrders;
+    private long totalFreeClaims;
+    private long totalPaidPurchases;
     private BigDecimal totalRevenue;
     private List<OrderResponse> recentOrders;
     private List<UserProfileResponse> recentStudents;
@@ -46,6 +48,22 @@ public class AdminDashboardDto {
 
     public void setTotalPaidOrders(long totalPaidOrders) {
         this.totalPaidOrders = totalPaidOrders;
+    }
+
+    public long getTotalFreeClaims() {
+        return totalFreeClaims;
+    }
+
+    public void setTotalFreeClaims(long totalFreeClaims) {
+        this.totalFreeClaims = totalFreeClaims;
+    }
+
+    public long getTotalPaidPurchases() {
+        return totalPaidPurchases;
+    }
+
+    public void setTotalPaidPurchases(long totalPaidPurchases) {
+        this.totalPaidPurchases = totalPaidPurchases;
     }
 
     public BigDecimal getTotalRevenue() {

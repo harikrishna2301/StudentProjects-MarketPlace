@@ -23,20 +23,36 @@ interface ProjectCardProps {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }) => {
   const navigate = useNavigate();
-  const { purchasedProjectIds } = useAuth();
+  const { purchasedProjectIds, claimedProjectIds, claimFreeKit, isAuthenticated } = useAuth();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { addItem } = useCart();
+  const isFree = project.isFree || project.accessType === 'FREE' || project.price === 0;
   const isPurchased = purchasedProjectIds.includes(project.id);
+  const isClaimed = claimedProjectIds?.includes(project.id);
   const isWishlisted = isInWishlist(project.id);
+  const [claiming, setClaiming] = React.useState(false);
 
-  // Status badge logic: Only small status badge in top-left (Featured, New, or Owned)
-  // Palette strictly follows design specs: Owned #16A34A, Featured #6C5CE7, New/Top #2F4BFF (NO sky blue)
+  // Status badge logic: Free Kits, Owned Kits, Featured, or Academic Year
   const badgeConfig = useMemo(() => {
+    if (isClaimed) {
+      return {
+        label: 'Claimed Free Kit',
+        className: 'bg-emerald-600 text-white shadow-xs font-bold',
+        icon: CheckCircle2,
+      };
+    }
     if (isPurchased) {
       return {
         label: 'Owned Kit',
         className: 'bg-[#16A34A] text-white shadow-xs font-bold',
         icon: CheckCircle2,
+      };
+    }
+    if (isFree) {
+      return {
+        label: '100% Free Kit',
+        className: 'bg-emerald-500 text-white shadow-xs font-bold animate-pulse',
+        icon: Sparkles,
       };
     }
     if (project.featured) {
@@ -61,7 +77,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
       };
     }
     return null;
-  }, [isPurchased, project.featured, project.academicYear, project.rating]);
+  }, [isClaimed, isPurchased, isFree, project.featured, project.academicYear, project.rating]);
 
   // Prioritize matching tech tags when a search query is active
   const displayedTechStack = useMemo(() => {
@@ -84,29 +100,47 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
     return [...matches, ...nonMatches].slice(0, 3);
   }, [project.techStack, searchQuery]);
 
-  const handleActionClick = (e: React.MouseEvent) => {
+  const handleActionClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isPurchased) {
-      navigate('/dashboard/purchases');
-    } else {
-      addItem({
-        id: project.id,
-        title: project.title,
-        price: project.price,
-        originalPrice: project.originalPrice,
-        category: project.category,
-        slug: project.slug,
-      });
+
+    if (isClaimed || isPurchased) {
+      navigate('/dashboard');
+      return;
     }
+
+    if (isFree) {
+      if (!isAuthenticated) {
+        navigate(`/login?redirect=${encodeURIComponent(`/projects/${project.id}`)}`);
+        return;
+      }
+      try {
+        setClaiming(true);
+        await claimFreeKit(project);
+      } catch (err: any) {
+        console.error('Failed to claim free kit:', err);
+      } finally {
+        setClaiming(false);
+      }
+      return;
+    }
+
+    addItem({
+      id: project.id,
+      title: project.title,
+      price: project.price,
+      originalPrice: project.originalPrice,
+      category: project.category,
+      slug: project.slug,
+    });
   };
 
   const BadgeIcon = badgeConfig?.icon;
 
   return (
-    <div className="pk-card-3d group bg-white dark:bg-[#1A0D3D] hover:bg-[#FAF7FD] dark:hover:bg-[#25134D] rounded-2xl border border-[#E8DEFF] dark:border-[#3A2074] hover:border-[#6A2FC8] dark:hover:border-[#9D71E8] shadow-xs hover:shadow-[0_12px_28px_-4px_rgba(106,47,200,0.18)] dark:hover:shadow-[0_12px_28px_-4px_rgba(0,0,0,0.7)] transition-all duration-200 flex flex-col overflow-hidden h-full">
+    <div className="card pk-card-3d group rounded-[20px] transition-all duration-200 flex flex-col overflow-hidden h-full">
       {/* 1. Top Thumbnail Area (16:9, clean visual, no fake code/terminal) */}
-      <div className="relative overflow-hidden bg-[#0B0720] aspect-[16/9] w-full border-b border-[#E8DEFF] dark:border-[#3A2074] shrink-0">
+      <div className="relative overflow-hidden bg-[#0B0720] aspect-[16/9] w-full border-b border-white/20 shrink-0 rounded-t-[19px]">
         <Link
           to={`/projects/${project.id}`}
           className="block w-full h-full transform group-hover:scale-105 transition-transform duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] focus-visible:ring-inset"
@@ -236,30 +270,64 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
         {/* 3. Pricing & Call-to-Action Footer (Pinned to bottom, stacks cleanly on narrow cards) */}
         <div className="pt-4 border-t border-[#E8DEFF] dark:border-[#3A2074] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-auto">
           <div className="flex items-baseline gap-2">
-            <span className="text-lg font-extrabold text-[#0B0720] dark:text-[#F2E9FF] font-mono tabular-nums tracking-tight">
-              ₹{project.price.toLocaleString('en-IN')}
-            </span>
-            {project.originalPrice > project.price && (
-              <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/60 line-through font-mono tabular-nums">
-                ₹{project.originalPrice.toLocaleString('en-IN')}
-              </span>
+            {isFree ? (
+              <div className="flex items-center gap-1.5">
+                <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight uppercase">
+                  FREE
+                </span>
+                <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/60 font-medium">
+                  (₹0)
+                </span>
+              </div>
+            ) : (
+              <>
+                <span className="text-lg font-extrabold text-[#0B0720] dark:text-[#F2E9FF] font-mono tabular-nums tracking-tight">
+                  ₹{project.price.toLocaleString('en-IN')}
+                </span>
+                {project.originalPrice > project.price && (
+                  <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/60 line-through font-mono tabular-nums">
+                    ₹{project.originalPrice.toLocaleString('en-IN')}
+                  </span>
+                )}
+              </>
             )}
           </div>
 
           <button
             type="button"
             onClick={handleActionClick}
+            disabled={claiming}
             className={`w-full sm:w-auto min-h-[40px] px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 shadow-xs flex items-center justify-center gap-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] focus-visible:ring-offset-2 ${
-              isPurchased
+              isClaimed || isPurchased
                 ? 'bg-[#16A34A] hover:bg-[#15803D] active:bg-[#14532D] text-white'
+                : isFree
+                ? 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-emerald-900/20'
                 : 'bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#451B87] text-white hover:shadow-[0_4px_14px_rgba(106,47,200,0.35)]'
             }`}
-            aria-label={isPurchased ? `Download ${project.title} kit` : `Add ${project.title} to cart`}
+            aria-label={
+              isClaimed
+                ? `View claimed free kit ${project.title}`
+                : isPurchased
+                ? `Download ${project.title} kit`
+                : isFree
+                ? `Claim ${project.title} for free`
+                : `Add ${project.title} to cart`
+            }
           >
-            {isPurchased ? (
+            {isClaimed ? (
+              <>
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Claimed (View Kit)</span>
+              </>
+            ) : isPurchased ? (
               <>
                 <Download className="w-3.5 h-3.5" />
                 <span>Download Kit</span>
+              </>
+            ) : isFree ? (
+              <>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{claiming ? 'Claiming...' : 'Get Free Kit'}</span>
               </>
             ) : (
               <>

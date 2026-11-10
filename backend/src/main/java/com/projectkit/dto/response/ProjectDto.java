@@ -23,10 +23,15 @@ public class ProjectDto {
     private BigDecimal discountPrice;
     private boolean isFeatured;
     private boolean isActive;
+    private boolean isFree;
+    private String accessType;
+    private String publicationStatus;
     private String thumbnailUrl;
     private int viewCount;
     private int purchaseCount;
+    private int claimCount;
     private boolean purchasedByCurrentUser = false;
+    private boolean claimedByCurrentUser = false;
     private boolean hasSourceCode = false;
     private boolean hasDocumentation = false;
     private List<String> screenshotUrls = new ArrayList<>();
@@ -53,9 +58,13 @@ public class ProjectDto {
         dto.setDiscountPrice(project.getDiscountPrice());
         dto.setFeatured(project.isFeatured());
         dto.setActive(project.isActive());
+        dto.setFree(project.isFree());
+        dto.setAccessType(project.getAccessType());
+        dto.setPublicationStatus(project.getPublicationStatus());
         dto.setThumbnailUrl(project.getThumbnailUrl());
         dto.setViewCount(project.getViewCount());
         dto.setPurchaseCount(project.getPurchaseCount());
+        dto.setClaimCount(project.getClaimCount());
         dto.setCreatedAt(project.getCreatedAt());
         dto.setUpdatedAt(project.getUpdatedAt());
         return dto;
@@ -235,5 +244,45 @@ public class ProjectDto {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public boolean isFree() {
+        return isFree;
+    }
+
+    public void setFree(boolean free) {
+        isFree = free;
+    }
+
+    public String getAccessType() {
+        return accessType;
+    }
+
+    public void setAccessType(String accessType) {
+        this.accessType = accessType;
+    }
+
+    public String getPublicationStatus() {
+        return publicationStatus;
+    }
+
+    public void setPublicationStatus(String publicationStatus) {
+        this.publicationStatus = publicationStatus;
+    }
+
+    public int getClaimCount() {
+        return claimCount;
+    }
+
+    public void setClaimCount(int claimCount) {
+        this.claimCount = claimCount;
+    }
+
+    public boolean isClaimedByCurrentUser() {
+        return claimedByCurrentUser;
+    }
+
+    public void setClaimedByCurrentUser(boolean claimedByCurrentUser) {
+        this.claimedByCurrentUser = claimedByCurrentUser;
     }
 }

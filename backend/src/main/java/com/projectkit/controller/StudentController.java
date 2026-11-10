@@ -66,6 +66,34 @@ public class StudentController {
         return ResponseEntity.ok(ApiResponse.success(purchases));
     }
 
+    @GetMapping("/my-kits")
+    @Operation(summary = "Get all student kits", description = "Returns all claimed free project kits and purchased paid kits")
+    public ResponseEntity<ApiResponse<List<com.projectkit.dto.response.MyKitDto>>> getMyKits(
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        List<com.projectkit.dto.response.MyKitDto> kits = studentService.getMyKits(currentUser.getId());
+        return ResponseEntity.ok(ApiResponse.success(kits));
+    }
+
+    @GetMapping("/projects/{projectId}/access")
+    @Operation(summary = "Check project kit access entitlement", description = "Verifies if the student owns active entitlement to the specified kit")
+    public ResponseEntity<ApiResponse<com.projectkit.dto.response.ProjectAccessStatusDto>> checkProjectAccess(
+            @PathVariable Long projectId,
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        com.projectkit.dto.response.ProjectAccessStatusDto status = studentService.checkProjectAccess(currentUser.getId(), projectId);
+        return ResponseEntity.ok(ApiResponse.success(status));
+    }
+
+    @GetMapping("/available-free")
+    @Operation(summary = "Get available free kits not yet claimed", description = "Returns active free projects the student has not yet claimed")
+    public ResponseEntity<ApiResponse<List<com.projectkit.dto.response.ProjectSummaryDto>>> getAvailableFreeKits(
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        List<com.projectkit.dto.response.ProjectSummaryDto> available = studentService.getAvailableFreeKits(currentUser.getId());
+        return ResponseEntity.ok(ApiResponse.success(available));
+    }
+
     @GetMapping("/dashboard")
     @Operation(summary = "Get student dashboard metrics", description = "Returns overview statistics including total purchased projects and spent amount")
     public ResponseEntity<ApiResponse<StudentDashboardDto>> getDashboard(

@@ -97,13 +97,6 @@ export const authService = {
       );
 
       const authData = response.data.data;
-      if (authData?.accessToken) {
-        localStorage.setItem('projectkit_auth_token', authData.accessToken);
-        if (authData.refreshToken) {
-          localStorage.setItem('projectkit_refresh_token', authData.refreshToken);
-        }
-      }
-
       const u = authData.user;
       const user: User = {
         id: String(u.id),
@@ -114,9 +107,9 @@ export const authService = {
         role: 'student',
         joinedDate: u.createdAt ? u.createdAt.split('T')[0] : new Date().toISOString().split('T')[0],
       };
-      return { user, token: authData.accessToken };
+      return { user, token: authData?.accessToken || '' };
     } catch (error) {
-      // Fallback
+      // Local fallback
       const user: User = {
         id: `usr-${Date.now()}`,
         fullName: payload.fullName,
@@ -126,9 +119,7 @@ export const authService = {
         role: 'student',
         joinedDate: new Date().toISOString().split('T')[0],
       };
-      const token = `dev_jwt_${Date.now()}`;
-      localStorage.setItem('projectkit_auth_token', token);
-      return { user, token };
+      return { user, token: '' };
     }
   },
 

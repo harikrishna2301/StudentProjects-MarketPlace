@@ -324,9 +324,9 @@ export const Projects: React.FC = () => {
               : 'hidden lg:block'
           }`}
         >
-          <div className="bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200/90 dark:border-[#1A2846] p-5 shadow-xs space-y-5 max-h-[88vh] lg:max-h-none overflow-y-auto">
+          <div className="card p-5 space-y-5 max-h-[88vh] lg:max-h-none overflow-y-auto">
             {/* Header: "Filters" matching Screenshot 3 */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#1A2846]">
+            <div className="flex items-center justify-between pb-3 border-b border-white/20 dark:border-[#3A2074]">
               <h2 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-[#F8FAFC] tracking-tight">
                 Filters
               </h2>

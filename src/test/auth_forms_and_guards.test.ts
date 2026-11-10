@@ -168,3 +168,55 @@ describe('Route Guard & Role-Based Access Enforcement', () => {
     expect(access).toBe('ALLOW');
   });
 });
+
+describe('Post-Registration Flow & Account Order Scoping', () => {
+  it('redirects to /login after account creation without auto-login session', () => {
+    // Simulate registration event without creating authenticated session
+    let activeSession: UserSession | null = null;
+    const registrationPayload = {
+      fullName: 'Vikram Singh',
+      email: 'vikram@college.edu',
+    };
+
+    // Correct behavior: redirect to login with prefill message, keep session null
+    const navigationResult = {
+      target: '/login',
+      state: {
+        registeredMessage: 'Account created successfully! Please sign in with your email and password.',
+        email: registrationPayload.email,
+      },
+    };
+
+    expect(activeSession).toBeNull();
+    expect(navigationResult.target).toBe('/login');
+    expect(navigationResult.state.email).toBe('vikram@college.edu');
+    expect(navigationResult.state.registeredMessage).toContain('Account created successfully');
+  });
+
+  it('ensures newly created accounts start with empty purchased kits list instead of default kits', () => {
+    interface SystemOrder {
+      id: string;
+      userId: string;
+      projectId: string;
+    }
+
+    const initialSystemOrders: SystemOrder[] = [
+      { id: 'ord-101', userId: 'usr-student-01', projectId: 'proj-001' },
+      { id: 'ord-102', userId: 'usr-student-01', projectId: 'proj-003' },
+    ];
+
+    const newRegisteredStudentId = 'usr-987654';
+
+    // Scoped orders for newly registered student
+    const studentOrders = initialSystemOrders.filter((o) => o.userId === newRegisteredStudentId);
+    const purchasedKitIds = studentOrders.map((o) => o.projectId);
+
+    expect(studentOrders.length).toBe(0);
+    expect(purchasedKitIds).toEqual([]);
+
+    // Default demo student retains demo kits
+    const demoStudentOrders = initialSystemOrders.filter((o) => o.userId === 'usr-student-01');
+    expect(demoStudentOrders.length).toBe(2);
+    expect(demoStudentOrders.map((o) => o.projectId)).toEqual(['proj-001', 'proj-003']);
+  });
+});

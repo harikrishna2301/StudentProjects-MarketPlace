@@ -19,4 +19,12 @@ public interface StudentService {
     List<PurchasedProjectDto> getPurchasedProjects(Long userId);
 
     StudentDashboardDto getDashboard(Long userId);
+
+    com.projectkit.dto.response.ClaimFreeProjectResponseDto claimFreeProject(Long userId, Long projectId);
+
+    List<com.projectkit.dto.response.MyKitDto> getMyKits(Long userId);
+
+    com.projectkit.dto.response.ProjectAccessStatusDto checkProjectAccess(Long userId, Long projectId);
+
+    List<com.projectkit.dto.response.ProjectSummaryDto> getAvailableFreeKits(Long userId);
 }

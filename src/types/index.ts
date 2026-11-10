@@ -35,6 +35,12 @@ export interface Project {
     description: string;
   }[];
   featured: boolean;
+  isFree?: boolean;
+  accessType?: 'FREE' | 'PAID';
+  publicationStatus?: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  claimCount?: number;
+  claimed?: boolean;
+  purchased?: boolean;
   createdAt: string;
   downloadsCount: number;
   academicYear: string;
