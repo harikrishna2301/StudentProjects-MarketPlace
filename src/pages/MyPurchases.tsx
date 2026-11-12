@@ -146,14 +146,14 @@ export const MyPurchases: React.FC = () => {
       ) : (
         <div className="bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200 dark:border-[#1A2846] p-12 text-center max-w-lg mx-auto shadow-xs">
           <h3 className="text-base font-bold text-slate-900 dark:text-[#F8FAFC] mb-1">
-            You don't own any project kits yet
+            You haven't purchased any project kits yet.
           </h3>
           <p className="text-xs text-slate-500 dark:text-[#94A3B8] mb-6">
-            Explore our curated catalog of final year projects with source code and documentation.
+            Explore our curated catalog of final year projects with complete source code, reports, and documentation.
           </p>
           <Link
             to="/projects"
-            className="px-4 py-2 bg-[#2F4BFF] hover:bg-[#1E36D6] text-white rounded-xl text-xs font-semibold shadow-xs transition-colors"
+            className="px-4 py-2 bg-[#6A2FC8] hover:bg-[#5824A8] text-white rounded-xl text-xs font-semibold shadow-xs transition-colors inline-block"
           >
             Explore Projects
           </Link>

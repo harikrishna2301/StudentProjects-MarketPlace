@@ -38,9 +38,30 @@ export const Checkout: React.FC = () => {
   const [bankName, setBankName] = useState('State Bank of India (SBI)');
   const [agreedToCheckoutLegal, setAgreedToCheckoutLegal] = useState(false);
   const [legalError, setLegalError] = useState('');
+  const [paymentError, setPaymentError] = useState('');
   const [processing, setProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [lastOrderId, setLastOrderId] = useState<string>('');
+  const [pendingRazorpayModal, setPendingRazorpayModal] = useState<{
+    orderResp: any;
+    methodLabel: string;
+  } | null>(null);
+
+  // Helper to load Razorpay SDK dynamically
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if ((window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
 
   // Coupon state
   const [couponInput, setCouponInput] = useState('');
@@ -99,6 +120,7 @@ export const Checkout: React.FC = () => {
       return;
     }
     setLegalError('');
+    setPaymentError('');
     setProcessing(true);
 
     const methodLabel =
@@ -122,28 +144,107 @@ export const Checkout: React.FC = () => {
       // 3. Create verified order on Spring Boot backend (server calculates exact price from DB)
       const orderResp = await orderService.create([numericProjectId], appliedCoupon?.couponCode);
 
-      // 4. Send cryptographic payment signature verification to backend
+      // 4. Attempt to load standard Razorpay script
+      const scriptLoaded = await loadRazorpayScript();
+
+      if (scriptLoaded && (window as any).Razorpay) {
+        // Open standard Razorpay Checkout Modal
+        const options = {
+          key: orderResp.razorpayKeyId || 'rzp_test_projectkit',
+          amount: Math.round(orderResp.totalAmount * 100),
+          currency: orderResp.currency || 'INR',
+          name: 'ProjectKit Marketplace',
+          description: `Capstone Kit License: ${project.title}`,
+          order_id: orderResp.razorpayOrderId,
+          prefill: {
+            name: user?.fullName || 'John Doe',
+            email: user?.email || 'john.doe@projectkit.edu',
+            contact: user?.phoneNumber || '+91 9999999999',
+          },
+          theme: {
+            color: '#6A2FC8',
+          },
+          handler: async function (response: {
+            razorpay_payment_id: string;
+            razorpay_order_id: string;
+            razorpay_signature: string;
+          }) {
+            try {
+              setProcessing(true);
+              const verifyResp = await paymentService.verifyPayment({
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+              });
+
+              // CRITICAL: Only after Razorpay confirms and signature verifies do we complete purchase!
+              completePurchase(project, methodLabel);
+              const targetOrderNumber = verifyResp.orderNumber || orderResp.orderNumber;
+              const paymentId = verifyResp.paymentNumber || response.razorpay_payment_id;
+              navigate(`/payment/status/${targetOrderNumber}?paymentId=${paymentId}&projectId=${project.id}`);
+            } catch (verifErr: any) {
+              setProcessing(false);
+              setPaymentError(verifErr.message || 'Payment signature verification failed. Kit access was not granted.');
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              setProcessing(false);
+              setPaymentError('Razorpay payment cancelled. The project kit has NOT been unlocked.');
+            },
+          },
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on('payment.failed', function (resp: any) {
+          setProcessing(false);
+          setPaymentError(`Payment failed: ${resp.error?.description || 'Transaction declined'}. No project access granted.`);
+        });
+        rzp.open();
+      } else {
+        // Render verified Razorpay confirmation gateway modal
+        setPendingRazorpayModal({ orderResp, methodLabel });
+        setProcessing(false);
+      }
+    } catch (err: any) {
+      console.warn('Backend order placement error:', err);
+      // STRICT: Never grant purchase on error or failure!
+      setProcessing(false);
+      setPaymentError(err?.response?.data?.message || err.message || 'Payment initiation failed. Access is NOT granted.');
+    }
+  };
+
+  const handleConfirmRazorpayPayment = async () => {
+    if (!pendingRazorpayModal || !project) return;
+    setProcessing(true);
+    setPaymentError('');
+    const { orderResp, methodLabel } = pendingRazorpayModal;
+
+    try {
+      // Send cryptographic verification to backend
       const verifyResp = await paymentService.verifyPayment({
         razorpayOrderId: orderResp.razorpayOrderId || `order_${orderResp.orderId}`,
         razorpayPaymentId: `pay_${Date.now()}_verified`,
         razorpaySignature: 'sig_verified_by_sha256',
       });
 
-      // 5. Finalize purchase and update student state
-      const confirmedOrder = completePurchase(project, methodLabel);
-      const targetOrderNumber = verifyResp.orderNumber || orderResp.orderNumber || confirmedOrder.orderNumber;
+      // ONLY grant entitlement upon verified payment success
+      completePurchase(project, methodLabel);
+      const targetOrderNumber = verifyResp.orderNumber || orderResp.orderNumber;
       const paymentId = verifyResp.paymentNumber || `pay_${Date.now()}_verified`;
-      
-      // Navigate to dedicated real-time payment status polling page
+      setPendingRazorpayModal(null);
       navigate(`/payment/status/${targetOrderNumber}?paymentId=${paymentId}&projectId=${project.id}`);
-    } catch (err) {
-      console.warn('Backend order placement fallback:', err);
-      const confirmedOrder = completePurchase(project, methodLabel);
-      const targetOrderNumber = confirmedOrder.orderNumber;
-      navigate(`/payment/status/${targetOrderNumber}?projectId=${project.id}`);
-    } finally {
+    } catch (verifErr: any) {
       setProcessing(false);
+      setPendingRazorpayModal(null);
+      setPaymentError(verifErr.message || 'Razorpay payment signature verification failed. Project kit was not unlocked.');
     }
+  };
+
+  const handleCancelRazorpayPayment = () => {
+    setPendingRazorpayModal(null);
+    setProcessing(false);
+    setPaymentError('Payment cancelled. Project kit has NOT been unlocked.');
   };
 
   return (
@@ -226,19 +327,19 @@ export const Checkout: React.FC = () => {
                 <div>
                   <span className="text-slate-400 dark:text-[#9AA6C7] block text-[11px]">Full Name</span>
                   <span className="font-semibold text-slate-800 dark:text-[#E8ECFA]">
-                    {user?.fullName || 'Rahul Varma'}
+                    {user?.fullName || 'John Doe'}
                   </span>
                 </div>
                 <div>
                   <span className="text-slate-400 dark:text-[#9AA6C7] block text-[11px]">University Email</span>
                   <span className="font-semibold text-slate-800 dark:text-[#E8ECFA]">
-                    {user?.email || 'rahul.student@projectkit.edu'}
+                    {user?.email || 'john.doe@projectkit.edu'}
                   </span>
                 </div>
                 <div className="sm:col-span-2">
                   <span className="text-slate-400 dark:text-[#9AA6C7] block text-[11px]">College / Campus</span>
                   <span className="font-semibold text-slate-800 dark:text-[#CBD5E1]">
-                    {user?.collegeName || 'Vellore Institute of Technology'}
+                    {user?.collegeName || 'Metropolitan Institute of Technology'}
                   </span>
                 </div>
               </div>
@@ -533,6 +634,16 @@ export const Checkout: React.FC = () => {
                   {legalError}
                 </div>
               )}
+
+              {paymentError && (
+                <div role="alert" className="p-3 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs text-rose-700 dark:text-rose-300 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <div className="leading-tight">
+                    <span className="font-bold">Payment Status: </span>
+                    {paymentError}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Action button */}
@@ -540,14 +651,15 @@ export const Checkout: React.FC = () => {
               <button
                 onClick={handlePlaceOrder}
                 disabled={processing}
-                className="pk-btn-primary w-full py-3 px-4 bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-[0_4px_16px_rgba(47,75,255,0.35)] disabled:opacity-50"
+                className="pk-btn-primary w-full py-3 px-4 bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#491C91] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-[0_4px_16px_rgba(106,47,200,0.35)] disabled:opacity-50"
               >
                 {processing ? (
-                  <span>Authorizing Demonstration Purchase...</span>
+                  <span>Connecting to Razorpay Gateway...</span>
                 ) : (
                   <>
-                    <span>Confirm & Unlock Academic Kit</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>Proceed to Pay with Razorpay</span>
+                    <ArrowRight className="w-4 h-4 ml-auto" />
                   </>
                 )}
               </button>
@@ -556,17 +668,114 @@ export const Checkout: React.FC = () => {
             {/* Guarantee points */}
             <div className="pt-4 border-t border-slate-100 dark:border-[#25335F] space-y-2 text-[11px] text-slate-500 dark:text-[#9AA6C7]">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#2F4BFF] dark:text-[#5B7BFF]" />
-                <span>Instant ZIP package archive access</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-[#6A2FC8] dark:text-[#9D71E8]" />
+                <span>Cryptographically verified Razorpay settlement</span>
               </div>
               <div className="flex items-center gap-2">
-                <FileCheck2 className="w-3.5 h-3.5 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+                <FileCheck2 className="w-3.5 h-3.5 text-[#6A2FC8] dark:text-[#9D71E8]" />
                 <span>Standard university formatting warranty</span>
               </div>
               <div className="flex items-center gap-2">
-                <HelpCircle className="w-3.5 h-3.5 text-[#2F4BFF] dark:text-[#5B7BFF]" />
+                <HelpCircle className="w-3.5 h-3.5 text-[#6A2FC8] dark:text-[#9D71E8]" />
                 <span>Ready for local installation on Windows, Mac & Linux</span>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Razorpay Gateway Confirmation Modal */}
+      {pendingRazorpayModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn"
+        >
+          <div className="bg-[#0B0720] border border-[#6A2FC8]/50 rounded-2xl max-w-md w-full p-6 text-white shadow-2xl space-y-5 relative">
+            {/* Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-[#25134D]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#6A2FC8] to-[#9D71E8] flex items-center justify-center font-bold text-sm shadow-md">
+                  R
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm text-[#F2E9FF] tracking-wide flex items-center gap-2">
+                    Razorpay Secure Checkout
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Sandbox
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-[#A798C4]">Order #{pendingRazorpayModal.orderResp.orderNumber}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleCancelRazorpayPayment}
+                className="text-[#A798C4] hover:text-white p-1 rounded-lg transition-colors"
+                title="Cancel payment"
+              >
+                <CloseIcon className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Order Summary in Modal */}
+            <div className="bg-[#1A0D3D] border border-[#3A2074] rounded-xl p-4 space-y-2.5 text-xs">
+              <div className="flex justify-between items-center text-[#D1B8FF]">
+                <span>Project Kit:</span>
+                <span className="font-semibold text-[#F2E9FF] text-right truncate max-w-[200px]">
+                  {project.title}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-[#D1B8FF]">
+                <span>Licensee:</span>
+                <span className="font-medium text-[#F2E9FF]">John Doe</span>
+              </div>
+              <div className="flex justify-between items-center text-[#D1B8FF]">
+                <span>Payment Mode:</span>
+                <span className="font-medium text-[#F2E9FF]">{pendingRazorpayModal.methodLabel}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-[#25134D] text-sm font-bold">
+                <span className="text-[#F2E9FF]">Total Amount:</span>
+                <span className="text-[#D1B8FF] font-mono text-base">
+                  ₹{Number(pendingRazorpayModal.orderResp.totalAmount || project.price).toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+
+            {/* Security note */}
+            <div className="text-[11px] text-[#A798C4] leading-relaxed flex items-start gap-2 bg-[#25134D]/50 p-3 rounded-xl border border-[#3A2074]/60">
+              <ShieldCheck className="w-4 h-4 text-[#9D71E8] shrink-0 mt-0.5" />
+              <span>
+                Payment must be cryptographically confirmed by Razorpay. Kit source code and IEEE documents are ONLY unlocked after verified transaction settlement.
+              </span>
+            </div>
+
+            {/* Action buttons */}
+            <div className="space-y-2 pt-2">
+              <button
+                type="button"
+                onClick={handleConfirmRazorpayPayment}
+                disabled={processing}
+                className="w-full py-3 bg-gradient-to-r from-[#6A2FC8] to-[#9D71E8] hover:from-[#5824A8] hover:to-[#8558D4] text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-[#6A2FC8]/30 transition-all disabled:opacity-50"
+              >
+                {processing ? (
+                  <span>Verifying Cryptographic Signature...</span>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-white" />
+                    <span>Confirm & Authorize Razorpay Payment</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleCancelRazorpayPayment}
+                disabled={processing}
+                className="w-full py-2.5 bg-transparent hover:bg-white/5 text-[#A798C4] hover:text-white rounded-xl text-xs font-semibold transition-colors"
+              >
+                Cancel / Decline Transaction
+              </button>
             </div>
           </div>
         </div>

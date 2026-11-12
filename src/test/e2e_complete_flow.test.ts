@@ -242,7 +242,7 @@ describe('ProjectKit End-to-End E2E Lifecycle Simulation', () => {
 
   describe('Failure Scenarios & Security Controls', () => {
     it('failure case 1: rejects invalid payment signatures with error', () => {
-      const student = system.registerOrLogin('rahul@college.edu');
+      const student = system.registerOrLogin('john.doe@college.edu');
       const order = system.createOrder(student, [102]);
 
       const res = system.verifyPayment(

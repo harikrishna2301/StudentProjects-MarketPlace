@@ -67,10 +67,10 @@ export const authService = {
       const isAdmin = email.includes('admin');
       const user: User = {
         id: isAdmin ? 'usr-admin-01' : 'usr-student-01',
-        fullName: isAdmin ? 'Dr. Anita Sharma' : 'Rahul Varma',
+        fullName: isAdmin ? 'Dr. Anita Sharma' : 'John Doe',
         email: credentials.email,
-        phoneNumber: '+91 98451 22890',
-        collegeName: isAdmin ? 'National Institute of Technology' : 'Vellore Institute of Technology',
+        phoneNumber: '+91 98765 43210',
+        collegeName: isAdmin ? 'National Institute of Technology' : 'Metropolitan Institute of Technology',
         role: isAdmin ? 'admin' : 'student',
         joinedDate: '2025-08-14',
       };

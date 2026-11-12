@@ -33,12 +33,16 @@ import java.util.UUID;
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
 
-    private static final Set<String> ALLOWED_IMAGE_EXTENSIONS = Set.of("png", "jpg", "jpeg");
+    private static final Set<String> ALLOWED_IMAGE_EXTENSIONS = Set.of("png", "jpg", "jpeg", "webp");
     private static final Set<String> ALLOWED_DOC_EXTENSIONS = Set.of("pdf");
     private static final Set<String> ALLOWED_CODE_EXTENSIONS = Set.of("zip");
+    private static final Set<String> ALLOWED_PRESENTATION_EXTENSIONS = Set.of("ppt", "pptx");
+    private static final Set<String> ALLOWED_VIDEO_EXTENSIONS = Set.of("mp4", "webm");
 
     private static final long MAX_SOURCE_CODE_SIZE = 50L * 1024 * 1024; // 50 MB
     private static final long MAX_DOCUMENTATION_SIZE = 25L * 1024 * 1024; // 25 MB
+    private static final long MAX_PRESENTATION_SIZE = 50L * 1024 * 1024; // 50 MB
+    private static final long MAX_VIDEO_SIZE = 100L * 1024 * 1024; // 100 MB
     private static final long MAX_IMAGE_SIZE = 10L * 1024 * 1024; // 10 MB
 
     private final Path fileStorageLocation;
@@ -75,6 +79,8 @@ public class FileStorageServiceImpl implements FileStorageService {
         String subDir = switch (fileType) {
             case SOURCE_CODE -> "projects/" + projectId + "/source";
             case DOCUMENTATION -> "projects/" + projectId + "/docs";
+            case PRESENTATION -> "projects/" + projectId + "/presentation";
+            case DEMO_VIDEO -> "projects/" + projectId + "/video";
             case SCREENSHOT -> "projects/" + projectId + "/screenshots";
             case THUMBNAIL -> "thumbnails";
         };
@@ -97,8 +103,9 @@ public class FileStorageServiceImpl implements FileStorageService {
             String relativeFilePath = subDir + "/" + storedFileName;
             String verifiedMimeType = resolveVerifiedMimeType(extension, fileType);
 
-            // If unique single-file type like SOURCE_CODE or DOCUMENTATION, replace previous file entry
-            if (fileType == FileType.SOURCE_CODE || fileType == FileType.DOCUMENTATION) {
+            // If unique single-file type, replace previous file entry
+            if (fileType == FileType.SOURCE_CODE || fileType == FileType.DOCUMENTATION ||
+                fileType == FileType.PRESENTATION || fileType == FileType.DEMO_VIDEO) {
                 projectFileRepository.findByProjectIdAndFileType(projectId, fileType).ifPresent(oldFile -> {
                     deleteFile(oldFile.getFilePath());
                     projectFileRepository.delete(oldFile);
@@ -216,9 +223,25 @@ public class FileStorageServiceImpl implements FileStorageService {
                     throw new BadRequestException("Documentation file exceeds 25MB limit.");
                 }
             }
+            case PRESENTATION -> {
+                if (!ALLOWED_PRESENTATION_EXTENSIONS.contains(extension)) {
+                    throw new BadRequestException("Presentation must be a .ppt or .pptx document. Found: ." + extension);
+                }
+                if (file.getSize() > MAX_PRESENTATION_SIZE) {
+                    throw new BadRequestException("Presentation file exceeds 50MB limit.");
+                }
+            }
+            case DEMO_VIDEO -> {
+                if (!ALLOWED_VIDEO_EXTENSIONS.contains(extension)) {
+                    throw new BadRequestException("Demo video must be a .mp4 or .webm file. Found: ." + extension);
+                }
+                if (file.getSize() > MAX_VIDEO_SIZE) {
+                    throw new BadRequestException("Demo video exceeds 100MB limit.");
+                }
+            }
             case SCREENSHOT, THUMBNAIL -> {
                 if (!ALLOWED_IMAGE_EXTENSIONS.contains(extension)) {
-                    throw new BadRequestException("Images must be in PNG or JPG/JPEG format. Found: ." + extension);
+                    throw new BadRequestException("Images must be in PNG, JPG, or WEBP format. Found: ." + extension);
                 }
                 if (file.getSize() > MAX_IMAGE_SIZE) {
                     throw new BadRequestException("Image file exceeds 10MB limit.");
@@ -325,8 +348,13 @@ public class FileStorageServiceImpl implements FileStorageService {
         return switch (extension) {
             case "zip" -> "application/zip";
             case "pdf" -> "application/pdf";
+            case "ppt" -> "application/vnd.ms-powerpoint";
+            case "pptx" -> "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+            case "mp4" -> "video/mp4";
+            case "webm" -> "video/webm";
             case "png" -> "image/png";
             case "jpg", "jpeg" -> "image/jpeg";
+            case "webp" -> "image/webp";
             default -> (fileType == FileType.SOURCE_CODE) ? "application/zip" : "application/octet-stream";
         };
     }

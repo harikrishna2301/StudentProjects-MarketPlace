@@ -556,7 +556,7 @@ export const Home: React.FC = () => {
                 RS
               </div>
               <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-[#E8ECFA]">Rahul Sharma</h4>
+                <h4 className="text-xs font-bold text-slate-900 dark:text-[#E8ECFA]">John Doe</h4>
                 <p className="text-[11px] text-slate-500 dark:text-[#9AA6C7]">B.Tech CSE, VIT Vellore</p>
               </div>
             </div>

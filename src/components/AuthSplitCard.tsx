@@ -280,7 +280,7 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
 
   const fillQuickDemo = (role: 'student' | 'admin') => {
     if (role === 'student') {
-      setLoginEmail('rahul.student@projectkit.edu');
+      setLoginEmail('john.doe@projectkit.edu');
       setLoginPassword('StudentPass2026!');
     } else {
       setLoginEmail('admin@projectkit.edu');
@@ -543,7 +543,7 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
                           type="email"
                           value={loginEmail}
                           onChange={(e) => setLoginEmail(e.target.value)}
-                          placeholder="e.g. rahul.student@projectkit.edu"
+                          placeholder="e.g. john.doe@projectkit.edu"
                           className="w-full bg-transparent py-1.5 text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none"
                           required
                         />

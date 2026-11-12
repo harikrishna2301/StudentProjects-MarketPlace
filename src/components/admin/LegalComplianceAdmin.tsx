@@ -136,7 +136,7 @@ export const LegalComplianceAdmin: React.FC = () => {
     {
       id: 101,
       userId: 1,
-      userEmail: 'rahul.student@vit.ac.in',
+      userEmail: 'john.doe@mit.edu',
       documentType: 'TERMS_AND_CONDITIONS',
       documentVersion: '1.0',
       ipAddress: '157.48.12.94',
@@ -146,7 +146,7 @@ export const LegalComplianceAdmin: React.FC = () => {
     {
       id: 102,
       userId: 1,
-      userEmail: 'rahul.student@vit.ac.in',
+      userEmail: 'john.doe@mit.edu',
       documentType: 'PRIVACY_POLICY',
       documentVersion: '1.0',
       ipAddress: '157.48.12.94',

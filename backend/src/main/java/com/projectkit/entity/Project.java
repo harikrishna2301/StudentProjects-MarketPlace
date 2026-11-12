@@ -63,6 +63,12 @@ public class Project {
     @Column(name = "thumbnail_url", length = 500)
     private String thumbnailUrl;
 
+    @Column(name = "demo_url", length = 500)
+    private String demoUrl;
+
+    @Column(name = "demo_video_url", length = 500)
+    private String demoVideoUrl;
+
     @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
 
@@ -297,5 +303,21 @@ public class Project {
 
     public void setClaimCount(int claimCount) {
         this.claimCount = claimCount;
+    }
+
+    public String getDemoUrl() {
+        return demoUrl;
+    }
+
+    public void setDemoUrl(String demoUrl) {
+        this.demoUrl = demoUrl;
+    }
+
+    public String getDemoVideoUrl() {
+        return demoVideoUrl;
+    }
+
+    public void setDemoVideoUrl(String demoVideoUrl) {
+        this.demoVideoUrl = demoVideoUrl;
     }
 }

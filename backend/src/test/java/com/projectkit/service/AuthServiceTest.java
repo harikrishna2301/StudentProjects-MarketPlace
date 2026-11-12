@@ -75,7 +75,7 @@ public class AuthServiceTest {
         sampleUser = new User();
         sampleUser.setId(1L);
         sampleUser.setEmail("student@example.com");
-        sampleUser.setFullName("Rahul Sharma");
+        sampleUser.setFullName("John Doe");
         sampleUser.setPasswordHash("encoded_password");
         sampleUser.setRole(Role.STUDENT);
         sampleUser.setStatus(AccountStatus.ACTIVE);
@@ -85,7 +85,7 @@ public class AuthServiceTest {
     @DisplayName("Register: Valid registration should save student user and return tokens")
     void register_WhenEmailNotExists_ShouldRegisterSuccessfully() {
         RegisterRequest request = new RegisterRequest(
-                "Rahul Sharma",
+                "John Doe",
                 "student@example.com",
                 "Password@123",
                 "IIT Bombay",
@@ -115,7 +115,7 @@ public class AuthServiceTest {
     @DisplayName("Register: Duplicate email should throw BadRequestException")
     void register_WhenEmailAlreadyExists_ShouldThrowBadRequest() {
         RegisterRequest request = new RegisterRequest(
-                "Rahul Sharma",
+                "John Doe",
                 "student@example.com",
                 "Password@123",
                 "IIT Bombay",

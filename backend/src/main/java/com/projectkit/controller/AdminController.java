@@ -147,6 +147,28 @@ public class AdminController {
                 Map.of("fileId", projectFile.getId(), "fileName", projectFile.getFileName())));
     }
 
+    @PostMapping(value = "/projects/{id}/presentation", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload project presentation PPT/PPTX file")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> uploadPresentation(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        ProjectFile projectFile = fileStorageService.storeProjectFile(id, file, FileType.PRESENTATION);
+        return ResponseEntity.ok(ApiResponse.success("Presentation uploaded successfully",
+                Map.of("fileId", projectFile.getId(), "fileName", projectFile.getFileName(), "size", projectFile.getFileSize())));
+    }
+
+    @PostMapping(value = "/projects/{id}/demo-video", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload project demo video MP4/WEBM file")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> uploadDemoVideo(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        ProjectFile projectFile = fileStorageService.storeProjectFile(id, file, FileType.DEMO_VIDEO);
+        return ResponseEntity.ok(ApiResponse.success("Demo video uploaded successfully",
+                Map.of("fileId", projectFile.getId(), "fileName", projectFile.getFileName(), "size", projectFile.getFileSize())));
+    }
+
     @PostMapping(value = "/projects/upload-thumbnail", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload project thumbnail preview image")
     public ResponseEntity<ApiResponse<Map<String, String>>> uploadThumbnail(

@@ -196,27 +196,46 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
       {/* 2. Card Body Content (Typography & badging hierarchy) */}
       <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-2 min-w-0">
-          {/* Metadata Row: Category & Academic Year */}
+            {/* Metadata Row: Category & Academic Year */}
           <div className="flex items-center gap-2 text-xs font-medium text-[#63567D] dark:text-[#D1B8FF]/80 min-w-0">
-            <span className="uppercase tracking-wider font-semibold text-[#6A2FC8] dark:text-[#D1B8FF] truncate">
+            <Link
+              to={`/projects?category=${encodeURIComponent(project.category)}`}
+              onClick={(e) => e.stopPropagation()}
+              className="uppercase tracking-wider font-semibold text-[#6A2FC8] dark:text-[#D1B8FF] hover:underline hover:text-[#5824A8] dark:hover:text-[#F2E9FF] truncate transition-colors"
+              title={`View all ${project.category} projects`}
+            >
               {project.category}
-            </span>
+            </Link>
             <span aria-hidden="true" className="text-slate-300 dark:text-[#3A2074]">·</span>
             <span className="shrink-0">{project.academicYear || '2025–26'}</span>
+            {project.difficulty && (
+              <>
+                <span aria-hidden="true" className="text-slate-300 dark:text-[#3A2074]">·</span>
+                <span className={`px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide uppercase ${
+                  project.difficulty === 'Beginner'
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                    : project.difficulty === 'Intermediate'
+                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                    : 'bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20'
+                }`}>
+                  {project.difficulty}
+                </span>
+              </>
+            )}
           </div>
 
-          {/* Project Title - High contrast bold typography */}
+          {/* Project Title - High contrast bold typography with fixed 2-line height */}
           <Link
             to={`/projects/${project.id}`}
             className="block group-hover:text-[#6A2FC8] dark:group-hover:text-[#D1B8FF] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] rounded-sm min-w-0"
           >
-            <h3 className="font-bold text-base text-[#0B0720] dark:text-[#F2E9FF] leading-snug line-clamp-2">
+            <h3 className="font-bold text-base text-[#0B0720] dark:text-[#F2E9FF] leading-snug line-clamp-2 min-h-[44px]">
               <HighlightText text={project.title} query={searchQuery} />
             </h3>
           </Link>
 
-          {/* Short Description - At least 14px (text-sm) */}
-          <p className="text-sm text-[#4E4166] dark:text-[#D1B8FF]/80 line-clamp-2 leading-relaxed">
+          {/* Short Description - Controlled 2-line clamp with uniform height */}
+          <p className="text-sm text-[#4E4166] dark:text-[#D1B8FF]/80 line-clamp-2 leading-relaxed min-h-[40px]">
             <HighlightText text={project.shortDescription} query={searchQuery} />
           </p>
 
@@ -237,7 +256,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
             </span>
           </div>
 
-          {/* Tech Stack & Report Badges in Body (Purple Palette: #F2E9FF bg, #25134D text) */}
+          {/* Tech Stack & Report Badges in Body (Clean non-clickable badges) */}
           <div className="flex flex-wrap items-center gap-1.5 pt-2">
             {displayedTechStack.map((tech) => (
               <span
@@ -267,75 +286,77 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
           </div>
         </div>
 
-        {/* 3. Pricing & Call-to-Action Footer (Pinned to bottom, stacks cleanly on narrow cards) */}
-        <div className="pt-4 border-t border-[#E8DEFF] dark:border-[#3A2074] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-auto">
-          <div className="flex items-baseline gap-2">
-            {isFree ? (
-              <div className="flex items-center gap-1.5">
-                <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight uppercase">
-                  FREE
-                </span>
-                <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/60 font-medium">
-                  (₹0)
-                </span>
-              </div>
-            ) : (
-              <>
-                <span className="text-lg font-extrabold text-[#0B0720] dark:text-[#F2E9FF] font-mono tabular-nums tracking-tight">
-                  ₹{project.price.toLocaleString('en-IN')}
-                </span>
-                {project.originalPrice > project.price && (
-                  <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/60 line-through font-mono tabular-nums">
-                    ₹{project.originalPrice.toLocaleString('en-IN')}
+        {/* 3. Pricing & Call-to-Action Footer (Pinned to bottom, View Details + Buy Now / Action) */}
+        <div className="pt-4 border-t border-[#E8DEFF] dark:border-[#3A2074] flex flex-col gap-3 mt-auto">
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline gap-2">
+              {isFree ? (
+                <div className="flex items-center gap-1.5">
+                  <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 font-mono tracking-tight uppercase">
+                    FREE
                   </span>
-                )}
-              </>
+                  <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/60 font-medium">
+                    (₹0)
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <span className="text-lg font-extrabold text-[#0B0720] dark:text-[#F2E9FF] font-mono tabular-nums tracking-tight">
+                    ₹{project.price.toLocaleString('en-IN')}
+                  </span>
+                  {project.originalPrice > project.price && (
+                    <span className="text-xs text-[#63567D] dark:text-[#D1B8FF]/60 line-through font-mono tabular-nums">
+                      ₹{project.originalPrice.toLocaleString('en-IN')}
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
+            {isFree && (
+              <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
+                Instant Access
+              </span>
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={handleActionClick}
-            disabled={claiming}
-            className={`w-full sm:w-auto min-h-[40px] px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 shadow-xs flex items-center justify-center gap-2 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] focus-visible:ring-offset-2 ${
-              isClaimed || isPurchased
-                ? 'bg-[#16A34A] hover:bg-[#15803D] active:bg-[#14532D] text-white'
-                : isFree
-                ? 'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-emerald-900/20'
-                : 'bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#451B87] text-white hover:shadow-[0_4px_14px_rgba(106,47,200,0.35)]'
-            }`}
-            aria-label={
-              isClaimed
-                ? `View claimed free kit ${project.title}`
-                : isPurchased
-                ? `Download ${project.title} kit`
-                : isFree
-                ? `Claim ${project.title} for free`
-                : `Add ${project.title} to cart`
-            }
-          >
-            {isClaimed ? (
-              <>
+          <div className="grid grid-cols-2 gap-2">
+            {/* View Details Button */}
+            <Link
+              to={`/projects/${project.id}`}
+              className="min-h-[38px] px-3 py-2 rounded-xl text-xs font-semibold text-center flex items-center justify-center border border-[#D1B8FF]/70 dark:border-[#3A2074] text-[#25134D] dark:text-[#D1B8FF] hover:bg-[#F2E9FF]/50 dark:hover:bg-[#25134D]/60 transition-colors"
+            >
+              View Details
+            </Link>
+
+            {/* Buy Now / Claim / Owned Button */}
+            {isClaimed || isPurchased ? (
+              <Link
+                to={isPurchased ? '/dashboard/purchases' : `/projects/${project.id}`}
+                className="min-h-[38px] px-3 py-2 rounded-xl text-xs font-semibold bg-[#16A34A] hover:bg-[#15803D] text-white flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+              >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Claimed (View Kit)</span>
-              </>
-            ) : isPurchased ? (
-              <>
-                <Download className="w-3.5 h-3.5" />
-                <span>Download Kit</span>
-              </>
+                <span>{isPurchased ? 'Owned' : 'Claimed'}</span>
+              </Link>
             ) : isFree ? (
-              <>
+              <button
+                type="button"
+                onClick={handleActionClick}
+                disabled={claiming}
+                className="min-h-[38px] px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center gap-1.5 transition-colors shadow-xs disabled:opacity-60"
+              >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>{claiming ? 'Claiming...' : 'Get Free Kit'}</span>
-              </>
+              </button>
             ) : (
-              <>
+              <Link
+                to={`/checkout/${project.id}`}
+                className="min-h-[38px] px-3 py-2 rounded-xl text-xs font-semibold bg-[#6A2FC8] hover:bg-[#5824A8] text-white flex items-center justify-center gap-1.5 transition-all shadow-xs hover:shadow-[0_4px_14px_rgba(106,47,200,0.35)]"
+              >
                 <ShoppingCart className="w-3.5 h-3.5" />
-                <span>Add to Cart</span>
-              </>
+                <span>Buy Now</span>
+              </Link>
             )}
-          </button>
+          </div>
         </div>
       </div>
     </div>

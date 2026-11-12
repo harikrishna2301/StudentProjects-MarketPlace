@@ -47,6 +47,25 @@ export interface Project {
   colorTheme: string;
   imageUrl?: string;
   coverImage?: string;
+  detailedDescription?: string;
+  difficulty?: 'Beginner' | 'Intermediate' | 'Advanced';
+  demoUrl?: string;
+  demoVideoUrl?: string;
+  screenshots?: string[];
+  resources?: {
+    sourceCodeZip?: boolean;
+    presentationPpt?: boolean;
+    documentationPdf?: boolean;
+    screenshots?: boolean;
+    demo?: boolean;
+    hasSourceCode?: boolean;
+    hasPresentation?: boolean;
+    hasDocumentation?: boolean;
+    hasDemoVideo?: boolean;
+    sourceCodeSize?: string;
+    presentationSize?: string;
+    documentationPages?: number;
+  };
 }
 
 export interface Category {

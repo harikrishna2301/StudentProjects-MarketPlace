@@ -181,6 +181,8 @@ public class ProjectServiceImpl implements ProjectService {
         project.setFeatured(request.getIsFeatured() != null && request.getIsFeatured());
         project.setActive(request.getIsActive() == null || request.getIsActive());
         project.setThumbnailUrl(request.getThumbnailUrl());
+        project.setDemoUrl(request.getDemoUrl());
+        project.setDemoVideoUrl(request.getDemoVideoUrl());
 
         Project saved = projectRepository.save(project);
         return ProjectDto.fromEntity(saved);
@@ -265,6 +267,12 @@ public class ProjectServiceImpl implements ProjectService {
         if (request.getThumbnailUrl() != null) {
             project.setThumbnailUrl(request.getThumbnailUrl());
         }
+        if (request.getDemoUrl() != null) {
+            project.setDemoUrl(request.getDemoUrl());
+        }
+        if (request.getDemoVideoUrl() != null) {
+            project.setDemoVideoUrl(request.getDemoVideoUrl());
+        }
 
         Project updated = projectRepository.save(project);
         return ProjectDto.fromEntity(updated);
@@ -295,6 +303,8 @@ public class ProjectServiceImpl implements ProjectService {
         List<ProjectFile> files = projectFileRepository.findByProjectId(project.getId());
         boolean hasSource = false;
         boolean hasDoc = false;
+        boolean hasPresentation = false;
+        boolean hasDemoVideo = false;
         List<String> screenshots = new java.util.ArrayList<>();
 
         for (ProjectFile f : files) {
@@ -302,6 +312,10 @@ public class ProjectServiceImpl implements ProjectService {
                 hasSource = true;
             } else if (f.getFileType() == FileType.DOCUMENTATION) {
                 hasDoc = true;
+            } else if (f.getFileType() == FileType.PRESENTATION) {
+                hasPresentation = true;
+            } else if (f.getFileType() == FileType.DEMO_VIDEO) {
+                hasDemoVideo = true;
             } else if (f.getFileType() == FileType.SCREENSHOT) {
                 screenshots.add("/api/projects/" + project.getId() + "/files/" + f.getId());
             }
@@ -309,6 +323,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         dto.setHasSourceCode(hasSource);
         dto.setHasDocumentation(hasDoc);
+        dto.setHasPresentation(hasPresentation);
+        dto.setHasDemoVideo(hasDemoVideo);
+        dto.setDemoUrl(project.getDemoUrl());
+        dto.setDemoVideoUrl(project.getDemoVideoUrl());
         dto.setScreenshotUrls(screenshots);
 
         return dto;

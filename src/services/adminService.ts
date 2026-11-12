@@ -102,6 +102,42 @@ export const adminService = {
     );
     return response.data.data.thumbnailUrl;
   },
+
+  /**
+   * Upload project screenshot
+   */
+  async uploadScreenshot(projectId: string | number, file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post(`/api/admin/projects/${projectId}/screenshot`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data.data;
+  },
+
+  /**
+   * Upload project presentation PPT/PPTX
+   */
+  async uploadPresentation(projectId: string | number, file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post(`/api/admin/projects/${projectId}/presentation`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data.data;
+  },
+
+  /**
+   * Upload project demo video MP4/WEBM
+   */
+  async uploadDemoVideo(projectId: string | number, file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post(`/api/admin/projects/${projectId}/demo-video`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data.data;
+  },
 };
 
 export default adminService;

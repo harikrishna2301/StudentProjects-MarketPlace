@@ -94,6 +94,31 @@ public class DownloadController {
                 .body(resource);
     }
 
+    @GetMapping("/{projectId}/download/presentation")
+    @SecurityRequirement(name = "BearerAuth")
+    @Operation(summary = "Download project presentation PPT/PPTX", description = "Verifies student purchase and paid order status before streaming the presentation file")
+    public ResponseEntity<Resource> downloadPresentation(
+            @PathVariable Long projectId,
+            @AuthenticationPrincipal UserPrincipal currentUser
+    ) {
+        verifyPurchaseOrAdmin(projectId, currentUser);
+
+        ProjectFile file = projectFileRepository.findByProjectIdAndFileType(projectId, FileType.PRESENTATION)
+                .orElseThrow(() -> new ResourceNotFoundException("Presentation package not yet uploaded for project id: " + projectId));
+
+        if (!file.getProject().getId().equals(projectId)) {
+            throw new ResourceNotFoundException("Presentation file does not belong to specified project.");
+        }
+
+        Resource resource = fileStorageService.loadFileAsResource(file.getFilePath());
+        String safeFilename = sanitizeFilename(file.getFileName());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + safeFilename + "\"")
+                .body(resource);
+    }
+
     @GetMapping("/{projectId}/files/{fileId}")
     @Operation(summary = "View project media file", description = "Streams project screenshots or public media files")
     public ResponseEntity<Resource> viewProjectMedia(

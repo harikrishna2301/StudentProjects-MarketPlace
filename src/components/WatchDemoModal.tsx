@@ -478,7 +478,7 @@ ${project.installationSteps.map((s) => s.codeCommand).filter(Boolean).join('\n')
                       </div>
                       <div className="flex justify-between text-slate-300">
                         <span>#1001</span>
-                        <span>rahul.varma@vit.edu</span>
+                        <span>john.doe@mit.edu</span>
                         <span className="text-emerald-400">COMPLETED</span>
                         <span>1.2ms</span>
                       </div>

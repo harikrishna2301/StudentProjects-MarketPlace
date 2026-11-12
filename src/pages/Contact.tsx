@@ -47,27 +47,38 @@ Sent via ProjectKit Student Portal`;
     return `mailto:${OFFICIAL_CONTACT_EMAIL}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
   };
 
+  const [submitError, setSubmitError] = useState<string>('');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.message) return;
+    if (!formData.fullName.trim() || !formData.email.trim() || !formData.message.trim()) {
+      setSubmitError('Please complete all required fields (Name, Email, and Message).');
+      return;
+    }
 
     try {
       setLoading(true);
+      setSubmitError('');
       const res = await studentService.submitContactInquiry({
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        college: formData.college,
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone?.trim(),
+        college: formData.college?.trim(),
         category: formData.category,
-        subject: formData.subject,
-        message: formData.message,
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
       });
       setTicketNumber(res?.ticketNumber || `TCK-${Date.now().toString().slice(-6)}`);
       setSubmitted(true);
-    } catch (err) {
-      // Graceful fallback ticket if backend is in preview
-      setTicketNumber(`TCK-${Date.now().toString().slice(-6)}`);
-      setSubmitted(true);
+    } catch (err: any) {
+      console.error('Contact submission error:', err);
+      // Strictly avoid displaying fake success when unsubmitted
+      setSubmitted(false);
+      setSubmitError(
+        err?.response?.data?.message ||
+        err?.message ||
+        'Unable to transmit message to the support server. Please check your connection or send directly to ' + OFFICIAL_CONTACT_EMAIL
+      );
     } finally {
       setLoading(false);
     }
@@ -263,7 +274,7 @@ Sent via ProjectKit Student Portal`;
                       required
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                      placeholder="e.g. Rahul Sharma"
+                      placeholder="e.g. John Doe"
                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#3A2074] bg-white dark:bg-[#0B0720] text-slate-900 dark:text-[#F2E9FF] text-xs focus:outline-none focus:ring-2 focus:ring-[#6A2FC8] transition-all"
                     />
                   </div>
@@ -278,7 +289,7 @@ Sent via ProjectKit Student Portal`;
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="e.g. rahul@university.edu"
+                      placeholder="e.g. john.doe@university.edu"
                       className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-[#3A2074] bg-white dark:bg-[#0B0720] text-slate-900 dark:text-[#F2E9FF] text-xs focus:outline-none focus:ring-2 focus:ring-[#6A2FC8] transition-all"
                     />
                   </div>

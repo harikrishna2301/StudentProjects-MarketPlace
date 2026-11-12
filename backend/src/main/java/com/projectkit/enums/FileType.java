@@ -4,5 +4,7 @@ public enum FileType {
     SOURCE_CODE,
     DOCUMENTATION,
     SCREENSHOT,
-    THUMBNAIL
+    THUMBNAIL,
+    PRESENTATION,
+    DEMO_VIDEO
 }

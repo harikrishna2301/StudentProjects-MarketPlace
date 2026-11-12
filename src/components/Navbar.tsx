@@ -159,12 +159,27 @@ export const Navbar: React.FC = () => {
     }
   };
 
-  const isLinkActive = (key: 'home' | 'projects' | 'how-it-works' | 'pricing' | 'contact') => {
+  const isLinkActive = (key: 'home' | 'projects' | 'how-it-works' | 'about' | 'contact' | 'purchases' | 'profile' | 'admin') => {
     if (key === 'projects') {
       return location.pathname === '/projects' || location.pathname.startsWith('/projects/');
     }
     if (key === 'contact') {
-      return location.pathname === '/contact' || (location.pathname === '/' && activeSection === 'contact');
+      return location.pathname === '/contact';
+    }
+    if (key === 'about') {
+      return location.pathname === '/about';
+    }
+    if (key === 'purchases') {
+      return location.pathname === '/dashboard/purchases';
+    }
+    if (key === 'profile') {
+      return location.pathname === '/dashboard/profile';
+    }
+    if (key === 'admin') {
+      return location.pathname.startsWith('/admin');
+    }
+    if (key === 'how-it-works') {
+      return location.pathname === '/' && activeSection === 'how-it-works';
     }
     if (location.pathname === '/') {
       return activeSection === key;
@@ -245,30 +260,53 @@ export const Navbar: React.FC = () => {
               Projects
             </Link>
 
-            <Link
-              to="/categories"
-              className={`nav-link-animated ${location.pathname === '/categories' ? 'is-active' : ''}`}
-            >
-              Categories
-            </Link>
+            {isAuthenticated ? (
+              isAdmin ? (
+                <Link
+                  to="/admin"
+                  aria-current={isLinkActive('admin') ? 'page' : undefined}
+                  className={`nav-link-animated ${isLinkActive('admin') ? 'is-active' : ''}`}
+                >
+                  Admin Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/dashboard/purchases"
+                    aria-current={isLinkActive('purchases') ? 'page' : undefined}
+                    className={`nav-link-animated ${isLinkActive('purchases') ? 'is-active' : ''}`}
+                  >
+                    My Purchases
+                  </Link>
+                  <Link
+                    to="/dashboard/profile"
+                    aria-current={isLinkActive('profile') ? 'page' : undefined}
+                    className={`nav-link-animated ${isLinkActive('profile') ? 'is-active' : ''}`}
+                  >
+                    Profile
+                  </Link>
+                </>
+              )
+            ) : (
+              <>
+                <a
+                  href="#how-it-works"
+                  onClick={handleSectionClick('how-it-works')}
+                  aria-current={isLinkActive('how-it-works') ? 'page' : undefined}
+                  className={`nav-link-animated ${isLinkActive('how-it-works') ? 'is-active' : ''}`}
+                >
+                  How It Works
+                </a>
 
-            <a
-              href="#how-it-works"
-              onClick={handleSectionClick('how-it-works')}
-              aria-current={isLinkActive('how-it-works') ? 'page' : undefined}
-              className={`nav-link-animated ${isLinkActive('how-it-works') ? 'is-active' : ''}`}
-            >
-              How It Works
-            </a>
-
-            <a
-              href="#pricing"
-              onClick={handleSectionClick('pricing')}
-              aria-current={isLinkActive('pricing') ? 'page' : undefined}
-              className={`nav-link-animated ${isLinkActive('pricing') ? 'is-active' : ''}`}
-            >
-              Pricing
-            </a>
+                <Link
+                  to="/about"
+                  aria-current={isLinkActive('about') ? 'page' : undefined}
+                  className={`nav-link-animated ${isLinkActive('about') ? 'is-active' : ''}`}
+                >
+                  About Us
+                </Link>
+              </>
+            )}
 
             <Link
               to="/contact"
@@ -496,44 +534,85 @@ export const Navbar: React.FC = () => {
                   Projects
                 </Link>
 
-                <a
-                  href="#how-it-works"
-                  onClick={(e) => {
-                    closeMobileDrawer();
-                    handleSectionClick('how-it-works')(e);
-                  }}
-                  aria-current={isLinkActive('how-it-works') ? 'page' : undefined}
-                  className={`p-3 rounded-xl transition-colors ${
-                    isLinkActive('how-it-works')
-                      ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
-                      : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
-                  }`}
-                >
-                  How It Works
-                </a>
+                {isAuthenticated ? (
+                  isAdmin ? (
+                    <Link
+                      to="/admin"
+                      onClick={closeMobileDrawer}
+                      aria-current={isLinkActive('admin') ? 'page' : undefined}
+                      className={`p-3 rounded-xl transition-colors ${
+                        isLinkActive('admin')
+                          ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                          : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
+                      }`}
+                    >
+                      Admin Dashboard
+                    </Link>
+                  ) : (
+                    <>
+                      <Link
+                        to="/dashboard/purchases"
+                        onClick={closeMobileDrawer}
+                        aria-current={isLinkActive('purchases') ? 'page' : undefined}
+                        className={`p-3 rounded-xl transition-colors ${
+                          isLinkActive('purchases')
+                            ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                            : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
+                        }`}
+                      >
+                        My Purchases
+                      </Link>
 
-                <a
-                  href="#pricing"
-                  onClick={(e) => {
-                    closeMobileDrawer();
-                    handleSectionClick('pricing')(e);
-                  }}
-                  aria-current={isLinkActive('pricing') ? 'page' : undefined}
-                  className={`p-3 rounded-xl transition-colors ${
-                    isLinkActive('pricing')
-                      ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
-                      : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
-                  }`}
-                >
-                  Pricing
-                </a>
+                      <Link
+                        to="/dashboard/profile"
+                        onClick={closeMobileDrawer}
+                        aria-current={isLinkActive('profile') ? 'page' : undefined}
+                        className={`p-3 rounded-xl transition-colors ${
+                          isLinkActive('profile')
+                            ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                            : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
+                        }`}
+                      >
+                        Profile
+                      </Link>
+                    </>
+                  )
+                ) : (
+                  <>
+                    <a
+                      href="#how-it-works"
+                      onClick={(e) => {
+                        closeMobileDrawer();
+                        handleSectionClick('how-it-works')(e);
+                      }}
+                      aria-current={isLinkActive('how-it-works') ? 'page' : undefined}
+                      className={`p-3 rounded-xl transition-colors ${
+                        isLinkActive('how-it-works')
+                          ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                          : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
+                      }`}
+                    >
+                      How It Works
+                    </a>
 
-                <a
-                  href="#contact"
-                  onClick={(e) => {
-                    closeMobileDrawer();
-                    handleSectionClick('contact')(e);
-                  }}
+                    <Link
+                      to="/about"
+                      onClick={closeMobileDrawer}
+                      aria-current={isLinkActive('about') ? 'page' : undefined}
+                      className={`p-3 rounded-xl transition-colors ${
+                        isLinkActive('about')
+                          ? 'bg-[#F2E9FF] dark:bg-[#25134D] text-[#6A2FC8] dark:text-[#D1B8FF] font-semibold'
+                          : 'hover:bg-slate-50 dark:hover:bg-[#1A0D3D]'
+                      }`}
+                    >
+                      About Us
+                    </Link>
+                  </>
+                )}
+
+                <Link
+                  to="/contact"
+                  onClick={closeMobileDrawer}
                   aria-current={isLinkActive('contact') ? 'page' : undefined}
                   className={`p-3 rounded-xl transition-colors ${
                     isLinkActive('contact')
@@ -542,7 +621,7 @@ export const Navbar: React.FC = () => {
                   }`}
                 >
                   Contact
-                </a>
+                </Link>
 
                 <Link
                   to="/dashboard/wishlist"

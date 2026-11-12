@@ -34,6 +34,10 @@ public class ProjectDto {
     private boolean claimedByCurrentUser = false;
     private boolean hasSourceCode = false;
     private boolean hasDocumentation = false;
+    private boolean hasPresentation = false;
+    private boolean hasDemoVideo = false;
+    private String demoUrl;
+    private String demoVideoUrl;
     private List<String> screenshotUrls = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -62,6 +66,8 @@ public class ProjectDto {
         dto.setAccessType(project.getAccessType());
         dto.setPublicationStatus(project.getPublicationStatus());
         dto.setThumbnailUrl(project.getThumbnailUrl());
+        dto.setDemoUrl(project.getDemoUrl());
+        dto.setDemoVideoUrl(project.getDemoVideoUrl());
         dto.setViewCount(project.getViewCount());
         dto.setPurchaseCount(project.getPurchaseCount());
         dto.setClaimCount(project.getClaimCount());
@@ -284,5 +290,37 @@ public class ProjectDto {
 
     public void setClaimedByCurrentUser(boolean claimedByCurrentUser) {
         this.claimedByCurrentUser = claimedByCurrentUser;
+    }
+
+    public boolean isHasPresentation() {
+        return hasPresentation;
+    }
+
+    public void setHasPresentation(boolean hasPresentation) {
+        this.hasPresentation = hasPresentation;
+    }
+
+    public boolean isHasDemoVideo() {
+        return hasDemoVideo;
+    }
+
+    public void setHasDemoVideo(boolean hasDemoVideo) {
+        this.hasDemoVideo = hasDemoVideo;
+    }
+
+    public String getDemoUrl() {
+        return demoUrl;
+    }
+
+    public void setDemoUrl(String demoUrl) {
+        this.demoUrl = demoUrl;
+    }
+
+    public String getDemoVideoUrl() {
+        return demoVideoUrl;
+    }
+
+    public void setDemoVideoUrl(String demoVideoUrl) {
+        this.demoVideoUrl = demoVideoUrl;
     }
 }

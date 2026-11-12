@@ -43,6 +43,8 @@ public class UpdateProjectRequest {
     private String publicationStatus;
 
     private String thumbnailUrl;
+    private String demoUrl;
+    private String demoVideoUrl;
 
     public UpdateProjectRequest() {
     }
@@ -173,5 +175,21 @@ public class UpdateProjectRequest {
 
     public void setPublicationStatus(String publicationStatus) {
         this.publicationStatus = publicationStatus;
+    }
+
+    public String getDemoUrl() {
+        return demoUrl;
+    }
+
+    public void setDemoUrl(String demoUrl) {
+        this.demoUrl = demoUrl;
+    }
+
+    public String getDemoVideoUrl() {
+        return demoVideoUrl;
+    }
+
+    public void setDemoVideoUrl(String demoVideoUrl) {
+        this.demoVideoUrl = demoVideoUrl;
     }
 }

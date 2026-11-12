@@ -19,10 +19,10 @@ export const ProfileSettings: React.FC = () => {
   const { user } = useAuth();
   const { theme, setTheme } = useTheme();
 
-  const [fullName, setFullName] = useState(user?.fullName || 'Rahul Varma');
-  const [email, setEmail] = useState(user?.email || 'rahul.student@projectkit.edu');
-  const [phone, setPhone] = useState(user?.phoneNumber || '+91 98451 22890');
-  const [college, setCollege] = useState(user?.collegeName || 'Vellore Institute of Technology (VIT)');
+  const [fullName, setFullName] = useState(user?.fullName || 'John Doe');
+  const [email, setEmail] = useState(user?.email || 'john.doe@projectkit.edu');
+  const [phone, setPhone] = useState(user?.phoneNumber || '+91 98765 43210');
+  const [college, setCollege] = useState(user?.collegeName || 'Metropolitan Institute of Technology');
   const [branch, setBranch] = useState('Computer Science & Engineering');
   const [academicYear, setAcademicYear] = useState('2025–2026');
   const [savedSuccess, setSavedSuccess] = useState(false);

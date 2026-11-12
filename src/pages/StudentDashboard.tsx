@@ -61,7 +61,7 @@ export const StudentDashboard: React.FC = () => {
             <span>Student Dashboard & Access Center</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[#0B0720] dark:text-[#F2E9FF]">
-            Welcome back, {user?.fullName || 'Rahul Varma'}
+            Welcome back, {user?.fullName || 'John Doe'}
           </h1>
           <p className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/80 mt-1">
             Enrolled at <span className="font-semibold text-[#0B0720] dark:text-white">{user?.collegeName || 'Engineering College'}</span> · Capstone Entitlement Active
@@ -314,12 +314,12 @@ export const StudentDashboard: React.FC = () => {
           </div>
         ) : (
           <div className="p-8 text-center rounded-xl border border-dashed border-white/20">
-            <p className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/80 mb-3">No purchased projects yet.</p>
+            <p className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/80 mb-3">You haven't purchased any project kits yet.</p>
             <Link
               to="/projects"
               className="px-4 py-2 bg-[#6A2FC8] hover:bg-[#5824A8] text-white rounded-xl text-xs font-semibold transition-colors shadow-xs inline-block"
             >
-              Browse Engineering Kits
+              Explore Projects
             </Link>
           </div>
         )}
@@ -452,7 +452,7 @@ export const StudentDashboard: React.FC = () => {
           </div>
         ) : (
           <div className="p-8 text-center text-xs text-[#4E4166] dark:text-[#D1B8FF]/80">
-            No transactions found for this account.
+            No purchases yet.
           </div>
         )}
       </div>

@@ -300,7 +300,7 @@ export const Projects: React.FC = () => {
       {/* Mobile Filter Toggle & Quick Header */}
       <div className="flex items-center justify-between lg:hidden pb-1">
         <div className="text-sm font-bold text-slate-900 dark:text-[#F8FAFC]">
-          {totalItems} Products
+          {totalItems} Projects
         </div>
         <button
           onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
@@ -559,7 +559,7 @@ export const Projects: React.FC = () => {
           <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-[#25335F]">
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
-                {totalItems} Products
+                {totalItems} Projects
               </h1>
               {hasActiveFilters && (
                 <span className="text-xs text-slate-500 dark:text-[#9AA6C7]">
@@ -672,41 +672,50 @@ export const Projects: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-[#E3E8F2] dark:border-[#25335F] gap-3 shrink-0">
+                      <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-[#E8DEFF] dark:border-[#3A2074] gap-3 shrink-0">
                         <div className="text-left sm:text-right">
-                          <div className="text-lg font-extrabold text-[#0F172A] dark:text-[#E8ECFA] font-mono tabular-nums">
-                            ₹{project.price.toLocaleString('en-IN')}
+                          <div className="text-lg font-extrabold text-[#0B0720] dark:text-[#F2E9FF] font-mono tabular-nums">
+                            {project.isFree || project.price === 0 ? 'FREE' : `₹${project.price.toLocaleString('en-IN')}`}
                           </div>
                           {project.originalPrice > project.price && (
-                            <div className="text-xs text-slate-400 dark:text-[#9AA6C7] line-through font-mono tabular-nums">
+                            <div className="text-xs text-[#63567D] dark:text-[#D1B8FF]/60 line-through font-mono tabular-nums">
                               ₹{project.originalPrice.toLocaleString('en-IN')}
                             </div>
                           )}
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (isPurchased) navigate('/dashboard/purchases');
-                            else navigate(`/checkout/${project.id}`);
-                          }}
-                          className={`w-full sm:w-auto min-h-[40px] px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 shadow-xs flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F4BFF] ${
-                            isPurchased
-                              ? 'bg-[#16A34A] hover:bg-[#15803D] active:bg-[#14532D] text-white'
-                              : 'bg-[#2F4BFF] hover:bg-[#1E36D6] active:bg-[#172BB5] text-white hover:shadow-[0_4px_14px_rgba(47,75,255,0.35)]'
-                          }`}
-                        >
-                          {isPurchased ? (
-                            <>
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              <span>Download Kit</span>
-                            </>
-                          ) : (
-                            <>
-                              <ShoppingCart className="w-3.5 h-3.5" />
-                              <span>Add to Cart</span>
-                            </>
-                          )}
-                        </button>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/projects/${project.id}`)}
+                            className="min-h-[38px] px-3 py-2 rounded-xl text-xs font-semibold border border-[#D1B8FF]/70 dark:border-[#3A2074] text-[#25134D] dark:text-[#D1B8FF] hover:bg-[#F2E9FF]/50 dark:hover:bg-[#25134D]/60 transition-colors"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (isPurchased) navigate('/dashboard/purchases');
+                              else navigate(`/checkout/${project.id}`);
+                            }}
+                            className={`min-h-[38px] px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 shadow-xs flex items-center justify-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] ${
+                              isPurchased
+                                ? 'bg-[#16A34A] hover:bg-[#15803D] text-white'
+                                : 'bg-[#6A2FC8] hover:bg-[#5824A8] text-white hover:shadow-[0_4px_14px_rgba(106,47,200,0.35)]'
+                            }`}
+                          >
+                            {isPurchased ? (
+                              <>
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>Owned</span>
+                              </>
+                            ) : (
+                              <>
+                                <ShoppingCart className="w-3.5 h-3.5" />
+                                <span>Buy Now</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );

@@ -29,10 +29,10 @@ interface AuthContextType {
 
 const DEFAULT_STUDENT: User = {
   id: 'usr-student-01',
-  fullName: 'Rahul Varma',
-  email: 'rahul.student@projectkit.edu',
-  phoneNumber: '+91 98451 22890',
-  collegeName: 'Vellore Institute of Technology (VIT)',
+  fullName: 'John Doe',
+  email: 'john.doe@projectkit.edu',
+  phoneNumber: '+91 98765 43210',
+  collegeName: 'Metropolitan Institute of Technology',
   role: 'student',
   joinedDate: '2025-08-14',
 };
@@ -324,6 +324,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fileType.toLowerCase().includes('viva')
       ) {
         await orderService.downloadDocumentation(numericId, project.title);
+        return;
+      } else if (
+        fileType.toLowerCase().includes('presentation') ||
+        fileType.toLowerCase().includes('ppt') ||
+        fileType.toLowerCase().includes('slides')
+      ) {
+        await orderService.downloadPresentation(numericId, project.title);
         return;
       }
     } catch {

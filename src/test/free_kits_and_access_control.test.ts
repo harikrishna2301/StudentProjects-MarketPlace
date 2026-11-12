@@ -254,8 +254,8 @@ describe('ProjectKit - Free Kits, Purchase Access Control & Entitlement System',
   // 13. Scenario 13: Contact form submission
   test('Scenario 13: Contact form inquiry creates tracked ticket and generates ticket ID', () => {
     const contactPayload = {
-      fullName: 'Rahul Varma',
-      email: 'rahul.student@vit.edu',
+      fullName: 'John Doe',
+      email: 'john.doe@mit.edu',
       phone: '+91 98451 22890',
       category: 'Project Kit Support',
       subject: 'ROS2 Gazebo Simulation Setup',
