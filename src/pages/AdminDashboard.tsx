@@ -639,7 +639,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {projects.slice(0, 5).map((project) => (
                     <tr key={project.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
-                      <td className="py-3 font-semibold text-slate-900 dark:text-white max-w-xs truncate">
+                      <td className="py-3 font-project-title font-bold text-slate-900 dark:text-white max-w-xs truncate">
                         {project.title}
                       </td>
                       <td className="py-3 text-slate-600 dark:text-slate-300">{project.category}</td>
@@ -742,7 +742,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                       <tr key={project.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
                         <td className="py-3.5 px-4">
                           <div className="flex items-center gap-2 max-w-sm">
-                            <span className="font-semibold text-slate-900 dark:text-white truncate">
+                            <span className="font-project-title font-bold text-slate-900 dark:text-white truncate">
                               {project.title}
                             </span>
                             {project.isFree || project.accessType === 'FREE' || project.price === 0 ? (

@@ -78,6 +78,8 @@ public class SecurityConfig {
                                 .maxAgeInSeconds(31536000)
                                 .preload(true)
                         )
+                        .referrerPolicy(referrer -> referrer.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                        .permissionsPolicy(permissions -> permissions.policy("camera=(), microphone=(), geolocation=()"))
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception
@@ -120,7 +122,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/contact/**").permitAll()
 
                         // 4. CRITICAL: Protected Download and Free Claim Endpoints MUST precede public project browsing
-                        .requestMatchers("/api/projects/*/download/**").hasAnyRole("STUDENT", "ADMIN")
+                        .requestMatchers("/api/projects/*/download/**", "/api/downloads/**").hasAnyRole("STUDENT", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/projects/*/claim-free").hasAnyRole("STUDENT", "ADMIN")
 
                         // 5. Public Project Catalog & Category Browsing (GET only)

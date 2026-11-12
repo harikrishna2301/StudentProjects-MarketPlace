@@ -89,7 +89,7 @@ export const Hero: React.FC<HeroProps> = ({ onHowItWorksClick }) => {
 
           {/* H1: Build. Submit. Succeed. (Word-by-word reveal) */}
           <h1
-            className="font-inter font-bold text-[clamp(2.1rem,4.8vw,3.25rem)] leading-[1.12] tracking-[-0.025em] text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mb-4"
+            className="font-heading font-bold text-[clamp(2.1rem,4.8vw,3.25rem)] leading-[1.12] tracking-[-0.025em] text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mb-4"
             style={{ textWrap: 'balance' }}
           >
             <span className="animate-word-1 inline-block text-[#FFFFFF] [text-shadow:0_2px_24px_rgba(0,0,0,0.45)] mr-2.5">Build.</span>

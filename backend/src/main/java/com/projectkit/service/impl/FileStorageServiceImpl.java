@@ -338,8 +338,12 @@ public class FileStorageServiceImpl implements FileStorageService {
             boolean isJpg = header.length >= 3 &&
                     (header[0] & 0xFF) == 0xFF && (header[1] & 0xFF) == 0xD8 && (header[2] & 0xFF) == 0xFF;
 
-            if (!isPng && !isJpg) {
-                throw new BadRequestException("Image content does not match PNG or JPG header specifications.");
+            boolean isWebp = header.length >= 12 &&
+                    header[0] == 0x52 && header[1] == 0x49 && header[2] == 0x46 && header[3] == 0x46 &&
+                    header[8] == 0x57 && header[9] == 0x45 && header[10] == 0x42 && header[11] == 0x50;
+
+            if (!isPng && !isJpg && !isWebp) {
+                throw new BadRequestException("Image content does not match PNG, JPG, or WEBP header specifications.");
             }
         }
     }

@@ -181,7 +181,7 @@ export const StudentDashboard: React.FC = () => {
                       FREE CLAIMED
                     </span>
                   </div>
-                  <h3 className="text-sm font-bold text-[#0B0720] dark:text-[#F2E9FF] truncate">
+                  <h3 className="font-project-title font-bold text-sm text-[#0B0720] dark:text-[#F2E9FF] truncate">
                     {p.title}
                   </h3>
                   <div className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/70 font-mono truncate">
@@ -276,7 +276,7 @@ export const StudentDashboard: React.FC = () => {
                       PAID & VERIFIED
                     </span>
                   </div>
-                  <h3 className="text-sm font-bold text-[#0B0720] dark:text-[#F2E9FF] truncate">
+                  <h3 className="font-project-title font-bold text-sm text-[#0B0720] dark:text-[#F2E9FF] truncate">
                     {p.title}
                   </h3>
                   <div className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/70 font-mono truncate">
@@ -360,7 +360,7 @@ export const StudentDashboard: React.FC = () => {
                       FREE (₹0)
                     </span>
                   </div>
-                  <h3 className="text-sm font-bold text-[#0B0720] dark:text-[#F2E9FF] line-clamp-1">
+                  <h3 className="font-project-title font-bold text-sm text-[#0B0720] dark:text-[#F2E9FF] line-clamp-1">
                     {p.title}
                   </h3>
                   <p className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/70 line-clamp-2 mt-1">

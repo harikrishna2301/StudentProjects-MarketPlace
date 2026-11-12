@@ -22,7 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/projects")
+@RequestMapping({"/api/projects", "/api/downloads"})
 @Tag(name = "Downloads & Media", description = "Secure authorized project kit downloads and public media access")
 public class DownloadController {
 
@@ -44,7 +44,7 @@ public class DownloadController {
         this.fileStorageService = fileStorageService;
     }
 
-    @GetMapping("/{projectId}/download/source")
+    @GetMapping({"/{projectId}/download/source", "/{projectId}/source", "/{projectId}"})
     @SecurityRequirement(name = "BearerAuth")
     @Operation(summary = "Download project source code ZIP", description = "Verifies student purchase and paid order status before streaming the source archive")
     public ResponseEntity<Resource> downloadSourceCode(
@@ -69,7 +69,7 @@ public class DownloadController {
                 .body(resource);
     }
 
-    @GetMapping("/{projectId}/download/documentation")
+    @GetMapping({"/{projectId}/download/documentation", "/{projectId}/documentation"})
     @SecurityRequirement(name = "BearerAuth")
     @Operation(summary = "Download project documentation PDF", description = "Verifies student purchase and paid order status before streaming the documentation PDF")
     public ResponseEntity<Resource> downloadDocumentation(
@@ -94,7 +94,7 @@ public class DownloadController {
                 .body(resource);
     }
 
-    @GetMapping("/{projectId}/download/presentation")
+    @GetMapping({"/{projectId}/download/presentation", "/{projectId}/presentation"})
     @SecurityRequirement(name = "BearerAuth")
     @Operation(summary = "Download project presentation PPT/PPTX", description = "Verifies student purchase and paid order status before streaming the presentation file")
     public ResponseEntity<Resource> downloadPresentation(
@@ -123,7 +123,8 @@ public class DownloadController {
     @Operation(summary = "View project media file", description = "Streams project screenshots or public media files")
     public ResponseEntity<Resource> viewProjectMedia(
             @PathVariable Long projectId,
-            @PathVariable Long fileId
+            @PathVariable Long fileId,
+            @AuthenticationPrincipal UserPrincipal currentUser
     ) {
         projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
@@ -135,6 +136,15 @@ public class DownloadController {
             throw new ResourceNotFoundException("File does not belong to specified project.");
         }
 
+        // CRITICAL ACCESS CONTROL:
+        // Source code, documentation reports, and presentation decks are restricted deliverables.
+        // They must never be accessible anonymously through the media streaming route.
+        if (file.getFileType() == FileType.SOURCE_CODE ||
+            file.getFileType() == FileType.DOCUMENTATION ||
+            file.getFileType() == FileType.PRESENTATION) {
+            verifyPurchaseOrAdmin(projectId, currentUser);
+        }
+
         Resource resource = fileStorageService.loadFileAsResource(file.getFilePath());
         MediaType mediaType = (file.getMimeType() != null && !file.getMimeType().isBlank())
                 ? MediaType.parseMediaType(file.getMimeType())
@@ -142,9 +152,13 @@ public class DownloadController {
 
         String safeFilename = sanitizeFilename(file.getFileName());
 
+        String disposition = (file.getFileType() == FileType.SCREENSHOT || file.getFileType() == FileType.THUMBNAIL)
+                ? "inline"
+                : "attachment";
+
         return ResponseEntity.ok()
                 .contentType(mediaType)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + safeFilename + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + safeFilename + "\"")
                 .body(resource);
     }
 

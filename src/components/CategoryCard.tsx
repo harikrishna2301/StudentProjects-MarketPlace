@@ -69,7 +69,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
       case 'iot-projects':
         return ['ESP32', 'Embedded', 'ECE / EEE'];
       case 'android-development':
-        return ['Kotlin', 'Compose', 'Mobile'];
+        return ['Android Kotlin', 'Jetpack Compose', 'Mobile App'];
       default:
         return ['B.Tech Engineering', 'M.Tech'];
     }
@@ -81,38 +81,38 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   return (
     <Link
       to={`/projects?category=${encodeURIComponent(category.name)}`}
-      className="group relative category-card-beam-container flex flex-col justify-between"
+      className="group relative category-card-beam-container w-full h-full flex flex-col justify-between"
     >
       {/* Animated Purple Palette Perimeter Beam */}
       <div className="category-card-beam-spinner" aria-hidden="true" />
 
       {/* Main Card Surface (Masks center of beam to reveal only the perimeter border) */}
-      <div className="card relative z-10 w-full h-full p-6 !rounded-[19px] flex flex-col justify-between transition-colors duration-200">
-        <div>
+      <div className="card relative z-10 w-full h-full p-5 sm:p-6 !rounded-[19px] flex flex-col justify-between flex-1 transition-colors duration-200">
+        <div className="flex-1 flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] group-hover:border-[#9D71E8] flex items-center justify-center text-[#6A2FC8] dark:text-[#D1B8FF] transition-colors duration-200 shadow-inner">
+            <div className="w-12 h-12 rounded-xl bg-[#F2E9FF] dark:bg-[#0B0720] border border-[#D1B8FF]/60 dark:border-[#3A2074] group-hover:border-[#9D71E8] flex items-center justify-center text-[#6A2FC8] dark:text-[#D1B8FF] transition-colors duration-200 shadow-inner shrink-0">
               <IconComponent className="w-6 h-6 transition-colors duration-200" />
             </div>
 
-            <span className="text-xs font-mono font-medium text-[#25134D] dark:text-[#F2E9FF] bg-[#F2E9FF] dark:bg-[#0B0720] px-2.5 py-1 rounded-lg border border-[#D1B8FF]/60 dark:border-[#3A2074] tabular-nums">
+            <span className="text-xs font-mono font-medium text-[#25134D] dark:text-[#F2E9FF] bg-[#F2E9FF] dark:bg-[#0B0720] px-2.5 py-1 rounded-lg border border-[#D1B8FF]/60 dark:border-[#3A2074] tabular-nums shrink-0">
               {category.projectCount} kits
             </span>
           </div>
 
-          <h3 className="text-base font-bold text-[#0B0720] dark:text-[#F2E9FF] group-hover:text-[#6A2FC8] dark:group-hover:text-[#D1B8FF] transition-colors duration-200 mb-2">
+          <h3 className="font-heading font-semibold text-base text-[#0B0720] dark:text-[#F2E9FF] group-hover:text-[#6A2FC8] dark:group-hover:text-[#D1B8FF] transition-colors duration-200 mb-2 leading-snug line-clamp-2 min-h-[44px] flex items-center">
             {category.name}
           </h3>
 
-          <p className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/80 leading-relaxed line-clamp-2 mb-4">
+          <p className="font-body text-xs text-[#4E4166] dark:text-[#D1B8FF]/80 leading-relaxed line-clamp-2 min-h-[36px] mb-3.5">
             {category.description}
           </p>
 
-          {/* Academic focus tags */}
-          <div className="flex flex-wrap items-center gap-1.5 mb-2">
+          {/* Academic focus tags: uniform height container so cards align identically */}
+          <div className="flex flex-wrap items-center gap-1.5 min-h-[44px] content-start mb-3">
             {branches.map((b) => (
               <span
                 key={b}
-                className="text-[10px] font-medium text-[#25134D] dark:text-[#D1B8FF] bg-[#F2E9FF] dark:bg-[#0B0720] px-2 py-0.5 rounded border border-[#D1B8FF]/50 dark:border-[#3A2074]"
+                className="text-[10px] font-medium text-[#25134D] dark:text-[#D1B8FF] bg-[#F2E9FF] dark:bg-[#0B0720] px-2 py-0.5 rounded border border-[#D1B8FF]/50 dark:border-[#3A2074] shrink-0"
               >
                 {b}
               </span>
@@ -120,7 +120,7 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
           </div>
         </div>
 
-        <div className="pt-4 border-t border-[#E8DEFF] dark:border-[#3A2074] flex items-center justify-between text-xs font-semibold text-[#6A2FC8] dark:text-[#9D71E8] transition-colors duration-200">
+        <div className="pt-3.5 border-t border-[#E8DEFF] dark:border-[#3A2074] flex items-center justify-between text-xs font-semibold text-[#6A2FC8] dark:text-[#9D71E8] transition-colors duration-200 mt-auto">
           <span>Explore Category</span>
           <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-0.5 transition-transform duration-200" />
         </div>

@@ -28,9 +28,12 @@ public class JwtTokenProvider {
             @Value("${projectkit.jwt.expiration-ms:86400000}") long jwtExpirationMs,
             @Value("${projectkit.jwt.refresh-expiration-ms:604800000}") long refreshExpirationMs) {
         
+        if (jwtSecret == null || jwtSecret.isBlank()) {
+            throw new IllegalArgumentException("JWT signing secret must be provided and cannot be empty.");
+        }
         byte[] keyBytes;
         if (jwtSecret.length() < 32) {
-            // Pad or repeat to ensure minimum 256 bits (32 bytes)
+            logger.warn("SECURITY WARNING: JWT Secret is shorter than 256 bits (32 characters). Pad applied for development only; configure a secure 256-bit secret in production!");
             String padded = String.format("%-32s", jwtSecret).replace(' ', '0');
             keyBytes = padded.getBytes(StandardCharsets.UTF_8);
         } else {

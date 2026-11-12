@@ -445,7 +445,7 @@ export const ProjectDetails: React.FC = () => {
             </div>
 
             <div className="flex items-start justify-between gap-3">
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-[#F8FAFC] leading-snug">
+              <h1 className="font-project-title font-bold text-xl sm:text-2xl text-slate-900 dark:text-[#F8FAFC] leading-snug">
                 {project.title}
               </h1>
               <button

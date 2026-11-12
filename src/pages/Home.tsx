@@ -203,10 +203,10 @@ export const Home: React.FC = () => {
           </Link>
         </div>
 
-        {/* 10 Categories Responsive Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
+        {/* 10 Categories Responsive Grid: 2 columns on tablet, 5 columns on desktop for perfect 2-row symmetry */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5 items-stretch">
           {categories.map((category) => (
-            <div key={category.id} className="h-full">
+            <div key={category.id} className="h-full w-full flex flex-col">
               <CategoryCard category={category} />
             </div>
           ))}

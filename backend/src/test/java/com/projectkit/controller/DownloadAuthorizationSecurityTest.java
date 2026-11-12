@@ -51,6 +51,9 @@ public class DownloadAuthorizationSecurityTest {
     private OrderRepository orderRepository;
 
     @Mock
+    private com.projectkit.repository.StudentProjectAccessRepository accessRepository;
+
+    @Mock
     private FileStorageService fileStorageService;
 
     private MockMvc mockMvc;
@@ -69,6 +72,7 @@ public class DownloadAuthorizationSecurityTest {
                 projectRepository,
                 projectFileRepository,
                 orderRepository,
+                accessRepository,
                 fileStorageService
         );
 

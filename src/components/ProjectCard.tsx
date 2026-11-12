@@ -224,18 +224,18 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
             )}
           </div>
 
-          {/* Project Title - High contrast bold typography with fixed 2-line height */}
+          {/* Project Title - High contrast bold typography with fixed 2-line height (Strictly DM Sans Bold 700) */}
           <Link
             to={`/projects/${project.id}`}
             className="block group-hover:text-[#6A2FC8] dark:group-hover:text-[#D1B8FF] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6A2FC8] rounded-sm min-w-0"
           >
-            <h3 className="font-bold text-base text-[#0B0720] dark:text-[#F2E9FF] leading-snug line-clamp-2 min-h-[44px]">
+            <h3 className="font-project-title font-bold text-base text-[#0B0720] dark:text-[#F2E9FF] leading-snug line-clamp-2 min-h-[44px]">
               <HighlightText text={project.title} query={searchQuery} />
             </h3>
           </Link>
 
-          {/* Short Description - Controlled 2-line clamp with uniform height */}
-          <p className="text-sm text-[#4E4166] dark:text-[#D1B8FF]/80 line-clamp-2 leading-relaxed min-h-[40px]">
+          {/* Short Description - Controlled 2-line clamp with uniform height (DM Sans 400) */}
+          <p className="font-body font-normal text-sm text-[#4E4166] dark:text-[#D1B8FF]/80 line-clamp-2 leading-relaxed min-h-[40px]">
             <HighlightText text={project.shortDescription} query={searchQuery} />
           </p>
 

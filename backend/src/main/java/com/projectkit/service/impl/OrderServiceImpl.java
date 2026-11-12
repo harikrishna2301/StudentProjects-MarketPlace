@@ -43,6 +43,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final com.projectkit.service.EmailService emailService;
     private final com.projectkit.service.CouponService couponService;
+    private final org.springframework.core.env.Environment environment;
 
     @Value("${projectkit.razorpay.key-id}")
     private String razorpayKeyId;
@@ -54,12 +55,14 @@ public class OrderServiceImpl implements OrderService {
                             ProjectRepository projectRepository,
                             UserRepository userRepository,
                             com.projectkit.service.EmailService emailService,
-                            com.projectkit.service.CouponService couponService) {
+                            com.projectkit.service.CouponService couponService,
+                            org.springframework.core.env.Environment environment) {
         this.orderRepository = orderRepository;
         this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.couponService = couponService;
+        this.environment = environment;
     }
 
     @Override
@@ -128,6 +131,7 @@ public class OrderServiceImpl implements OrderService {
 
         // Initialize Razorpay Order
         String razorpayOrderId = null;
+        boolean isDev = environment != null && environment.acceptsProfiles(org.springframework.core.env.Profiles.of("dev"));
         try {
             if (!razorpayKeyId.contains("placeholder") && !razorpayKeySecret.contains("placeholder")) {
                 RazorpayClient razorpay = new RazorpayClient(razorpayKeyId, razorpayKeySecret);
@@ -138,14 +142,22 @@ public class OrderServiceImpl implements OrderService {
                 orderReq.put("receipt", orderNumber);
                 com.razorpay.Order rzpOrder = razorpay.orders.create(orderReq);
                 razorpayOrderId = rzpOrder.get("id");
-            } else {
+            } else if (isDev) {
                 logger.info("Using simulated Razorpay Order ID for offline development/staging");
                 razorpayOrderId = "order_sim_" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
+            } else {
+                throw new BadRequestException("Razorpay gateway credentials are not configured on server.");
             }
+        } catch (BadRequestException bre) {
+            throw bre;
         } catch (Exception ex) {
             logger.error("Error creating Razorpay order: {}", ex.getMessage());
-            // Fallback for development/testing if API key is invalid or offline
-            razorpayOrderId = "order_sim_" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
+            if (isDev) {
+                // Fallback for development/testing if API key is invalid or offline
+                razorpayOrderId = "order_sim_" + UUID.randomUUID().toString().replace("-", "").substring(0, 14);
+            } else {
+                throw new BadRequestException("Failed to initiate Razorpay order: " + ex.getMessage());
+            }
         }
 
         order.setRazorpayOrderId(razorpayOrderId);

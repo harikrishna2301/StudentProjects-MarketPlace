@@ -558,7 +558,7 @@ export const Projects: React.FC = () => {
           {/* Header Bar */}
           <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-[#25335F]">
             <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+              <h1 className="font-heading font-bold text-xl sm:text-2xl text-slate-900 dark:text-[#E8ECFA] tracking-tight">
                 {totalItems} Projects
               </h1>
               {hasActiveFilters && (
