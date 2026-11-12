@@ -112,3 +112,19 @@ export interface PurchaseItem {
   downloadCount: number;
   licenseKey: string;
 }
+
+export interface StudentReview {
+  id: string;
+  projectId?: string;
+  projectTitle?: string;
+  studentName: string;
+  collegeName: string;
+  branch: string;
+  rating: number;
+  title: string;
+  comment: string;
+  date: string;
+  verifiedPurchase: boolean;
+  helpfulCount: number;
+  highlightTag?: string;
+}

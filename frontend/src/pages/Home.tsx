@@ -5,6 +5,7 @@ import { useProjects } from '../context/ProjectsContext';
 import { ProjectCard } from '../components/ProjectCard';
 import { CategoryCard } from '../components/CategoryCard';
 import { SEOHead } from '../components/SEOHead';
+import { StudentReviewsSection } from '../components/StudentReviewsSection';
 import {
   ArrowRight,
   ShieldCheck,
@@ -532,66 +533,25 @@ export const Home: React.FC = () => {
 
       {/* =========================================================================
           6. TESTIMONIALS SECTION (Student Success Proof)
+      {/* =========================================================================
+          6. STUDENT REVIEWS & RATINGS SECTION
           ========================================================================= */}
-      <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8]">
-            Student Success Stories
+      <section id="student-reviews" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-24">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200 dark:border-[#3A2074]">
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#9D71E8] mb-1">
+              Verified Academic Feedback
+            </div>
+            <h2 className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 dark:text-[#E8ECFA] tracking-tight">
+              Student Reviews & Viva Defense Ratings
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7] mt-1">
+              Independent evaluations from final-year engineering scholars who defended ProjectKit capstones across top universities.
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-[#E8ECFA] tracking-tight">
-            Trusted by Final-Year Engineers Across India
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-[#9AA6C7]">
-            Real feedback from engineering students who successfully defended their capstone projects.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="card pk-card-tilt p-6 space-y-4">
-            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
-              "The Spring Boot & React kit saved our team during the final internal review. The IEEE report was accepted on the first submission without major formatting revisions."
-            </p>
-            <div className="pt-2 border-t border-slate-100 dark:border-[#3A2074] flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#6A2FC8] text-white flex items-center justify-center font-bold text-xs">
-                RS
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-[#E8ECFA]">John Doe</h4>
-                <p className="text-[11px] text-slate-500 dark:text-[#9AA6C7]">B.Tech CSE, VIT Vellore</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card pk-card-tilt p-6 space-y-4">
-            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
-              "The viva voce cheat sheet was a game changer. The external examiner asked specifically about JWT replay prevention and database indexes, exactly as explained in the guide."
-            </p>
-            <div className="pt-2 border-t border-slate-100 dark:border-[#3A2074] flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#9D71E8] text-white flex items-center justify-center font-bold text-xs">
-                SP
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-[#E8ECFA]">Sneha Patel</h4>
-                <p className="text-[11px] text-slate-500 dark:text-[#9AA6C7]">B.Tech IT, BITS Pilani</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card pk-card-tilt p-6 space-y-4">
-            <p className="text-xs text-slate-600 dark:text-[#9AA6C7] leading-relaxed italic">
-              "Clean source code with zero deprecated libraries. Running Docker Compose set up the backend and MySQL container in under 3 minutes on our lab machine."
-            </p>
-            <div className="pt-2 border-t border-slate-100 dark:border-[#3A2074] flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#6A2FC8] text-white flex items-center justify-center font-bold text-xs">
-                KR
-              </div>
-              <div>
-                <h4 className="text-xs font-bold text-slate-900 dark:text-[#E8ECFA]">Karthik Raja</h4>
-                <p className="text-[11px] text-slate-500 dark:text-[#9AA6C7]">B.Tech ECE, NIT Trichy</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <StudentReviewsSection showHeaderSummary={true} />
       </section>
 
       {/* Subtle Divider */}

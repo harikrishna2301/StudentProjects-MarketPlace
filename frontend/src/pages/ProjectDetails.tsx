@@ -43,6 +43,7 @@ import {
 import { useWishlist } from '../context/WishlistContext';
 import { WatchDemoModal } from '../components/WatchDemoModal';
 import { SEOHead } from '../components/SEOHead';
+import { StudentReviewsSection } from '../components/StudentReviewsSection';
 
 export const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -59,7 +60,7 @@ export const ProjectDetails: React.FC = () => {
   const { isInWishlist, toggleWishlist } = useWishlist();
 
   const [copiedStep, setCopiedStep] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'screenshots' | 'modules' | 'docs' | 'setup'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'screenshots' | 'modules' | 'docs' | 'setup' | 'reviews'>('overview');
   // Selected screenshot in hero gallery (0 = main cover, 1 = UI, 2 = ERD, 3 = DFD, 4 = Viva)
   const [activePreviewIndex, setActivePreviewIndex] = useState<number>(0);
   const [fullscreenModal, setFullscreenModal] = useState<boolean>(false);
@@ -462,17 +463,25 @@ export const ProjectDetails: React.FC = () => {
               </button>
             </div>
 
-            {/* Ratings & reviews count */}
-            <div className="flex items-center gap-2 mt-2 text-xs">
+            {/* Ratings & reviews count - interactive jump to reviews tab */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveTab('reviews');
+                document.getElementById('project-detail-tabs')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 mt-2 text-xs hover:opacity-90 text-left group cursor-pointer focus:outline-none"
+              title="Read verified student reviews"
+            >
               <div className="flex items-center text-amber-500">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                 <span className="font-bold font-mono ml-1 text-slate-900 dark:text-[#F8FAFC]">{project.rating}</span>
               </div>
               <span className="text-slate-300 dark:text-[#1A2846]">·</span>
-              <span className="text-slate-600 dark:text-[#94A3B8] font-medium">
-                {project.reviewsCount} verified student reviews
+              <span className="text-[#6A2FC8] dark:text-[#D1B8FF] font-medium underline-offset-2 group-hover:underline">
+                {project.reviewsCount} verified student reviews &darr;
               </span>
-            </div>
+            </button>
           </div>
 
           <p className="text-xs text-slate-600 dark:text-[#CBD5E1] leading-relaxed">
@@ -911,6 +920,17 @@ export const ProjectDetails: React.FC = () => {
           >
             Installation Guide & Requirements
           </button>
+          <button
+            onClick={() => setActiveTab('reviews')}
+            className={`px-4 py-2 text-xs font-semibold rounded-xl transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
+              activeTab === 'reviews'
+                ? 'bg-white dark:bg-slate-900 text-[#6A2FC8] dark:text-[#D1B8FF] shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+            }`}
+          >
+            <Star className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
+            <span>Student Reviews & Ratings ({project.reviewsCount})</span>
+          </button>
         </div>
 
         {/* Tab Body */}
@@ -1214,6 +1234,26 @@ export const ProjectDetails: React.FC = () => {
                   ))}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* TAB 6: STUDENT REVIEWS & EXAMINER RATINGS */}
+          {activeTab === 'reviews' && (
+            <div className="space-y-6 max-w-5xl">
+              <div>
+                <h3 className="font-heading font-semibold text-lg text-slate-900 dark:text-white mb-1">
+                  Student Defense Reviews & Viva Ratings
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
+                  Verified feedback from engineering students who downloaded, ran, and defended this capstone project kit.
+                </p>
+              </div>
+
+              <StudentReviewsSection
+                projectId={project.id}
+                projectTitle={project.title}
+                showHeaderSummary={true}
+              />
             </div>
           )}
         </div>
