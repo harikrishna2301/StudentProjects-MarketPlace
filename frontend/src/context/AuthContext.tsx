@@ -9,11 +9,33 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  login: (email: string, password?: string) => Promise<boolean>;
+  login: (email: string, password?: string) => Promise<User>;
+  loginAdmin: (email: string, password: string) => Promise<User>;
+  setupInitialAdmin: (data: {
+    fullName: string;
+    email: string;
+    password: string;
+    adminTitle?: string;
+  }) => Promise<User>;
+  hasLocalAdmin: () => boolean;
+  getAdminAccounts: () => User[];
+  addAdminAccount: (data: {
+    fullName: string;
+    email: string;
+    password: string;
+    adminTitle: string;
+  }) => Promise<User>;
+  updateAdminAccount: (
+    adminId: string,
+    updates: { fullName: string; adminTitle: string; newPassword?: string }
+  ) => Promise<User>;
+  removeAdminAccount: (adminId: string) => void;
   logout: () => void;
+  deleteAccount: (reason: string) => Promise<void>;
   register: (data: {
     fullName: string;
     email: string;
+    password: string;
     phoneNumber?: string;
     collegeName?: string;
   }) => Promise<boolean>;
@@ -24,85 +46,48 @@ interface AuthContextType {
   hasAccessToProject: (projectId: string) => boolean;
   completePurchase: (project: Project, paymentMethod: string) => Order;
   downloadProjectKit: (project: Project, fileType?: string) => Promise<void>;
-  quickSwitchUser: (role: 'student' | 'admin' | 'guest') => void;
 }
-
-const DEFAULT_STUDENT: User = {
-  id: 'usr-student-01',
-  fullName: 'John Doe',
-  email: 'john.doe@projectkit.edu',
-  phoneNumber: '+91 98765 43210',
-  collegeName: 'Metropolitan Institute of Technology',
-  role: 'student',
-  joinedDate: '2025-08-14',
-};
-
-const DEFAULT_ADMIN: User = {
-  id: 'usr-admin-01',
-  fullName: 'Dr. Anita Sharma',
-  email: 'admin@projectkit.edu',
-  phoneNumber: '+91 94480 11223',
-  collegeName: 'National Institute of Technology (NIT)',
-  role: 'admin',
-  joinedDate: '2024-06-01',
-};
-
-const DEFAULT_INITIAL_ORDERS: Order[] = [
-  {
-    id: 'ord-101',
-    orderNumber: 'PK-2026-8821',
-    userId: 'usr-student-01',
-    projectId: 'proj-001',
-    projectTitle: 'Online Job Portal & Recruitment System',
-    category: 'Web Development',
-    amount: 1999,
-    date: '2025-01-28',
-    status: 'Completed',
-    paymentMethod: 'UPI (Google Pay / PhonePe)',
-    invoiceId: 'INV-902144',
-    downloadToken: 'pk_dl_jobportal_98a72',
-  },
-  {
-    id: 'ord-102',
-    orderNumber: 'PK-2026-6419',
-    userId: 'usr-student-01',
-    projectId: 'proj-003',
-    projectTitle: 'Enterprise Student Information & Examination System',
-    category: 'Java & Spring Boot',
-    amount: 1899,
-    date: '2025-02-14',
-    status: 'Completed',
-    paymentMethod: 'Net Banking (HDFC Bank)',
-    invoiceId: 'INV-773190',
-    downloadToken: 'pk_dl_studenterp_77c12',
-  },
-];
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('projectkit_user');
-    if (saved) {
+    const token = localStorage.getItem('projectkit_auth_token');
+    if (saved && token) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved) as User;
+        // Clear any legacy auto-seeded demo user without a real session
+        if (parsed.id === 'usr-student-01' && token.startsWith('mock_jwt_')) {
+          localStorage.removeItem('projectkit_user');
+          localStorage.removeItem('projectkit_auth_token');
+          return null;
+        }
+        return parsed;
       } catch {
-        return DEFAULT_STUDENT;
+        return null;
       }
     }
-    return DEFAULT_STUDENT;
+    if (saved && !token) {
+      localStorage.removeItem('projectkit_user');
+    }
+    return null;
   });
 
   const [allOrders, setAllOrders] = useState<Order[]>(() => {
     const saved = localStorage.getItem('projectkit_orders');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved) as Order[];
+        // Filter out legacy seeded demo orders so accounts only reflect real purchases
+        return parsed.filter(
+          (o) => !(o.userId === 'usr-student-01' && (o.id === 'ord-101' || o.id === 'ord-102'))
+        );
       } catch {
-        return DEFAULT_INITIAL_ORDERS;
+        return [];
       }
     }
-    return DEFAULT_INITIAL_ORDERS;
+    return [];
   });
 
   useEffect(() => {
@@ -171,40 +156,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
-  const login = async (email: string, password?: string) => {
-    try {
-      const { user: loggedInUser } = await authService.login({ email, password });
-      setUser(loggedInUser);
-      return true;
-    } catch {
-      const isAdminUser = email.toLowerCase().includes('admin');
-      if (isAdminUser) {
-        setUser(DEFAULT_ADMIN);
-        return true;
-      }
+  const login = async (email: string, password?: string): Promise<User> => {
+    const { user: loggedInUser } = await authService.login({ email, password });
+    setUser(loggedInUser);
+    return loggedInUser;
+  };
 
-      // Check if user was registered in local storage
-      const registeredUsers: User[] = JSON.parse(
-        localStorage.getItem('projectkit_registered_users') || '[]'
-      );
-      const found = registeredUsers.find((u) => u.email.toLowerCase() === email.toLowerCase());
-      if (found) {
-        setUser(found);
-      } else if (email.toLowerCase() === DEFAULT_STUDENT.email.toLowerCase()) {
-        setUser(DEFAULT_STUDENT);
-      } else {
-        const targetUser: User = {
-          id: `usr-${Date.now()}`,
-          fullName: email.split('@')[0],
-          email,
-          role: 'student',
-          collegeName: 'Engineering College',
-          joinedDate: new Date().toISOString().split('T')[0],
-        };
-        setUser(targetUser);
-      }
-      return true;
+  const loginAdmin = async (email: string, password: string): Promise<User> => {
+    const { user: adminUser } = await authService.loginAdmin({ email, password });
+    setUser(adminUser);
+    return adminUser;
+  };
+
+  const setupInitialAdmin = async (data: {
+    fullName: string;
+    email: string;
+    password: string;
+    adminTitle?: string;
+  }): Promise<User> => {
+    return authService.setupInitialAdmin(data);
+  };
+
+  const hasLocalAdmin = (): boolean => {
+    return authService.hasLocalAdmin();
+  };
+
+  const getAdminAccounts = (): User[] => {
+    return authService.getAdminAccounts();
+  };
+
+  const addAdminAccount = async (data: {
+    fullName: string;
+    email: string;
+    password: string;
+    adminTitle: string;
+  }): Promise<User> => {
+    return authService.addAdminAccount(data);
+  };
+
+  const updateAdminAccount = async (
+    adminId: string,
+    updates: { fullName: string; adminTitle: string; newPassword?: string }
+  ): Promise<User> => {
+    const updated = await authService.updateAdminAccount(adminId, updates);
+    if (user && user.id === updated.id) {
+      setUser(updated);
     }
+    return updated;
+  };
+
+  const removeAdminAccount = (adminId: string): void => {
+    authService.removeAdminAccount(adminId, user?.id);
   };
 
   const logout = async () => {
@@ -215,80 +217,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('projectkit_refresh_token');
   };
 
+  const deleteAccount = async (reason: string): Promise<void> => {
+    const currentUser = user;
+    await authService.deleteAccount(reason, currentUser);
+    if (currentUser) {
+      setAllOrders((prev) => prev.filter((o) => o.userId !== currentUser.id));
+    }
+    setClaimedProjectIds([]);
+    setUser(null);
+  };
+
   const register = async (data: {
     fullName: string;
     email: string;
+    password: string;
     phoneNumber?: string;
     collegeName?: string;
   }) => {
-    // Clear any existing active session so newly registered account is detached
+    // Clear any existing active session so newly registered account must explicitly sign in
     setUser(null);
     localStorage.removeItem('projectkit_user');
     localStorage.removeItem('projectkit_auth_token');
     localStorage.removeItem('projectkit_refresh_token');
 
-    try {
-      const { user: registeredUser } = await authService.register({
-        fullName: data.fullName,
-        email: data.email,
-        phone: data.phoneNumber,
-        collegeName: data.collegeName,
-      });
+    await authService.register({
+      fullName: data.fullName,
+      email: data.email,
+      password: data.password,
+      phone: data.phoneNumber,
+      collegeName: data.collegeName,
+    });
 
-      // Persist in registered users pool for subsequent login
-      const registeredUsers: User[] = JSON.parse(
-        localStorage.getItem('projectkit_registered_users') || '[]'
-      );
-      const updated = registeredUsers.filter((u) => u.email.toLowerCase() !== data.email.toLowerCase());
-      updated.push(registeredUser);
-      localStorage.setItem('projectkit_registered_users', JSON.stringify(updated));
-
-      // Note: We deliberately DO NOT call setUser here.
-      // After successful account creation, the user is redirected to /login to log in explicitly.
-      return true;
-    } catch {
-      const newUser: User = {
-        id: `usr-${Date.now()}`,
-        fullName: data.fullName,
-        email: data.email,
-        phoneNumber: data.phoneNumber || '+91 98765 00000',
-        collegeName: data.collegeName || 'Engineering College',
-        role: 'student',
-        joinedDate: new Date().toISOString().split('T')[0],
-      };
-
-      const registeredUsers: User[] = JSON.parse(
-        localStorage.getItem('projectkit_registered_users') || '[]'
-      );
-      const updated = registeredUsers.filter((u) => u.email.toLowerCase() !== data.email.toLowerCase());
-      updated.push(newUser);
-      localStorage.setItem('projectkit_registered_users', JSON.stringify(updated));
-
-      // Note: We deliberately DO NOT call setUser here.
-      // After successful account creation, the user is redirected to /login to log in explicitly.
-      return true;
-    }
-  };
-
-  const quickSwitchUser = (role: 'student' | 'admin' | 'guest') => {
-    if (role === 'guest') {
-      setUser(null);
-      localStorage.removeItem('projectkit_auth_token');
-      localStorage.removeItem('projectkit_refresh_token');
-    } else if (role === 'admin') {
-      setUser(DEFAULT_ADMIN);
-      localStorage.setItem('projectkit_auth_token', `mock_jwt_admin_${Date.now()}`);
-    } else {
-      setUser(DEFAULT_STUDENT);
-      localStorage.setItem('projectkit_auth_token', `mock_jwt_student_${Date.now()}`);
-    }
+    // Deliberately DO NOT call setUser here; user must log in with verified credentials
+    return true;
   };
 
   const completePurchase = (project: Project, paymentMethod: string): Order => {
+    if (!user) {
+      throw new Error('You must be signed in to complete a purchase.');
+    }
     const newOrder: Order = {
       id: `ord-${Date.now()}`,
       orderNumber: `PK-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-      userId: user?.id || 'usr-student-01',
+      userId: user.id,
       projectId: project.id,
       projectTitle: project.title,
       category: project.category,
@@ -378,7 +349,15 @@ Thank you for using ProjectKit!`;
         isAuthenticated: !!user,
         isAdmin: user?.role === 'admin',
         login,
+        loginAdmin,
+        setupInitialAdmin,
+        hasLocalAdmin,
+        getAdminAccounts,
+        addAdminAccount,
+        updateAdminAccount,
+        removeAdminAccount,
         logout,
+        deleteAccount,
         register,
         myOrders,
         purchasedProjectIds,
@@ -387,7 +366,6 @@ Thank you for using ProjectKit!`;
         hasAccessToProject,
         completePurchase,
         downloadProjectKit,
-        quickSwitchUser,
       }}
     >
       {children}

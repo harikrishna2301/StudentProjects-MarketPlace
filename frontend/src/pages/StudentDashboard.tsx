@@ -16,6 +16,7 @@ import {
   Lock,
   Clock,
   ShieldCheck,
+  Trash2,
 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 
@@ -44,8 +45,8 @@ export const StudentDashboard: React.FC = () => {
     try {
       setClaimingId(project.id);
       await claimFreeKit(project);
-    } catch (err) {
-      console.error('Error claiming kit:', err);
+    } catch {
+      // Handled gracefully by AuthContext fallback
     } finally {
       setClaimingId(null);
     }
@@ -61,10 +62,10 @@ export const StudentDashboard: React.FC = () => {
             <span>Student Dashboard & Access Center</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[#0B0720] dark:text-[#F2E9FF]">
-            Welcome back, {user?.fullName || 'John Doe'}
+            Welcome back, {user?.fullName || 'Student'}
           </h1>
           <p className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/80 mt-1">
-            Enrolled at <span className="font-semibold text-[#0B0720] dark:text-white">{user?.collegeName || 'Engineering College'}</span> · Capstone Entitlement Active
+            Enrolled at <span className="font-semibold text-[#0B0720] dark:text-white">{user?.collegeName || 'Academic Institution'}</span> · Account Active
           </p>
         </div>
 
@@ -83,6 +84,14 @@ export const StudentDashboard: React.FC = () => {
           >
             <span>Explore Catalog</span>
             <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+
+          <Link
+            to="/dashboard/delete-account"
+            className="px-3.5 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Delete Account</span>
           </Link>
         </div>
       </div>
@@ -455,6 +464,30 @@ export const StudentDashboard: React.FC = () => {
             No purchases yet.
           </div>
         )}
+      </div>
+
+      {/* SECTION 5: ACCOUNT SECURITY & PERMANENT DELETION */}
+      <div className="card rounded-[20px] p-6 border border-rose-500/25 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+            <Trash2 className="w-4 h-4" />
+            <span>Account Privacy & Deletion</span>
+          </div>
+          <h2 className="text-sm font-bold text-[#0B0720] dark:text-[#F2E9FF]">
+            Need to close and erase your ProjectKit student account?
+          </h2>
+          <p className="text-xs text-[#4E4166] dark:text-[#D1B8FF]/75">
+            Permanently remove your student profile, saved claims, and active session credentials anytime.
+          </p>
+        </div>
+
+        <Link
+          to="/dashboard/delete-account"
+          className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center gap-2 shrink-0 self-start sm:self-center"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          <span>Delete My Account</span>
+        </Link>
       </div>
     </div>
   );

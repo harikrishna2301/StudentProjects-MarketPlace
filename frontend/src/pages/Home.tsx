@@ -6,8 +6,12 @@ import { ProjectCard } from '../components/ProjectCard';
 import { CategoryCard } from '../components/CategoryCard';
 import { SEOHead } from '../components/SEOHead';
 import { StudentReviewsSection } from '../components/StudentReviewsSection';
+import studentService from '../services/studentService';
+import { filterAdminProjects } from '../utils/adminProjectFilters';
 import {
   ArrowRight,
+  Search,
+  X,
   ShieldCheck,
   CheckCircle2,
   FileText,
@@ -27,6 +31,7 @@ import {
   Check,
   Copy,
   Zap,
+  AlertCircle,
 } from 'lucide-react';
 
 export const Home: React.FC = () => {
@@ -34,6 +39,7 @@ export const Home: React.FC = () => {
   const { projects, categories } = useProjects();
 
   const [featuredDomain, setFeaturedDomain] = useState<string>('All');
+  const [homeProjectSearch, setHomeProjectSearch] = useState<string>('');
 
   // Handle smooth scroll if navigated with hash or on hash change
   useEffect(() => {
@@ -63,6 +69,10 @@ export const Home: React.FC = () => {
     message: '',
   });
   const [contactSubmitted, setContactSubmitted] = useState(false);
+  const [contactLoading, setContactLoading] = useState(false);
+  const [contactError, setContactError] = useState('');
+  const [contactBackendOffline, setContactBackendOffline] = useState(false);
+  const [contactTicketNumber, setContactTicketNumber] = useState('');
   const [emailCopied, setEmailCopied] = useState(false);
 
   const handleCopyEmail = () => {
@@ -71,10 +81,44 @@ export const Home: React.FC = () => {
     setTimeout(() => setEmailCopied(false), 2500);
   };
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const generateHomeMailtoUrl = () => {
+    const subject = encodeURIComponent(contactForm.subject || 'ProjectKit Support Request');
+    const bodyText = `Hello ProjectKit Support Team,\n\nName: ${contactForm.name || '[Your Name]'}\nEmail: ${contactForm.email || '[Your Email]'}\n\nMessage:\n${contactForm.message || ''}`;
+    return `mailto:support@projectkit.in?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactForm.name || !contactForm.email || !contactForm.message) return;
-    setContactSubmitted(true);
+    if (!contactForm.name.trim() || !contactForm.email.trim() || !contactForm.message.trim()) {
+      setContactBackendOffline(false);
+      setContactError('Please complete all required fields (Name, Email, and Inquiry Details).');
+      return;
+    }
+
+    try {
+      setContactLoading(true);
+      setContactError('');
+      setContactBackendOffline(false);
+      const res = await studentService.submitContactInquiry({
+        fullName: contactForm.name.trim(),
+        email: contactForm.email.trim(),
+        category: 'Homepage Quick Inquiry',
+        subject: contactForm.subject.trim() || 'ProjectKit Support Request',
+        message: contactForm.message.trim(),
+      });
+      setContactTicketNumber(res?.ticketNumber || `TCK-${Date.now().toString().slice(-6)}`);
+      setContactSubmitted(true);
+    } catch (err: any) {
+      setContactSubmitted(false);
+      setContactBackendOffline(Boolean(err?.isBackendOffline));
+      setContactError(
+        err?.response?.data?.message ||
+          err?.message ||
+          'Unable to send inquiry right now. Please email support@projectkit.in directly.'
+      );
+    } finally {
+      setContactLoading(false);
+    }
   };
 
   const scrollToSection = (id: string) => (e: React.MouseEvent) => {
@@ -86,13 +130,14 @@ export const Home: React.FC = () => {
     }
   };
 
-  // Filtered featured projects
-  const filteredFeatured = projects
-    .filter((p) => {
-      if (featuredDomain === 'All') return true;
-      return p.category.toLowerCase().includes(featuredDomain.toLowerCase());
-    })
-    .slice(0, 6);
+  // Filtered featured projects (supports direct homepage search across all listed kits + domain filter)
+  const domainFilteredProjects = projects.filter((p) => {
+    if (featuredDomain === 'All') return true;
+    return p.category.toLowerCase().includes(featuredDomain.toLowerCase());
+  });
+  const filteredFeatured = homeProjectSearch.trim()
+    ? filterAdminProjects(domainFilteredProjects, homeProjectSearch, 'All').slice(0, 6)
+    : domainFilteredProjects.slice(0, 6);
 
   // Popular category quick links for the hero bottom strip
   const popularCategories = [
@@ -137,39 +182,96 @@ export const Home: React.FC = () => {
             </p>
           </div>
 
-          {/* Domain Filter Switcher */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white dark:bg-[#1A0D3D] rounded-xl border border-slate-200 dark:border-[#3A2074] shadow-xs">
-            {['All', 'Java', 'Python', 'Web', 'IoT'].map((domain) => (
-              <button
-                key={domain}
-                onClick={() => setFeaturedDomain(domain)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  featuredDomain === domain
-                    ? 'bg-[#6A2FC8] text-white shadow-xs'
-                    : 'text-slate-600 dark:text-[#CBD5E1] hover:text-slate-900 dark:hover:text-[#E8ECFA]'
-                }`}
-              >
-                {domain === 'All' ? 'All Focus' : domain}
-              </button>
-            ))}
+          {/* Domain Filter Switcher + Direct Section Search */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="relative w-full sm:w-64">
+              <Search className="w-3.5 h-3.5 text-slate-400 dark:text-[#C5B4E3] absolute left-3 top-2.5 pointer-events-none" />
+              <input
+                id="home-featured-search"
+                type="text"
+                aria-label="Search featured projects on home page"
+                value={homeProjectSearch}
+                onChange={(e) => setHomeProjectSearch(e.target.value)}
+                placeholder="Search kits on this page..."
+                className="w-full pl-8 pr-8 py-2 text-xs bg-white dark:bg-[#1A0D3D] border border-slate-200 dark:border-[#3A2074] rounded-xl text-slate-900 dark:text-[#F2E9FF] placeholder:text-slate-400 dark:placeholder:text-[#C5B4E3]/60 outline-none focus:border-[#6A2FC8] dark:focus:border-[#9D71E8]"
+              />
+              {homeProjectSearch && (
+                <button
+                  type="button"
+                  onClick={() => setHomeProjectSearch('')}
+                  aria-label="Clear homepage project search"
+                  className="absolute right-2.5 top-2 p-0.5 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white dark:bg-[#1A0D3D] rounded-xl border border-slate-200 dark:border-[#3A2074] shadow-xs">
+              {['All', 'Java', 'Python', 'Web', 'IoT'].map((domain) => (
+                <button
+                  key={domain}
+                  onClick={() => setFeaturedDomain(domain)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                    featuredDomain === domain
+                      ? 'bg-[#6A2FC8] text-white shadow-xs'
+                      : 'text-slate-600 dark:text-[#CBD5E1] hover:text-slate-900 dark:hover:text-[#E8ECFA]'
+                  }`}
+                >
+                  {domain === 'All' ? 'All Focus' : domain}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* 6 Featured Project Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredFeatured.map((project) => (
-            <div key={project.id} className="pk-card-tilt h-full">
-              <ProjectCard project={project} />
+        {/* Matching Project Cards */}
+        {filteredFeatured.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredFeatured.map((project) => (
+              <div key={project.id} className="pk-card-tilt h-full">
+                <ProjectCard project={project} searchQuery={homeProjectSearch} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="card p-10 text-center space-y-3">
+            <p className="text-sm font-semibold text-slate-700 dark:text-[#F2E9FF]">
+              No kits matched &ldquo;{homeProjectSearch.trim()}&rdquo; in {featuredDomain === 'All' ? 'any category' : featuredDomain}.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setHomeProjectSearch('');
+                  setFeaturedDomain('All');
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-[#25134D] text-slate-800 dark:text-[#F2E9FF] hover:bg-slate-200 dark:hover:bg-[#3A2074] cursor-pointer"
+              >
+                Clear Search
+              </button>
+              {homeProjectSearch.trim() && (
+                <Link
+                  to={`/projects?search=${encodeURIComponent(homeProjectSearch.trim())}`}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#6A2FC8] hover:bg-[#5824A8] text-white"
+                >
+                  Search Full Catalog →
+                </Link>
+              )}
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
         <div className="text-center pt-2">
           <Link
-            to="/projects"
+            to={homeProjectSearch.trim() ? `/projects?search=${encodeURIComponent(homeProjectSearch.trim())}` : '/projects'}
             className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-[#1A0D3D] hover:bg-slate-50 dark:hover:bg-[#25134D] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold border border-slate-200 dark:border-[#3A2074] hover:border-[#6A2FC8] transition-all shadow-xs"
           >
-            <span>Browse Full Project Directory ({projects.length}+ Kits)</span>
+            <span>
+              {homeProjectSearch.trim()
+                ? `View All Results for "${homeProjectSearch.trim()}" in Directory`
+                : `Browse Full Project Directory (${projects.length}+ Kits)`}
+            </span>
             <ArrowRight className="w-4 h-4 text-[#6A2FC8] dark:text-[#9D71E8]" />
           </Link>
         </div>
@@ -742,6 +844,12 @@ export const Home: React.FC = () => {
                   <h3 className="text-lg font-bold text-slate-900 dark:text-[#E8ECFA]">
                     Message Sent Successfully!
                   </h3>
+                  {contactTicketNumber && (
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-mono font-bold">
+                      <span>Ticket Ref:</span>
+                      <span>{contactTicketNumber}</span>
+                    </div>
+                  )}
                   <p className="text-xs text-slate-600 dark:text-[#9AA6C7] max-w-md mx-auto leading-relaxed">
                     Thank you, <strong className="text-slate-900 dark:text-white">{contactForm.name}</strong>. Our academic engineering advisor has received your inquiry regarding <span className="text-[#6A2FC8] dark:text-[#D1B8FF] font-medium">{contactForm.subject || 'Project Support'}</span> and will reply to <span className="font-mono text-slate-700 dark:text-slate-300">{contactForm.email}</span> shortly.
                   </p>
@@ -751,6 +859,7 @@ export const Home: React.FC = () => {
                       onClick={() => {
                         setContactForm({ name: '', email: '', subject: '', message: '' });
                         setContactSubmitted(false);
+                        setContactError('');
                       }}
                       className="px-5 py-2.5 bg-slate-100 dark:bg-[#25134D] hover:bg-slate-200 dark:hover:bg-[#3A2074] text-slate-900 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold transition-all"
                     >
@@ -760,6 +869,41 @@ export const Home: React.FC = () => {
                 </div>
               ) : (
                 <form onSubmit={handleContactSubmit} className="space-y-4">
+                  {contactError && (
+                    <div
+                      role="alert"
+                      className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-xs text-rose-800 dark:text-rose-200 space-y-3"
+                    >
+                      <div className="flex items-start gap-2.5">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600 dark:text-rose-400" />
+                        <div className="space-y-1">
+                          <p className="font-semibold text-rose-900 dark:text-rose-100">
+                            {contactBackendOffline ? 'Online Inquiry Server Offline' : 'Could Not Submit Inquiry'}
+                          </p>
+                          <p className="leading-relaxed">{contactError}</p>
+                        </div>
+                      </div>
+                      {contactBackendOffline && (
+                        <div className="flex flex-wrap items-center gap-2 pl-6">
+                          <a
+                            href={generateHomeMailtoUrl()}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#6A2FC8] hover:bg-[#5824A8] text-white text-[11px] font-semibold transition-colors"
+                          >
+                            <Send className="w-3 h-3" />
+                            <span>Send via Email App Instead</span>
+                          </a>
+                          <button
+                            type="button"
+                            onClick={handleCopyEmail}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#25134D] border border-rose-200 dark:border-[#3A2074] text-slate-700 dark:text-[#F2E9FF] text-[11px] font-semibold hover:bg-slate-50 dark:hover:bg-[#3A2074] transition-colors cursor-pointer"
+                          >
+                            {emailCopied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                            <span>{emailCopied ? 'Email Copied' : 'Copy support@projectkit.in'}</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label htmlFor="contact-name" className="text-xs font-semibold text-slate-700 dark:text-[#CBD5E1]">
@@ -827,10 +971,11 @@ export const Home: React.FC = () => {
                     </span>
                     <button
                       type="submit"
-                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#451B87] text-white rounded-xl text-xs font-semibold shadow-md shadow-[#6A2FC8]/20 transition-all hover:scale-[1.01] active:scale-[0.98]"
+                      disabled={contactLoading}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#6A2FC8] hover:bg-[#5824A8] active:bg-[#451B87] text-white rounded-xl text-xs font-semibold shadow-md shadow-[#6A2FC8]/20 transition-all hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50 cursor-pointer"
                     >
                       <Send className="w-3.5 h-3.5" />
-                      <span>Send Inquiry</span>
+                      <span>{contactLoading ? 'Sending Inquiry...' : 'Send Inquiry'}</span>
                     </button>
                   </div>
                 </form>

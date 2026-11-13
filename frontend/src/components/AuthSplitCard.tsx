@@ -42,8 +42,12 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
 
-  // Registration banner message (if redirected from account creation)
+  // Registration or account-deleted banner message
   const [registeredSuccess, setRegisteredSuccess] = useState<string>(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('deleted') === '1') {
+      return 'Your student account has been permanently deleted and your session has ended.';
+    }
     return (location.state as any)?.registeredMessage || '';
   });
 
@@ -93,6 +97,9 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
       setMode('login');
     }
 
+    if (searchParams.get('deleted') === '1') {
+      setRegisteredSuccess('Your student account has been permanently deleted and your session has ended.');
+    }
     if ((location.state as any)?.registeredMessage) {
       setRegisteredSuccess((location.state as any).registeredMessage);
     }
@@ -128,17 +135,17 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
 
     setLoginLoading(true);
     try {
-      await login(loginEmail, loginPassword);
+      const loggedInUser = await login(loginEmail, loginPassword);
       const stateRedirect = (location.state as any)?.from;
       if (stateRedirect) {
         navigate(stateRedirect);
-      } else if (loginEmail.toLowerCase().includes('admin')) {
+      } else if (loggedInUser.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
       }
-    } catch {
-      setLoginError('Invalid email or password. Please verify your credentials.');
+    } catch (err: any) {
+      setLoginError(err?.message || 'Invalid email or password. Please verify your credentials.');
     } finally {
       setLoginLoading(false);
     }
@@ -178,6 +185,7 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
       await register({
         fullName: regData.fullName,
         email: regData.email,
+        password: regData.password,
         phoneNumber: regData.phoneNumber,
         collegeName: regData.collegeName,
       });
@@ -217,8 +225,8 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
       setLoginEmail(regData.email);
       setRegisteredSuccess('Account created successfully! Please sign in with your email and password.');
       switchMode('login');
-    } catch {
-      setRegError('Registration failed. This email may already be registered.');
+    } catch (err: any) {
+      setRegError(err?.message || 'Registration failed. This email may already be registered.');
     } finally {
       setRegLoading(false);
     }
@@ -276,18 +284,6 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
     } finally {
       setResetLoading(false);
     }
-  };
-
-  const fillQuickDemo = (role: 'student' | 'admin') => {
-    if (role === 'student') {
-      setLoginEmail('john.doe@projectkit.edu');
-      setLoginPassword('StudentPass2026!');
-    } else {
-      setLoginEmail('admin@projectkit.edu');
-      setLoginPassword('AdminPass2026!');
-    }
-    setLoginError('');
-    setRegisteredSuccess('');
   };
 
   const isRegister = mode === 'register';
@@ -506,35 +502,11 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
                   </div>
                 )}
 
-                {/* Fast Evaluation Demo Credentials */}
-                <div className="p-2.5 rounded-xl bg-[#25134D]/60 border border-[#6A2FC8]/40 space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] font-bold text-[#D1B8FF] uppercase tracking-wider">
-                    <span>Quick Fill</span>
-                    <span className="text-emerald-400 font-mono">Dev Test</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    <button
-                      type="button"
-                      onClick={() => fillQuickDemo('student')}
-                      className="py-1 px-2 rounded-lg bg-[#0B0720]/80 hover:bg-[#6A2FC8]/40 text-[#F2E9FF] border border-[#6A2FC8]/50 text-center font-semibold transition-colors"
-                    >
-                      Demo Student
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => fillQuickDemo('admin')}
-                      className="py-1 px-2 rounded-lg bg-[#0B0720]/80 hover:bg-[#9D71E8]/40 text-[#F2E9FF] border border-[#9D71E8]/50 text-center font-semibold transition-colors"
-                    >
-                      Demo Admin
-                    </button>
-                  </div>
-                </div>
-
                 <form onSubmit={handleLoginSubmit} className="space-y-5">
                   {/* Username / Email field with clean underline and right icon */}
                   <div className="space-y-1">
                     <label className="block text-xs font-semibold text-[#D1B8FF]">
-                      Username / Email
+                      Email Address
                     </label>
                     <div className="auth-underline-field pb-1">
                       <div className="flex items-center justify-between text-white/90">
@@ -543,7 +515,7 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
                           type="email"
                           value={loginEmail}
                           onChange={(e) => setLoginEmail(e.target.value)}
-                          placeholder="e.g. john.doe@projectkit.edu"
+                          placeholder="you@university.edu"
                           className="w-full bg-transparent py-1.5 text-xs sm:text-sm text-white placeholder:text-white/30 focus:outline-none"
                           required
                         />
@@ -601,15 +573,25 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
                   </div>
 
                   {/* Switch to Sign Up text */}
-                  <div className="text-center pt-2 text-xs text-[#C5B4E3]">
-                    <span>Don't have an account? </span>
-                    <button
-                      type="button"
-                      onClick={() => switchMode('register')}
-                      className="font-bold text-[#D1B8FF] hover:text-white hover:underline transition-colors cursor-pointer"
-                    >
-                      Sign Up
-                    </button>
+                  <div className="text-center pt-2 space-y-2 text-xs text-[#C5B4E3]">
+                    <div>
+                      <span>Don't have an account? </span>
+                      <button
+                        type="button"
+                        onClick={() => switchMode('register')}
+                        className="font-bold text-[#D1B8FF] hover:text-white hover:underline transition-colors cursor-pointer"
+                      >
+                        Sign Up
+                      </button>
+                    </div>
+                    <div>
+                      <Link
+                        to="/admin/login"
+                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#9D71E8] hover:text-[#D1B8FF] hover:underline transition-colors"
+                      >
+                        <span>Administrator? Access Admin Console Login →</span>
+                      </Link>
+                    </div>
                   </div>
                 </form>
               </div>
@@ -693,7 +675,7 @@ export const AuthSplitCard: React.FC<AuthSplitCardProps> = ({ initialMode = 'log
                   {/* University Email */}
                   <div className="space-y-0.5">
                     <label className="block text-[11px] font-semibold text-[#D1B8FF]">
-                      Academic Email
+                      Academic Email or Personal Email
                     </label>
                     <div className="auth-underline-field pb-1">
                       <div className="flex items-center justify-between text-white/90">

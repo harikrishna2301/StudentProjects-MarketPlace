@@ -172,8 +172,30 @@ export const studentService = {
     subject: string;
     message: string;
   }): Promise<any> {
-    const response = await apiClient.post<BackendApiResponse<any>>('/api/contact', data);
-    return response.data.data;
+    try {
+      const response = await apiClient.post<BackendApiResponse<any>>('/api/contact', data);
+      return response.data.data;
+    } catch (err: any) {
+      const backendMessage = err?.response?.data?.message;
+      const isOffline =
+        !err?.response ||
+        err?.response?.status === 502 ||
+        err?.response?.status === 503 ||
+        err?.response?.data?.code === 'BACKEND_OFFLINE' ||
+        err?.code === 'ERR_NETWORK';
+
+      if (isOffline) {
+        const offlineError = new Error(
+          'Live support server (port 8081) is not connected in this preview. Please launch your email client below or email support@projectkit.in directly.'
+        ) as Error & { isBackendOffline?: boolean };
+        offlineError.isBackendOffline = true;
+        throw offlineError;
+      }
+
+      throw new Error(
+        backendMessage || err?.message || 'Unable to submit inquiry right now. Please try again.'
+      );
+    }
   },
 };
 

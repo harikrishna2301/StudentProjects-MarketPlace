@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, Navigate } from 'react-router-dom';
 import { useProjects } from '../context/ProjectsContext';
 import { useAuth } from '../context/AuthContext';
 import orderService from '../services/orderService';
@@ -27,7 +27,7 @@ export const Checkout: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getProjectById } = useProjects();
-  const { user, completePurchase, purchasedProjectIds } = useAuth();
+  const { user, isAuthenticated, completePurchase, purchasedProjectIds } = useAuth();
 
   const project = id ? getProjectById(id) : undefined;
   const isAlreadyOwned = project ? purchasedProjectIds.includes(project.id) : false;
@@ -114,6 +114,10 @@ export const Checkout: React.FC = () => {
     );
   }
 
+  if (!isAuthenticated || !user) {
+    return <Navigate to={`/login?redirect=${encodeURIComponent(`/checkout/${project.id}`)}`} replace />;
+  }
+
   const handlePlaceOrder = async () => {
     if (!agreedToCheckoutLegal) {
       setLegalError('Please accept the Terms and Conditions and Refund Policy to proceed with checkout.');
@@ -157,9 +161,9 @@ export const Checkout: React.FC = () => {
           description: `Capstone Kit License: ${project.title}`,
           order_id: orderResp.razorpayOrderId,
           prefill: {
-            name: user?.fullName || 'John Doe',
-            email: user?.email || 'john.doe@projectkit.edu',
-            contact: user?.phoneNumber || '+91 9999999999',
+            name: user.fullName,
+            email: user.email,
+            contact: user.phoneNumber || '',
           },
           theme: {
             color: '#6A2FC8',
@@ -307,39 +311,30 @@ export const Checkout: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Student Details & Payment Methods */}
           <div className="lg:col-span-7 space-y-6">
-            {/* Disclaimer Box */}
-            <div className="p-4 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-900/60 flex items-start gap-3 text-xs text-amber-900 dark:text-amber-200">
-              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-              <div className="leading-relaxed">
-                <span className="font-bold">Evaluation Sandbox Notice: </span>
-                This is a frontend demonstration checkout interface. No real payment transaction is processed and no financial credentials will be charged.
-              </div>
-            </div>
-
             {/* Student Info Card */}
             <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200/90 dark:border-[#25335F] space-y-4 shadow-xs transition-colors">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#25335F]">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">Student Licensee Information</h3>
-                <span className="text-[11px] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold">B.Tech Verified</span>
+                <span className="text-[11px] text-[#2F4BFF] dark:text-[#5B7BFF] font-semibold">Verified Account</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-slate-400 dark:text-[#9AA6C7] block text-[11px]">Full Name</span>
                   <span className="font-semibold text-slate-800 dark:text-[#E8ECFA]">
-                    {user?.fullName || 'John Doe'}
+                    {user.fullName}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 dark:text-[#9AA6C7] block text-[11px]">University Email</span>
+                  <span className="text-slate-400 dark:text-[#9AA6C7] block text-[11px]">Email Address</span>
                   <span className="font-semibold text-slate-800 dark:text-[#E8ECFA]">
-                    {user?.email || 'john.doe@projectkit.edu'}
+                    {user.email}
                   </span>
                 </div>
                 <div className="sm:col-span-2">
                   <span className="text-slate-400 dark:text-[#9AA6C7] block text-[11px]">College / Campus</span>
                   <span className="font-semibold text-slate-800 dark:text-[#CBD5E1]">
-                    {user?.collegeName || 'Metropolitan Institute of Technology'}
+                    {user.collegeName || 'Academic Institution'}
                   </span>
                 </div>
               </div>
@@ -348,10 +343,10 @@ export const Checkout: React.FC = () => {
             {/* Payment Method Selector */}
             <div className="bg-white dark:bg-[#0F1830] p-6 rounded-2xl border border-slate-200/90 dark:border-[#25335F] space-y-4 shadow-xs transition-colors">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#25335F]">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">Select Demonstration Payment Method</h3>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-[#E8ECFA]">Select Payment Method</h3>
                 <div className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-[#9AA6C7]">
                   <Lock className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                  <span>Simulated TLS 1.3</span>
+                  <span>256-bit TLS Encrypted</span>
                 </div>
               </div>
 
@@ -377,7 +372,7 @@ export const Checkout: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-slate-900 dark:text-[#F8FAFC]">UPI Instant (GPay / PhonePe / Paytm)</div>
-                      <div className="text-[11px] text-slate-500 dark:text-[#94A3B8]">Fast 1-click simulation</div>
+                      <div className="text-[11px] text-slate-500 dark:text-[#94A3B8]">Fast 1-click Razorpay UPI</div>
                     </div>
                   </div>
                   <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 px-2 py-0.5 rounded">
@@ -728,7 +723,7 @@ export const Checkout: React.FC = () => {
               </div>
               <div className="flex justify-between items-center text-[#D1B8FF]">
                 <span>Licensee:</span>
-                <span className="font-medium text-[#F2E9FF]">John Doe</span>
+                <span className="font-medium text-[#F2E9FF]">{user.fullName}</span>
               </div>
               <div className="flex justify-between items-center text-[#D1B8FF]">
                 <span>Payment Mode:</span>

@@ -111,8 +111,8 @@ export const ProjectDetails: React.FC = () => {
     try {
       setClaiming(true);
       await claimFreeKit(project);
-    } catch (err: any) {
-      console.error('Error claiming free kit:', err);
+    } catch {
+      // Handled gracefully by AuthContext fallback
     } finally {
       setClaiming(false);
     }

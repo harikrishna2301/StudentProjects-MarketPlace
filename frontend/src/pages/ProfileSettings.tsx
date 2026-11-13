@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import {
@@ -13,16 +14,18 @@ import {
   Moon,
   Laptop,
   Check,
+  Trash2,
 } from 'lucide-react';
 
 export const ProfileSettings: React.FC = () => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, deleteAccount } = useAuth();
   const { theme, setTheme } = useTheme();
 
-  const [fullName, setFullName] = useState(user?.fullName || 'John Doe');
-  const [email, setEmail] = useState(user?.email || 'john.doe@projectkit.edu');
-  const [phone, setPhone] = useState(user?.phoneNumber || '+91 98765 43210');
-  const [college, setCollege] = useState(user?.collegeName || 'Metropolitan Institute of Technology');
+  const [fullName, setFullName] = useState(user?.fullName || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phoneNumber || '');
+  const [college, setCollege] = useState(user?.collegeName || '');
   const [branch, setBranch] = useState('Computer Science & Engineering');
   const [academicYear, setAcademicYear] = useState('2025–2026');
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -30,10 +33,8 @@ export const ProfileSettings: React.FC = () => {
   // Privacy & Deletion request states
   const [showDeletionModal, setShowDeletionModal] = useState(false);
   const [deletionReason, setDeletionReason] = useState('');
-  const [deletionSubmitted, setDeletionSubmitted] = useState(
-    !!localStorage.getItem('projectkit_deletion_request')
-  );
   const [deletionLoading, setDeletionLoading] = useState(false);
+  const [deletionError, setDeletionError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +53,7 @@ export const ProfileSettings: React.FC = () => {
   };
 
   const handleResetData = () => {
-    if (confirm('Reset your demo evaluation purchases and restore initial state?')) {
+    if (confirm('Reset your workspace profile preferences and restore initial state?')) {
       localStorage.removeItem('projectkit_orders');
       localStorage.removeItem('projectkit_user');
       localStorage.removeItem('projectkit_deletion_request');
@@ -65,30 +66,16 @@ export const ProfileSettings: React.FC = () => {
     if (!deletionReason.trim()) return;
 
     setDeletionLoading(true);
-    const reqData = {
-      userId: user?.id || 'demo_student',
-      userEmail: user?.email || 'student@example.com',
-      reason: deletionReason.trim(),
-      requestedAt: new Date().toISOString(),
-      status: 'PENDING',
-    };
-
-    localStorage.setItem('projectkit_deletion_request', JSON.stringify(reqData));
-
+    setDeletionError('');
     try {
-      await fetch('/api/users/account-deletion-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(user?.token ? { Authorization: `Bearer ${user.token}` } : {}),
-        },
-        body: JSON.stringify({ reason: deletionReason.trim() }),
-      });
-    } catch {}
-
-    setDeletionLoading(false);
-    setDeletionSubmitted(true);
-    setShowDeletionModal(false);
+      await deleteAccount(deletionReason.trim());
+      setShowDeletionModal(false);
+      navigate('/login?deleted=1', { replace: true });
+    } catch (err: any) {
+      setDeletionError(err?.message || 'Unable to delete account right now.');
+    } finally {
+      setDeletionLoading(false);
+    }
   };
 
   return (
@@ -327,26 +314,29 @@ export const ProfileSettings: React.FC = () => {
                 Account Erasure & Deletion
               </span>
               <p className="text-[11px] text-slate-500 dark:text-[#94A3B8] mt-1">
-                {deletionSubmitted
-                  ? 'Your account deletion request has been submitted and is currently under administrative review.'
-                  : 'Permanently remove your student profile and deactivate your access.'}
+                Permanently remove your student profile, claims, and deactivate your access.
               </p>
             </div>
 
-            {deletionSubmitted ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-300 text-[11px] font-semibold rounded-xl self-start">
-                <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span>Deletion Request Pending</span>
-              </span>
-            ) : (
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                to="/dashboard/delete-account"
+                className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition-colors inline-flex items-center gap-1.5"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Open Account Deletion</span>
+              </Link>
               <button
                 type="button"
-                onClick={() => setShowDeletionModal(true)}
-                className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900 rounded-xl text-xs font-semibold transition-colors self-start"
+                onClick={() => {
+                  setDeletionError('');
+                  setShowDeletionModal(true);
+                }}
+                className="px-3 py-2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
               >
-                Request Account Deletion
+                Quick Delete
               </button>
-            )}
+            </div>
           </div>
         </div>
       </div>
@@ -357,17 +347,23 @@ export const ProfileSettings: React.FC = () => {
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 shadow-2xl space-y-4">
             <div>
               <h3 className="text-sm font-bold text-red-600 dark:text-red-400">
-                Submit Account Deletion Request
+                Permanently Delete Student Account
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                Under the DPDPA 2023, you may request full erasure of your account. In accordance with statutory audit requirements, financial invoices will be archived while all active sessions will be terminated.
+                Under the DPDPA 2023, this permanently erases your account credentials and signs you out immediately. Financial invoices remain archived where legally required.
               </p>
             </div>
+
+            {deletionError && (
+              <div className="p-2.5 rounded-lg bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-xs text-rose-600 dark:text-rose-300">
+                {deletionError}
+              </div>
+            )}
 
             <form onSubmit={handleAccountDeletion} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  Reason for Deletion (Optional feedback)
+                  Reason for Deletion
                 </label>
                 <textarea
                   required
@@ -383,16 +379,16 @@ export const ProfileSettings: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowDeletionModal(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={deletionLoading}
-                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded-lg transition-colors shadow-sm disabled:opacity-50"
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded-lg transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
                 >
-                  {deletionLoading ? 'Submitting...' : 'Confirm Request'}
+                  {deletionLoading ? 'Deleting...' : 'Permanently Delete'}
                 </button>
               </div>
             </form>

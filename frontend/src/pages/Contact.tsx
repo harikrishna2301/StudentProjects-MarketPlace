@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 
 import studentService from '../services/studentService';
 
-const OFFICIAL_CONTACT_EMAIL = 'support@projectkit.in';
-const OFFICIAL_PHONE = '+91 98765 43210';
+const OFFICIAL_CONTACT_EMAIL = 'harikrishnabhyrraju22@gmail.com';
+const OFFICIAL_PHONE = '+91 8297274860';
 
 export const Contact: React.FC = () => {
   const [copied, setCopied] = useState(false);
@@ -48,10 +48,12 @@ Sent via ProjectKit Student Portal`;
   };
 
   const [submitError, setSubmitError] = useState<string>('');
+  const [backendOffline, setBackendOffline] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.fullName.trim() || !formData.email.trim() || !formData.message.trim()) {
+      setBackendOffline(false);
       setSubmitError('Please complete all required fields (Name, Email, and Message).');
       return;
     }
@@ -59,6 +61,7 @@ Sent via ProjectKit Student Portal`;
     try {
       setLoading(true);
       setSubmitError('');
+      setBackendOffline(false);
       const res = await studentService.submitContactInquiry({
         fullName: formData.fullName.trim(),
         email: formData.email.trim(),
@@ -71,9 +74,9 @@ Sent via ProjectKit Student Portal`;
       setTicketNumber(res?.ticketNumber || `TCK-${Date.now().toString().slice(-6)}`);
       setSubmitted(true);
     } catch (err: any) {
-      console.error('Contact submission error:', err);
       // Strictly avoid displaying fake success when unsubmitted
       setSubmitted(false);
+      setBackendOffline(Boolean(err?.isBackendOffline));
       setSubmitError(
         err?.response?.data?.message ||
         err?.message ||
@@ -263,6 +266,42 @@ Sent via ProjectKit Student Portal`;
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {submitError && (
+                  <div
+                    role="alert"
+                    className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-xs text-rose-800 dark:text-rose-200 space-y-3"
+                  >
+                    <div className="flex items-start gap-2.5">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-600 dark:text-rose-400" />
+                      <div className="space-y-1">
+                        <p className="font-semibold text-rose-900 dark:text-rose-100">
+                          {backendOffline ? 'Online Inquiry Server Offline' : 'Could Not Submit Inquiry'}
+                        </p>
+                        <p className="leading-relaxed">{submitError}</p>
+                      </div>
+                    </div>
+                    {backendOffline && (
+                      <div className="flex flex-wrap items-center gap-2 pl-6">
+                        <a
+                          href={generateMailtoUrl()}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#6A2FC8] hover:bg-[#5824A8] text-white text-[11px] font-semibold transition-colors"
+                        >
+                          <Send className="w-3 h-3" />
+                          <span>Send via Email App Instead</span>
+                        </a>
+                        <button
+                          type="button"
+                          onClick={handleCopyEmail}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#25134D] border border-rose-200 dark:border-[#3A2074] text-slate-700 dark:text-[#F2E9FF] text-[11px] font-semibold hover:bg-slate-50 dark:hover:bg-[#3A2074] transition-colors cursor-pointer"
+                        >
+                          {copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                          <span>{copied ? 'Email Copied' : `Copy ${OFFICIAL_CONTACT_EMAIL}`}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label htmlFor="contact-fullname" className="text-xs font-semibold text-slate-700 dark:text-[#CBD5E1]">

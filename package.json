@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite frontend --port=3000 --host=0.0.0.0",
-    "build": "vite build frontend",
-    "preview": "vite preview frontend",
+    "dev": "vite --port=3000 --host=0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview",
     "clean": "rm -rf dist frontend/dist server.js",
     "lint": "tsc -p frontend/tsconfig.json --noEmit",
     "test": "bun test frontend/src/test"

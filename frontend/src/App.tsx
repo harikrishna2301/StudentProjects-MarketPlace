@@ -38,8 +38,10 @@ const MyPurchases = lazy(() => import('./pages/MyPurchases').then((m) => ({ defa
 const OrderHistory = lazy(() => import('./pages/OrderHistory').then((m) => ({ default: m.OrderHistory })));
 const Downloads = lazy(() => import('./pages/Downloads').then((m) => ({ default: m.Downloads })));
 const ProfileSettings = lazy(() => import('./pages/ProfileSettings').then((m) => ({ default: m.ProfileSettings })));
+const DeleteAccount = lazy(() => import('./pages/DeleteAccount').then((m) => ({ default: m.DeleteAccount })));
 
 // Admin Dashboard Pages (Lazy loaded)
+const AdminLogin = lazy(() => import('./pages/AdminLogin').then((m) => ({ default: m.AdminLogin })));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard').then((m) => ({ default: m.AdminDashboard })));
 const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })));
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })));
@@ -85,6 +87,8 @@ export default function App() {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/admin-login" element={<Navigate to="/admin/login" replace />} />
 
                     {/* Public Legal & Compliance Routes */}
                     <Route path="/terms" element={<TermsAndConditions />} />
@@ -114,6 +118,7 @@ export default function App() {
                     <Route path="orders" element={<OrderHistory />} />
                     <Route path="downloads" element={<Downloads />} />
                     <Route path="profile" element={<ProfileSettings />} />
+                    <Route path="delete-account" element={<DeleteAccount />} />
                   </Route>
 
                   {/* Admin Dashboard Routes */}

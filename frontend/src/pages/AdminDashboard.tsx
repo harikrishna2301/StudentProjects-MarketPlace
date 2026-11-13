@@ -38,9 +38,16 @@ import {
   Unlock,
   CheckCheck,
   Paperclip,
+  KeyRound,
+  EyeOff,
 } from 'lucide-react';
 import { LegalComplianceAdmin } from '../components/admin/LegalComplianceAdmin';
 import { adminService } from '../services/adminService';
+import authService from '../services/authService';
+import {
+  filterAdminProjects,
+  getAdminProjectCategoryOptions,
+} from '../utils/adminProjectFilters';
 
 interface AdminDashboardProps {
   initialTab?: 'overview' | 'projects' | 'add' | 'categories' | 'orders' | 'users' | 'legal';
@@ -57,7 +64,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
     updateProject,
     resetToDefaultProjects,
   } = useProjects();
-  const { myOrders, user } = useAuth();
+  const {
+    myOrders,
+    user,
+    getAdminAccounts,
+    addAdminAccount,
+    updateAdminAccount,
+    removeAdminAccount,
+  } = useAuth();
 
   // Determine active tab from URL or prop
   const getTabFromPath = () => {
@@ -86,6 +100,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
   const [viewingOrder, setViewingOrder] = useState<Order | null>(null);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [selectedUserForDetail, setSelectedUserForDetail] = useState<any | null>(null);
+
+  // Admin Password Recovery / Security Modal state
+  const [showAdminPasswordModal, setShowAdminPasswordModal] = useState(false);
+  const [adminSecurityTab, setAdminSecurityTab] = useState<'forgot' | 'change'>('forgot');
+  const [recoveryEmail, setRecoveryEmail] = useState(user?.email || '');
+  const [recoveryPreviewToken, setRecoveryPreviewToken] = useState('');
+  const [recoveryToken, setRecoveryToken] = useState('');
+  const [recoveryNewPassword, setRecoveryNewPassword] = useState('');
+  const [recoveryConfirmPassword, setRecoveryConfirmPassword] = useState('');
+  const [currentAdminPassword, setCurrentAdminPassword] = useState('');
+  const [newAdminPassword, setNewAdminPassword] = useState('');
+  const [confirmNewAdminPassword, setConfirmNewAdminPassword] = useState('');
+  const [showAdminSecurityPwd, setShowAdminSecurityPwd] = useState(false);
+  const [adminSecurityLoading, setAdminSecurityLoading] = useState(false);
+  const [adminSecurityError, setAdminSecurityError] = useState('');
+  const [adminSecuritySuccess, setAdminSecuritySuccess] = useState('');
+
+  // Administrators & Co-Founders Management State
+  const [adminAccounts, setAdminAccounts] = useState<User[]>(() => {
+    const list = getAdminAccounts();
+    if (user && user.role === 'admin' && !list.some((a) => a.id === user.id || a.email === user.email)) {
+      return [user, ...list];
+    }
+    return list;
+  });
+  const [showAddAdminModal, setShowAddAdminModal] = useState(false);
+  const [newAdminForm, setNewAdminForm] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    adminTitle: 'Co-Founder',
+  });
+  const [showNewAdminPwd, setShowNewAdminPwd] = useState(false);
+  const [editingAdminTarget, setEditingAdminTarget] = useState<User | null>(null);
+  const [editAdminForm, setEditAdminForm] = useState({
+    fullName: '',
+    adminTitle: 'Co-Founder',
+    newPassword: '',
+  });
+  const [showEditAdminPwd, setShowEditAdminPwd] = useState(false);
+  const [adminTeamLoading, setAdminTeamLoading] = useState(false);
+  const [adminTeamError, setAdminTeamError] = useState('');
+
+  const refreshAdminAccounts = () => {
+    const list = getAdminAccounts();
+    if (user && user.role === 'admin' && !list.some((a) => a.id === user.id || a.email === user.email)) {
+      setAdminAccounts([user, ...list]);
+    } else {
+      setAdminAccounts(list);
+    }
+  };
 
   // Success toast
   const [actionSuccessMessage, setActionSuccessMessage] = useState<string | null>(null);
@@ -408,17 +473,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
     showToast('Updated student account status');
   };
 
-  // Filter projects in management table
-  const filteredProjects = projects.filter((p) => {
-    const matchSearch =
-      p.title.toLowerCase().includes(projectSearch.toLowerCase()) ||
-      p.primaryLanguage.toLowerCase().includes(projectSearch.toLowerCase()) ||
-      p.id.toLowerCase().includes(projectSearch.toLowerCase());
-    const matchCategory =
-      projectCategoryFilter === 'All' ||
-      p.category.toLowerCase() === projectCategoryFilter.toLowerCase();
-    return matchSearch && matchCategory;
-  });
+  // Filter projects in management table (real-time multi-field search + category filter)
+  const projectCategoryOptions = getAdminProjectCategoryOptions(projects, categories);
+  const filteredProjects = filterAdminProjects(projects, projectSearch, projectCategoryFilter);
+  const hasActiveProjectFilters =
+    projectSearch.trim().length > 0 || projectCategoryFilter !== 'All';
 
   // Filter orders
   const filteredOrders = myOrders.filter((o) => {
@@ -450,17 +509,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
             <span>Marketplace Administration Console</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-[#F8FAFC]">
-            Welcome, Dr. Anita Sharma
+            Welcome, {user?.fullName || 'Administrator'}
           </h1>
-          <p className="text-xs text-[#94A3B8] mt-1">
-            Curriculum supervisor & project kit catalog manager
+          <p className="text-xs text-[#94A3B8] mt-1 flex flex-wrap items-center gap-2">
+            <span className="px-2 py-0.5 rounded-md bg-[#6A2FC8]/25 text-[#D1B8FF] border border-[#9D71E8]/30 font-semibold">
+              {user?.adminTitle || 'Lead Administrator'}
+            </span>
+            <span>Curriculum supervisor & project kit catalog manager · {user?.email}</span>
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => {
+              setRecoveryEmail(user?.email || '');
+              setAdminSecurityError('');
+              setAdminSecuritySuccess('');
+              setRecoveryPreviewToken('');
+              setAdminSecurityTab('forgot');
+              setShowAdminPasswordModal(true);
+            }}
+            className="px-3.5 py-2 bg-[#16224A] hover:bg-[#1E2E5D] text-[#E8ECFA] border border-[#2C3F7A] rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <KeyRound className="w-3.5 h-3.5 text-[#D1B8FF]" />
+            <span>Forgot / Reset Password</span>
+          </button>
+
           <button
             onClick={() => navigate('/admin/add-project')}
-            className="px-4 py-2 bg-[#6A2FC8] hover:bg-[#5824A8] text-white rounded-xl text-xs font-semibold transition-colors shadow-sm flex items-center gap-1.5"
+            className="px-4 py-2 bg-[#6A2FC8] hover:bg-[#5824A8] text-white rounded-xl text-xs font-semibold transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Add New Kit</span>
@@ -536,7 +614,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
               : 'text-slate-600 dark:text-[#94A3B8] hover:text-slate-900 dark:hover:text-[#F8FAFC]'
           }`}
         >
-          Students ({studentsList.length})
+          Users & Admins ({studentsList.length + adminAccounts.length})
         </button>
         <button
           onClick={() => navigate('/admin/legal')}
@@ -675,49 +753,125 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
 
       {/* TAB 2: MANAGE PROJECTS (TABLE, SEARCH, EDIT, DELETE CONFIRMATION) */}
       {activeTab === 'projects' && (
-        <div className="space-y-6">
+        <div className="space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Project Kits Catalog Management</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Search, inspect, edit pricing, or remove deprecated projects from student store.
+                Search, filter by category, edit pricing, or remove listed project kits in real time.
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Category Filter */}
-              <select
-                value={projectCategoryFilter}
-                onChange={(e) => setProjectCategoryFilter(e.target.value)}
-                className="px-3 py-1.5 text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl outline-none focus:border-blue-500"
-              >
-                <option value="All">All Categories</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+            <button
+              onClick={() => navigate('/admin/add-project')}
+              className="px-4 py-2 bg-[#6A2FC8] hover:bg-[#5824A8] text-white rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shrink-0 self-start sm:self-auto cursor-pointer"
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>Add Kit</span>
+            </button>
+          </div>
 
-              {/* Search Bar */}
-              <div className="relative w-full sm:w-56">
+          {/* Real-Time Search & Category Filter Controls */}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 shadow-xs space-y-3">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+              {/* Real-Time Search Bar */}
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-2.5 pointer-events-none" />
                 <input
+                  id="admin-project-search"
                   type="text"
+                  aria-label="Search listed project kits"
                   value={projectSearch}
                   onChange={(e) => setProjectSearch(e.target.value)}
-                  placeholder="Search project..."
-                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl outline-none focus:border-blue-500"
+                  placeholder="Search kits by title, tech stack, language, or ID..."
+                  className="w-full pl-9 pr-9 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 rounded-xl outline-none focus:border-[#6A2FC8] dark:focus:border-[#9D71E8] transition-colors"
                 />
-                <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute left-2.5 top-2.5" />
+                {projectSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setProjectSearch('')}
+                    aria-label="Clear project search"
+                    className="absolute right-2.5 top-2 p-0.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-md cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
 
-              <button
-                onClick={() => navigate('/admin/add-project')}
-                className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shrink-0"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>Add Kit</span>
-              </button>
+              {/* Category Filter Dropdown */}
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="relative flex items-center">
+                  <Filter className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute left-3 pointer-events-none" />
+                  <select
+                    id="admin-project-category-filter"
+                    aria-label="Filter projects by category"
+                    value={projectCategoryFilter}
+                    onChange={(e) => setProjectCategoryFilter(e.target.value)}
+                    className="pl-8 pr-4 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl outline-none focus:border-[#6A2FC8] dark:focus:border-[#9D71E8] cursor-pointer"
+                  >
+                    <option value="All">All Categories ({projects.length})</option>
+                    {projectCategoryOptions.map((c) => (
+                      <option key={c.name} value={c.name}>
+                        {c.name} ({c.count})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {hasActiveProjectFilters && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProjectSearch('');
+                      setProjectCategoryFilter('All');
+                    }}
+                    className="px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-900/70 rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    <span>Clear</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Category Quick-Filter Pills + Live Result Count */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setProjectCategoryFilter('All')}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer ${
+                    projectCategoryFilter === 'All'
+                      ? 'bg-[#6A2FC8] text-white'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  All ({projects.length})
+                </button>
+                {projectCategoryOptions.map((cat) => {
+                  const isSelected =
+                    projectCategoryFilter.toLowerCase() === cat.name.toLowerCase();
+                  return (
+                    <button
+                      key={cat.name}
+                      type="button"
+                      onClick={() => setProjectCategoryFilter(cat.name)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#6A2FC8] text-white'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      {cat.name} ({cat.count})
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400 tabular-nums">
+                Showing <span className="font-bold text-slate-800 dark:text-white">{filteredProjects.length}</span> of{' '}
+                <span className="font-bold text-slate-800 dark:text-white">{projects.length}</span> kits
+              </div>
             </div>
           </div>
 
@@ -860,8 +1014,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={7} className="py-8 text-center text-slate-400">
-                        No projects match your search or category filter.
+                      <td colSpan={7} className="py-10 px-4 text-center space-y-3">
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          No project kits match your current search{projectCategoryFilter !== 'All' ? ` in "${projectCategoryFilter}"` : ''}.
+                        </div>
+                        {hasActiveProjectFilters && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProjectSearch('');
+                              setProjectCategoryFilter('All');
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#6A2FC8]/10 hover:bg-[#6A2FC8]/20 text-[#6A2FC8] dark:text-[#D1B8FF] border border-[#6A2FC8]/30 transition-colors cursor-pointer"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            <span>Reset Search & Category Filters</span>
+                          </button>
+                        )}
                       </td>
                     </tr>
                   )}
@@ -1653,9 +1822,131 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
         </div>
       )}
 
-      {/* TAB 6: USER MANAGEMENT */}
+      {/* TAB 6: USER & ADMINISTRATOR MANAGEMENT */}
       {activeTab === 'users' && (
-        <div className="space-y-6">
+        <div className="space-y-8">
+          {/* Administrators & Co-Founders Section */}
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  Administrators &amp; Co-Founders
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  Add a Co-Founder or secondary Administrator, update leadership titles, or change admin credentials.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setAdminTeamError('');
+                  setNewAdminForm({
+                    fullName: '',
+                    email: '',
+                    password: '',
+                    adminTitle: 'Co-Founder',
+                  });
+                  setShowAddAdminModal(true);
+                }}
+                className="px-4 py-2 bg-[#6A2FC8] hover:bg-[#5824A8] text-white rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shrink-0 self-start sm:self-auto cursor-pointer"
+              >
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>Add Admin / Co-Founder</span>
+              </button>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-4 font-semibold">Admin Name</th>
+                      <th className="py-3 px-4 font-semibold">Designation / Role</th>
+                      <th className="py-3 px-4 font-semibold">Email</th>
+                      <th className="py-3 px-4 font-semibold">Joined</th>
+                      <th className="py-3 px-4 font-semibold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {adminAccounts.map((adm) => {
+                      const isCurrentAdmin = user?.id === adm.id || user?.email === adm.email;
+                      const isCoFounder = (adm.adminTitle || '').toLowerCase().includes('co-founder');
+                      return (
+                        <tr key={adm.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                          <td className="py-3.5 px-4 font-semibold text-slate-900 dark:text-white">
+                            <div className="flex items-center gap-2">
+                              <span>{adm.fullName}</span>
+                              {isCurrentAdmin && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
+                                  Active
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                                isCoFounder
+                                  ? 'bg-[#6A2FC8]/15 text-[#6A2FC8] dark:text-[#D1B8FF] border-[#6A2FC8]/30'
+                                  : 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/60'
+                              }`}
+                            >
+                              {adm.adminTitle || 'Lead Administrator'}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 font-mono text-slate-600 dark:text-slate-300">
+                            {adm.email}
+                          </td>
+                          <td className="py-3.5 px-4 font-mono text-slate-500 dark:text-slate-400">
+                            {adm.joinedDate}
+                          </td>
+                          <td className="py-3.5 px-4 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAdminTeamError('');
+                                setEditingAdminTarget(adm);
+                                setEditAdminForm({
+                                  fullName: adm.fullName,
+                                  adminTitle: adm.adminTitle || 'Lead Administrator',
+                                  newPassword: '',
+                                });
+                              }}
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                            >
+                              <Edit3 className="w-3 h-3" />
+                              <span>Edit / Change</span>
+                            </button>
+
+                            {!isCurrentAdmin && adminAccounts.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  try {
+                                    removeAdminAccount(adm.id);
+                                    refreshAdminAccounts();
+                                    showToast(`Removed admin "${adm.fullName}"`);
+                                  } catch (err: any) {
+                                    showToast(err?.message || 'Unable to remove admin');
+                                  }
+                                }}
+                                className="inline-flex items-center gap-1 text-xs font-semibold text-rose-500 hover:text-rose-700 cursor-pointer ml-2"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Remove</span>
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Enrolled Engineering Students</h2>
@@ -2502,6 +2793,559 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ initialTab = 'ov
                 Close Manager
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Forgot / Reset & Update Password Modal */}
+      {showAdminPasswordModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200 dark:border-[#1A2846] max-w-md w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-start justify-between border-b border-slate-200 dark:border-[#1A2846] pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-[#6A2FC8]/15 border border-[#6A2FC8]/30 text-[#6A2FC8] dark:text-[#D1B8FF] flex items-center justify-center">
+                  <KeyRound className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                    Administrator Password Recovery & Security
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-[#94A3B8]">
+                    Reset via verification token or update your current admin password
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAdminPasswordModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer"
+                aria-label="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Tabs */}
+            <div className="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846]">
+              <button
+                type="button"
+                onClick={() => {
+                  setAdminSecurityTab('forgot');
+                  setAdminSecurityError('');
+                  setAdminSecuritySuccess('');
+                }}
+                className={`py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                  adminSecurityTab === 'forgot'
+                    ? 'bg-[#6A2FC8] text-white'
+                    : 'text-slate-600 dark:text-[#94A3B8] hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                Forgot / Reset Token
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAdminSecurityTab('change');
+                  setAdminSecurityError('');
+                  setAdminSecuritySuccess('');
+                }}
+                className={`py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                  adminSecurityTab === 'change'
+                    ? 'bg-[#6A2FC8] text-white'
+                    : 'text-slate-600 dark:text-[#94A3B8] hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                Change Password
+              </button>
+            </div>
+
+            {adminSecuritySuccess && (
+              <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-700 text-xs text-emerald-700 dark:text-emerald-200 flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                <span>{adminSecuritySuccess}</span>
+              </div>
+            )}
+
+            {adminSecurityError && (
+              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-700 text-xs text-rose-700 dark:text-rose-200 flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                <span>{adminSecurityError}</span>
+              </div>
+            )}
+
+            {adminSecurityTab === 'forgot' ? (
+              <div className="space-y-4">
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    setAdminSecurityError('');
+                    setAdminSecuritySuccess('');
+                    setRecoveryPreviewToken('');
+                    setAdminSecurityLoading(true);
+                    try {
+                      const res = await authService.forgotAdminPassword(recoveryEmail);
+                      setAdminSecuritySuccess(res.message);
+                      if (res.previewResetToken) {
+                        setRecoveryPreviewToken(res.previewResetToken);
+                        setRecoveryToken(res.previewResetToken);
+                      }
+                    } catch (err: any) {
+                      setAdminSecurityError(err?.message || 'Unable to generate reset token.');
+                    } finally {
+                      setAdminSecurityLoading(false);
+                    }
+                  }}
+                  className="space-y-2.5"
+                >
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1]">
+                    1. Send Recovery Token to Admin Email
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      required
+                      value={recoveryEmail}
+                      onChange={(e) => setRecoveryEmail(e.target.value)}
+                      placeholder="admin@yourdomain.com"
+                      className="flex-1 px-3 py-2 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                    />
+                    <button
+                      type="submit"
+                      disabled={adminSecurityLoading}
+                      className="px-3.5 py-2 bg-[#6A2FC8] hover:bg-[#5824A8] text-white text-xs font-semibold rounded-xl transition-colors shrink-0 cursor-pointer disabled:opacity-50"
+                    >
+                      {adminSecurityLoading ? 'Sending...' : 'Get Token'}
+                    </button>
+                  </div>
+                </form>
+
+                {recoveryPreviewToken && (
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#080E20] border border-[#6A2FC8]/40 space-y-1">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#6A2FC8] dark:text-[#D1B8FF]">
+                      Recovery Token (Auto-filled below)
+                    </div>
+                    <div className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-300 select-all">
+                      {recoveryPreviewToken}
+                    </div>
+                  </div>
+                )}
+
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    setAdminSecurityError('');
+                    setAdminSecuritySuccess('');
+                    if (recoveryNewPassword !== recoveryConfirmPassword) {
+                      setAdminSecurityError('Passwords do not match.');
+                      return;
+                    }
+                    setAdminSecurityLoading(true);
+                    try {
+                      const msg = await authService.resetAdminPassword(recoveryToken, recoveryNewPassword);
+                      setAdminSecuritySuccess(msg);
+                      setRecoveryToken('');
+                      setRecoveryPreviewToken('');
+                      setRecoveryNewPassword('');
+                      setRecoveryConfirmPassword('');
+                      showToast('Administrator password reset successfully');
+                    } catch (err: any) {
+                      setAdminSecurityError(err?.message || 'Unable to reset password.');
+                    } finally {
+                      setAdminSecurityLoading(false);
+                    }
+                  }}
+                  className="space-y-3 pt-3 border-t border-slate-200 dark:border-[#1A2846]"
+                >
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1]">
+                    2. Apply Reset Token & New Password
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={recoveryToken}
+                    onChange={(e) => setRecoveryToken(e.target.value)}
+                    placeholder="Enter Reset Token (e.g. PK-ADM-XXXXXX)"
+                    className="w-full px-3 py-2 text-xs font-mono bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                  />
+                  <div className="relative">
+                    <input
+                      type={showAdminSecurityPwd ? 'text' : 'password'}
+                      required
+                      value={recoveryNewPassword}
+                      onChange={(e) => setRecoveryNewPassword(e.target.value)}
+                      placeholder="New Password (min. 8 chars)"
+                      className="w-full px-3 py-2 pr-9 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowAdminSecurityPwd(!showAdminSecurityPwd)}
+                      className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                    >
+                      {showAdminSecurityPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                  <input
+                    type={showAdminSecurityPwd ? 'text' : 'password'}
+                    required
+                    value={recoveryConfirmPassword}
+                    onChange={(e) => setRecoveryConfirmPassword(e.target.value)}
+                    placeholder="Confirm New Password"
+                    className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={adminSecurityLoading}
+                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    {adminSecurityLoading ? 'Resetting Password...' : 'Reset Admin Password'}
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setAdminSecurityError('');
+                  setAdminSecuritySuccess('');
+                  if (newAdminPassword !== confirmNewAdminPassword) {
+                    setAdminSecurityError('New passwords do not match.');
+                    return;
+                  }
+                  setAdminSecurityLoading(true);
+                  try {
+                    const msg = await authService.changeAdminPassword(
+                      user?.email || '',
+                      currentAdminPassword,
+                      newAdminPassword
+                    );
+                    setAdminSecuritySuccess(msg);
+                    setCurrentAdminPassword('');
+                    setNewAdminPassword('');
+                    setConfirmNewAdminPassword('');
+                    showToast('Administrator password updated');
+                  } catch (err: any) {
+                    setAdminSecurityError(err?.message || 'Unable to update password.');
+                  } finally {
+                    setAdminSecurityLoading(false);
+                  }
+                }}
+                className="space-y-3"
+              >
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                    Current Password
+                  </label>
+                  <input
+                    type={showAdminSecurityPwd ? 'text' : 'password'}
+                    required
+                    value={currentAdminPassword}
+                    onChange={(e) => setCurrentAdminPassword(e.target.value)}
+                    placeholder="Enter current admin password"
+                    className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                    New Password (min. 8 chars)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showAdminSecurityPwd ? 'text' : 'password'}
+                      required
+                      value={newAdminPassword}
+                      onChange={(e) => setNewAdminPassword(e.target.value)}
+                      placeholder="New strong password"
+                      className="w-full px-3 py-2 pr-9 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowAdminSecurityPwd(!showAdminSecurityPwd)}
+                      className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                    >
+                      {showAdminSecurityPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type={showAdminSecurityPwd ? 'text' : 'password'}
+                    required
+                    value={confirmNewAdminPassword}
+                    onChange={(e) => setConfirmNewAdminPassword(e.target.value)}
+                    placeholder="Re-enter new password"
+                    className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={adminSecurityLoading}
+                  className="w-full py-2.5 bg-[#6A2FC8] hover:bg-[#5824A8] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {adminSecurityLoading ? 'Updating...' : 'Update Current Password'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Add Another Admin / Co-Founder */}
+      {showAddAdminModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200 dark:border-[#1A2846] max-w-md w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-start justify-between border-b border-slate-200 dark:border-[#1A2846] pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Add Administrator / Co-Founder
+                </h3>
+                <p className="text-[11px] text-slate-500 dark:text-[#94A3B8]">
+                  Provision an additional admin or co-founder login for the ProjectKit Admin Console.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddAdminModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer"
+                aria-label="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {adminTeamError && (
+              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-700 text-xs text-rose-700 dark:text-rose-200">
+                {adminTeamError}
+              </div>
+            )}
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setAdminTeamError('');
+                setAdminTeamLoading(true);
+                try {
+                  const created = await addAdminAccount(newAdminForm);
+                  refreshAdminAccounts();
+                  setShowAddAdminModal(false);
+                  showToast(`Added ${created.adminTitle} "${created.fullName}"`);
+                } catch (err: any) {
+                  setAdminTeamError(err?.message || 'Unable to add administrator.');
+                } finally {
+                  setAdminTeamLoading(false);
+                }
+              }}
+              className="space-y-3.5"
+            >
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newAdminForm.fullName}
+                  onChange={(e) => setNewAdminForm({ ...newAdminForm, fullName: e.target.value })}
+                  placeholder="e.g. Hari Krishna"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                  Designation / Role Title
+                </label>
+                <select
+                  value={newAdminForm.adminTitle}
+                  onChange={(e) => setNewAdminForm({ ...newAdminForm, adminTitle: e.target.value })}
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                >
+                  <option value="Co-Founder">Co-Founder</option>
+                  <option value="Lead Administrator">Lead Administrator</option>
+                  <option value="Technical Co-Admin">Technical Co-Admin</option>
+                  <option value="Operations Admin">Operations Admin</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                  Administrator Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={newAdminForm.email}
+                  onChange={(e) => setNewAdminForm({ ...newAdminForm, email: e.target.value })}
+                  placeholder="cofounder@projectkit.in"
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                  Initial Password (min. 8 chars)
+                </label>
+                <div className="relative">
+                  <input
+                    type={showNewAdminPwd ? 'text' : 'password'}
+                    required
+                    value={newAdminForm.password}
+                    onChange={(e) => setNewAdminForm({ ...newAdminForm, password: e.target.value })}
+                    placeholder="Strong password"
+                    className="w-full px-3 py-2 pr-9 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewAdminPwd(!showNewAdminPwd)}
+                    className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                  >
+                    {showNewAdminPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddAdminModal(false)}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-[#CBD5E1] bg-slate-100 dark:bg-[#16224A] rounded-xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={adminTeamLoading}
+                  className="px-4 py-2 text-xs font-bold text-white bg-[#6A2FC8] hover:bg-[#5824A8] rounded-xl cursor-pointer disabled:opacity-50"
+                >
+                  {adminTeamLoading ? 'Adding...' : 'Add Admin / Co-Founder'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Edit / Change Existing Admin or Co-Founder */}
+      {editingAdminTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#0B1329] rounded-2xl border border-slate-200 dark:border-[#1A2846] max-w-md w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-start justify-between border-b border-slate-200 dark:border-[#1A2846] pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Edit / Change Administrator Details
+                </h3>
+                <p className="text-[11px] text-slate-500 dark:text-[#94A3B8]">
+                  Update name, switch designation to Co-Founder, or reset password for {editingAdminTarget.email}.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingAdminTarget(null)}
+                className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer"
+                aria-label="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {adminTeamError && (
+              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-700 text-xs text-rose-700 dark:text-rose-200">
+                {adminTeamError}
+              </div>
+            )}
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setAdminTeamError('');
+                setAdminTeamLoading(true);
+                try {
+                  const updated = await updateAdminAccount(editingAdminTarget.id, {
+                    fullName: editAdminForm.fullName,
+                    adminTitle: editAdminForm.adminTitle,
+                    newPassword: editAdminForm.newPassword.trim() || undefined,
+                  });
+                  refreshAdminAccounts();
+                  setEditingAdminTarget(null);
+                  showToast(`Updated ${updated.fullName} (${updated.adminTitle})`);
+                } catch (err: any) {
+                  setAdminTeamError(err?.message || 'Unable to update administrator.');
+                } finally {
+                  setAdminTeamLoading(false);
+                }
+              }}
+              className="space-y-3.5"
+            >
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                  Administrator Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editAdminForm.fullName}
+                  onChange={(e) => setEditAdminForm({ ...editAdminForm, fullName: e.target.value })}
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                  Role / Designation
+                </label>
+                <select
+                  value={editAdminForm.adminTitle}
+                  onChange={(e) => setEditAdminForm({ ...editAdminForm, adminTitle: e.target.value })}
+                  className="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                >
+                  <option value="Co-Founder">Co-Founder</option>
+                  <option value="Lead Administrator">Lead Administrator</option>
+                  <option value="Technical Co-Admin">Technical Co-Admin</option>
+                  <option value="Operations Admin">Operations Admin</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-[#CBD5E1] mb-1">
+                  New Password (Optional, min. 8 chars)
+                </label>
+                <div className="relative">
+                  <input
+                    type={showEditAdminPwd ? 'text' : 'password'}
+                    value={editAdminForm.newPassword}
+                    onChange={(e) => setEditAdminForm({ ...editAdminForm, newPassword: e.target.value })}
+                    placeholder="Leave blank to keep existing password"
+                    className="w-full px-3 py-2 pr-9 text-xs bg-slate-50 dark:bg-[#080E20] border border-slate-200 dark:border-[#1A2846] rounded-xl text-slate-900 dark:text-white outline-none focus:border-[#6A2FC8]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowEditAdminPwd(!showEditAdminPwd)}
+                    className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+                  >
+                    {showEditAdminPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingAdminTarget(null)}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-[#CBD5E1] bg-slate-100 dark:bg-[#16224A] rounded-xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={adminTeamLoading}
+                  className="px-4 py-2 text-xs font-bold text-white bg-[#6A2FC8] hover:bg-[#5824A8] rounded-xl cursor-pointer disabled:opacity-50"
+                >
+                  {adminTeamLoading ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

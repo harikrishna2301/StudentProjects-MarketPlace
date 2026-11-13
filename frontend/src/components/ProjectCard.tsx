@@ -117,8 +117,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, searchQuery }
       try {
         setClaiming(true);
         await claimFreeKit(project);
-      } catch (err: any) {
-        console.error('Failed to claim free kit:', err);
+      } catch {
+        // Handled gracefully by AuthContext fallback
       } finally {
         setClaiming(false);
       }

@@ -18,6 +18,7 @@ import {
   ArrowLeft,
   Heart,
   FileText,
+  Trash2,
 } from 'lucide-react';
 import { BrandLogo } from '../components/BrandLogo';
 import { ThemeToggle } from '../components/ThemeToggle';
@@ -32,7 +33,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAdmin, logout, quickSwitchUser } = useAuth();
+  const { user, isAdmin, logout } = useAuth();
   const { wishlistCount } = useWishlist();
 
   const handleLogout = () => {
@@ -42,7 +43,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
 
   // Security Guard: Authentication & Role-Based Authorization
   if (!user) {
-    return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
+    const loginPath = role === 'admin' ? '/admin/login' : '/login';
+    return <Navigate to={`${loginPath}?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
   if (role === 'admin' && !isAdmin) {
@@ -54,15 +56,25 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
           </div>
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">403 – Administrative Access Denied</h2>
           <p className="text-xs text-slate-600 dark:text-[#94A3B8] leading-relaxed">
-            Your authenticated account does not possess the requisite administrative privileges to access the ProjectKit back-office console.
+            Your authenticated account does not possess administrative privileges to access the ProjectKit Admin Console.
           </p>
-          <div className="pt-2">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
             <Link
               to="/dashboard"
-              className="px-4 py-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-xl text-xs font-semibold inline-block"
+              className="px-4 py-2 bg-[#6A2FC8] hover:bg-[#5824A8] text-white rounded-xl text-xs font-semibold inline-block transition-colors"
             >
               Return to Student Dashboard
             </Link>
+            <button
+              type="button"
+              onClick={() => {
+                logout();
+                navigate('/admin/login');
+              }}
+              className="px-4 py-2 bg-slate-100 dark:bg-[#16224A] hover:bg-slate-200 dark:hover:bg-[#1E2E5D] text-slate-800 dark:text-[#E8ECFA] rounded-xl text-xs font-semibold cursor-pointer transition-colors"
+            >
+              Sign In as Admin
+            </button>
           </div>
         </div>
       </div>
@@ -76,6 +88,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
     { name: 'Order History', path: '/dashboard/orders', icon: Receipt },
     { name: 'Downloads', path: '/dashboard/downloads', icon: Download },
     { name: 'Profile Settings', path: '/dashboard/profile', icon: User },
+    { name: 'Delete Account', path: '/dashboard/delete-account', icon: Trash2, danger: true },
   ];
 
   const adminNavItems = [
@@ -84,7 +97,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
     { name: 'Add Project', path: '/admin/add-project', icon: PlusCircle },
     { name: 'Manage Categories', path: '/admin/categories', icon: Tags },
     { name: 'Manage Orders', path: '/admin/orders', icon: Receipt },
-    { name: 'Manage Users', path: '/admin/users', icon: Users },
+    { name: 'Users & Admins', path: '/admin/users', icon: Users },
     { name: 'Legal & Compliance', path: '/admin/legal', icon: FileText },
   ];
 
@@ -142,6 +155,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isCurrentPath(item.path);
+              const isDanger = Boolean((item as any).danger);
               const hasBadge = (item as any).badge !== undefined && (item as any).badge > 0;
 
               return (
@@ -151,12 +165,24 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                     active
-                      ? 'bg-[#6A2FC8] text-white shadow-xs'
+                      ? isDanger
+                        ? 'bg-rose-600 text-white shadow-xs'
+                        : 'bg-[#6A2FC8] text-white shadow-xs'
+                      : isDanger
+                      ? 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-700 dark:hover:text-rose-300'
                       : 'text-slate-600 dark:text-[#CBD5E1] hover:bg-slate-100 dark:hover:bg-[#25134D] hover:text-slate-900 dark:hover:text-[#F2E9FF]'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-white' : 'text-[#6A2FC8] dark:text-[#D1B8FF]'}`} />
+                    <Icon
+                      className={`w-4 h-4 shrink-0 ${
+                        active
+                          ? 'text-white'
+                          : isDanger
+                          ? 'text-rose-600 dark:text-rose-400'
+                          : 'text-[#6A2FC8] dark:text-[#D1B8FF]'
+                      }`}
+                    />
                     <span className="truncate">{item.name}</span>
                   </div>
                   {hasBadge && (
@@ -173,42 +199,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ role = 'studen
                 </Link>
               );
             })}
-          </div>
-
-          {/* Role Simulator inside Sidebar */}
-          <div className="px-4 py-3 mx-3 rounded-xl bg-slate-50 dark:bg-[#1A0D3D] border border-slate-200 dark:border-[#3A2074] text-xs">
-            <div className="text-[10px] text-slate-500 dark:text-[#C5B4E3] font-semibold mb-1.5 flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-[#6A2FC8] dark:text-[#D1B8FF]" />
-              <span>Role Simulator</span>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  quickSwitchUser('student');
-                  navigate('/dashboard');
-                }}
-                className={`flex-1 py-1 px-2 rounded-lg text-[10px] font-semibold transition-colors ${
-                  role === 'student'
-                    ? 'bg-[#6A2FC8] text-white shadow-xs'
-                    : 'bg-white dark:bg-[#25134D] text-slate-600 dark:text-[#C5B4E3] border border-slate-200 dark:border-[#3A2074] hover:text-slate-900 dark:hover:text-[#F2E9FF]'
-                }`}
-              >
-                Student
-              </button>
-              <button
-                onClick={() => {
-                  quickSwitchUser('admin');
-                  navigate('/admin');
-                }}
-                className={`flex-1 py-1 px-2 rounded-lg text-[10px] font-semibold transition-colors ${
-                  role === 'admin'
-                    ? 'bg-[#6A2FC8] text-white shadow-xs'
-                    : 'bg-white dark:bg-[#25134D] text-slate-600 dark:text-[#C5B4E3] border border-slate-200 dark:border-[#3A2074] hover:text-slate-900 dark:hover:text-[#F2E9FF]'
-                }`}
-              >
-                Admin
-              </button>
-            </div>
           </div>
         </div>
 

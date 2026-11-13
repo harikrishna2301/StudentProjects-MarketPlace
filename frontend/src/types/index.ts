@@ -85,6 +85,7 @@ export interface User {
   phoneNumber?: string;
   collegeName?: string;
   role: 'student' | 'admin';
+  adminTitle?: string;
   avatar?: string;
   joinedDate: string;
   token?: string;
